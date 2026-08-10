@@ -1,0 +1,426 @@
+<phyphox version="1.14" locale="en">
+  <title>Rack Acoustic Signature</title>
+  <category>Data centre</category>
+  <icon>SIG</icon>
+  <description>
+        Finds the odd one out in a row of identical machines.
+
+        Units of the same model doing the same job sound the same. When one starts to differ - a fan slowing, a bearing roughening, a filter blocking, a disk shelf spinning up - its sound changes shape before anything trips an alarm. Comparing a unit against its neighbours catches that far earlier than comparing it against any absolute threshold, because everything that makes an absolute threshold useless (the room, the phone, the distance you stood) cancels out.
+
+        Record a healthy unit, press Set as reference, then hold the phone the same way in front of each of the others. The mismatch number says how differently each one sounds, in decibels.
+
+        Also reports the strongest low tone, which identifies spinning disks: 5400 rpm is 90 Hz, 7200 rpm is 120 Hz, 10000 rpm is 167 Hz and 15000 rpm is 250 Hz.
+    </description>
+
+  <data-containers>
+    <container size="16384">recording</container>
+    <container>micRate</container>
+    <container>micCnt</container>
+    <container>micFrom</container>
+    <container size="8192">block</container>
+    <container>blockN</container>
+
+    <container size="8192">winU</container>
+    <container size="8192">win</container>
+    <container size="8192">windowed</container>
+    <container size="8192">re</container>
+    <container size="8192">im</container>
+    <container>nHalf</container>
+    <container>nHalf1</container>
+    <container>rateHalf</container>
+    <container size="4097">freq</container>
+    <container size="4096">halfF</container>
+    <container size="4096">halfRe</container>
+    <container size="4096">halfIm</container>
+    <container size="4096">mag</container>
+
+    <container init="0">seeded</container>
+    <container size="4096">avgNew</container>
+    <container size="4096" init="0">avgMag</container>
+
+    <container size="4096">lnMag</container>
+    <container size="4096">dbMag</container>
+    <container>dbMean</container>
+    <container size="4096">dbNorm</container>
+
+    <container size="4096" init="0">refSpec</container>
+    <container init="0">hasRef</container>
+    <container init="0">setRef</container>
+    <container size="4096">diff</container>
+    <container size="4096">diffSq</container>
+    <container>sumDiffSq</container>
+    <container>nBins</container>
+    <container>mismatch</container>
+
+    <container init="60">fLow</container>
+    <container init="400">fHigh</container>
+    <container>iLow</container>
+    <container>iHigh</container>
+    <container size="4096">bandF</container>
+    <container size="4096">bandMag</container>
+    <container>toneF</container>
+    <container>toneRpm</container>
+
+    <container init="1">unitId</container>
+    <container>unitNext</container>
+    <container init="0">logNow</container>
+    <container size="0">logUnit</container>
+    <container size="0">logMis</container>
+    <container size="0">logTone</container>
+    <container>logCount</container>
+  </data-containers>
+
+  <input>
+    <audio append="true">
+      <output>recording</output>
+      <output component="rate">micRate</output>
+    </audio>
+  </input>
+
+  <views>
+    <view label="Compare">
+      <value label="How different from the reference" unit="dB" size="3" precision="1">
+        <input>mismatch</input>
+      </value>
+      <value label="Verdict">
+        <input>mismatch</input>
+        <map max="2">same as the reference unit</map>
+        <map max="4">slightly different - note it</map>
+        <map max="8">clearly different - worth investigating</map>
+        <map>very different - this one is not doing what the others are</map>
+      </value>
+      <separator height="0.5"/>
+      <value label="Reference set yet">
+        <input>hasRef</input>
+        <map max="0.5">NO - record a healthy unit and set it</map>
+        <map>yes</map>
+      </value>
+      <button label="Set this unit as the reference">
+        <input type="value">1</input>
+        <output>setRef</output>
+      </button>
+      <button label="Start a fresh recording">
+        <input type="value">0</input>
+        <output>seeded</output>
+      </button>
+      <info label="Press Start a fresh recording, hold still for about ten seconds in front of a unit, then read the number. Same distance and same phone orientation every time, or the comparison means nothing."/>
+      <separator height="0.5"/>
+      <value label="Strongest low tone" unit="Hz" precision="1">
+        <input>toneF</input>
+      </value>
+      <value label="which is something spinning at" unit="RPM" precision="0">
+        <input>toneRpm</input>
+      </value>
+      <value label="Likely source">
+        <input>toneF</input>
+        <map max="70">slow fan or structure</map>
+        <map max="100">5400 rpm disks</map>
+        <map max="135">7200 rpm disks</map>
+        <map max="200">10000 rpm disks or a fast fan</map>
+        <map max="280">15000 rpm disks or a fast fan</map>
+        <map>fan blade passing</map>
+      </value>
+    </view>
+
+    <view label="Log the row">
+      <value label="Unit number" size="2" precision="0">
+        <input>unitId</input>
+      </value>
+      <value label="Units logged" precision="0">
+        <input>logCount</input>
+      </value>
+      <button label="Log this unit">
+        <input type="value">1</input>
+        <output>logNow</output>
+      </button>
+      <separator height="0.5"/>
+      <edit label="Set the unit number" default="1" decimal="false">
+        <output>unitId</output>
+      </edit>
+      <button label="Clear the log">
+        <input type="empty"/>
+        <output>logUnit</output>
+        <input type="empty"/>
+        <output>logMis</output>
+        <input type="empty"/>
+        <output>logTone</output>
+      </button>
+      <separator height="0.5"/>
+      <graph label="Difference by unit" labelX="Unit" labelY="Mismatch" unitY="dB" style="dots" partialUpdate="true">
+        <input axis="x">logUnit</input>
+        <input axis="y">logMis</input>
+      </graph>
+      <info label="Walk the row and log every unit. One dot sitting well above the others is the finding."/>
+    </view>
+
+    <view label="Spectrum">
+      <graph label="This unit, averaged" logX="true" labelX="Frequency" unitX="Hz" labelY="Level" unitY="dB">
+        <input axis="x">halfF</input>
+        <input axis="y">dbNorm</input>
+      </graph>
+      <graph label="The reference unit" logX="true" labelX="Frequency" unitX="Hz" labelY="Level" unitY="dB">
+        <input axis="x">halfF</input>
+        <input axis="y">refSpec</input>
+      </graph>
+      <info label="Compare the shapes. A new peak means something new is turning; a peak that has moved sideways means something changed speed; a raised floor across the whole width usually means turbulence, a blocked filter or a loose panel."/>
+      <separator height="0.5"/>
+      <edit label="Tone search from" unit="Hz" default="60" decimal="false">
+        <output>fLow</output>
+      </edit>
+      <edit label="Tone search to" unit="Hz" default="400" decimal="false">
+        <output>fHigh</output>
+      </edit>
+    </view>
+
+    <view label="Notes">
+      <info label="How the number is worked out"/>
+      <info label="Both spectra are converted to decibels and each has its own average level subtracted, so overall loudness is removed and only the SHAPE is compared. The mismatch is then the typical difference between the two shapes, in dB. Because loudness is divided out, standing slightly closer to one unit does not fake a result - but standing at a completely different angle does, because the shape genuinely changes with direction."/>
+      <separator height="0.5"/>
+      <info label="What it is good at"/>
+      <info label="Spotting the one unit in twenty that has changed. It needs no calibration, no history and no baseline data from the manufacturer - just its neighbours, which you already have."/>
+      <info label="Repeat the row weekly and the numbers become a trend. A unit whose mismatch climbs steadily is degrading, even while it is still well inside anything the BMS would flag."/>
+      <separator height="0.5"/>
+      <info label="What it cannot do"/>
+      <info label="It cannot say what changed, only that something did. It also cannot separate two units standing close together - in a tight row you are always hearing the neighbours too, which compresses the differences and makes a real fault look milder than it is."/>
+      <info label="If the room is much louder than the unit you are pointing at, you are mostly measuring the room, and every unit will score the same. Get close, and get the microphone end of the phone facing the machine."/>
+    </view>
+  </views>
+
+  <analysis sleep="0.3">
+    <count>
+      <input clear="false">recording</input>
+      <output>micCnt</output>
+    </count>
+    <formula formula="max([1]-8192,0)">
+      <input>micCnt</input>
+      <output>micFrom</output>
+    </formula>
+    <subrange>
+      <input as="from" clear="false">micFrom</input>
+      <input as="in" clear="false">recording</input>
+      <output>block</output>
+    </subrange>
+    <count>
+      <input clear="false">block</input>
+      <output clear="false">blockN</output>
+    </count>
+
+    <ramp>
+      <input as="start" type="value">0</input>
+      <input as="stop" type="value">1</input>
+      <input as="length" clear="false">blockN</input>
+      <output>winU</output>
+    </ramp>
+    <formula formula="0.5-0.5*cos(6.283185307179586*[1_])">
+      <input>winU</input>
+      <output>win</output>
+    </formula>
+    <multiply>
+      <input as="factor">block</input>
+      <input as="factor">win</input>
+      <output>windowed</output>
+    </multiply>
+    <fft>
+      <input>windowed</input>
+      <output as="re">re</output>
+      <output as="im">im</output>
+    </fft>
+    <divide>
+      <input clear="false">micRate</input>
+      <input type="value">2</input>
+      <output>rateHalf</output>
+    </divide>
+    <divide>
+      <input clear="false">blockN</input>
+      <input type="value">2</input>
+      <output clear="false">nHalf</output>
+    </divide>
+    <add>
+      <input clear="false">nHalf</input>
+      <input type="value">1</input>
+      <output>nHalf1</output>
+    </add>
+    <ramp>
+      <input as="start" type="value">0</input>
+      <input as="stop">rateHalf</input>
+      <input as="length" clear="false">nHalf1</input>
+      <output>freq</output>
+    </ramp>
+    <subrange>
+      <input as="from" type="value">1</input>
+      <input as="to" clear="false">nHalf</input>
+      <input as="in">freq</input>
+      <input as="in">re</input>
+      <input as="in">im</input>
+      <output clear="false">halfF</output>
+      <output>halfRe</output>
+      <output>halfIm</output>
+    </subrange>
+    <formula formula="sqrt([1_]*[1_]+[2_]*[2_])+0.000000001">
+      <input>halfRe</input>
+      <input>halfIm</input>
+      <output clear="false">mag</output>
+    </formula>
+
+    <!-- smooth the spectrum over time so a steady machine settles -->
+    <formula formula="0.85*[1_]+0.15*[2_]">
+      <input clear="false">avgMag</input>
+      <input clear="false">mag</input>
+      <output>avgNew</output>
+    </formula>
+    <if less="true">
+      <input clear="false">seeded</input>
+      <input type="value">0.5</input>
+      <input clear="false">mag</input>
+      <input>avgNew</input>
+      <output clear="false">avgMag</output>
+    </if>
+    <append>
+      <input type="value">1</input>
+      <output>seeded</output>
+    </append>
+
+    <!-- to decibels, then remove the overall level so only the shape is left -->
+    <log>
+      <input clear="false">avgMag</input>
+      <output>lnMag</output>
+    </log>
+    <formula formula="8.685889638065035*[1_]">
+      <input>lnMag</input>
+      <output clear="false">dbMag</output>
+    </formula>
+    <average>
+      <input as="buffer" clear="false">dbMag</input>
+      <output as="average">dbMean</output>
+    </average>
+    <formula formula="[1_]-[2]">
+      <input clear="false">dbMag</input>
+      <input>dbMean</input>
+      <output clear="false">dbNorm</output>
+    </formula>
+
+    <if equal="true">
+      <input clear="false">setRef</input>
+      <input type="value">1</input>
+      <input clear="false">dbNorm</input>
+      <output clear="false">refSpec</output>
+    </if>
+    <if equal="true">
+      <input clear="false">setRef</input>
+      <input type="value">1</input>
+      <input type="value">1</input>
+      <output clear="false">hasRef</output>
+    </if>
+    <append>
+      <input type="value">0</input>
+      <output>setRef</output>
+    </append>
+
+    <formula formula="[1_]-[2_]">
+      <input clear="false">dbNorm</input>
+      <input clear="false">refSpec</input>
+      <output>diff</output>
+    </formula>
+    <formula formula="[1_]*[1_]">
+      <input>diff</input>
+      <output clear="false">diffSq</output>
+    </formula>
+    <integrate>
+      <input>diffSq</input>
+      <output>sumDiffSq</output>
+    </integrate>
+    <count>
+      <input clear="false">diffSq</input>
+      <output>nBins</output>
+    </count>
+    <formula formula="sqrt([1]/max([2],1))">
+      <input>sumDiffSq</input>
+      <input>nBins</input>
+      <output clear="false">mismatch</output>
+    </formula>
+
+    <!-- strongest low tone, for identifying spinning disks -->
+    <formula formula="max(round([1]*[2]/[3])-1,1)">
+      <input clear="false">fLow</input>
+      <input clear="false">blockN</input>
+      <input clear="false">micRate</input>
+      <output>iLow</output>
+    </formula>
+    <formula formula="min(max(round([1]*[2]/[3])-1,2),[4]-2)">
+      <input clear="false">fHigh</input>
+      <input clear="false">blockN</input>
+      <input clear="false">micRate</input>
+      <input clear="false">nHalf</input>
+      <output>iHigh</output>
+    </formula>
+    <subrange>
+      <input as="from" clear="false">iLow</input>
+      <input as="to" clear="false">iHigh</input>
+      <input as="in" clear="false">halfF</input>
+      <input as="in" clear="false">avgMag</input>
+      <output>bandF</output>
+      <output>bandMag</output>
+    </subrange>
+    <max>
+      <input as="x">bandF</input>
+      <input as="y">bandMag</input>
+      <output as="position" clear="false">toneF</output>
+    </max>
+    <multiply>
+      <input as="factor" clear="false">toneF</input>
+      <input as="factor" type="value">60</input>
+      <output>toneRpm</output>
+    </multiply>
+
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input clear="false">unitId</input>
+      <output clear="false">logUnit</output>
+    </if>
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input clear="false">mismatch</input>
+      <output clear="false">logMis</output>
+    </if>
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input clear="false">toneF</input>
+      <output clear="false">logTone</output>
+    </if>
+    <add>
+      <input clear="false">unitId</input>
+      <input type="value">1</input>
+      <output>unitNext</output>
+    </add>
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input>unitNext</input>
+      <output clear="false">unitId</output>
+    </if>
+    <append>
+      <input type="value">0</input>
+      <output>logNow</output>
+    </append>
+    <count>
+      <input clear="false">logUnit</input>
+      <output>logCount</output>
+    </count>
+  </analysis>
+
+  <export>
+    <set name="Units">
+      <data name="Unit">logUnit</data>
+      <data name="Mismatch (dB)">logMis</data>
+      <data name="Strongest low tone (Hz)">logTone</data>
+    </set>
+    <set name="This unit">
+      <data name="Frequency (Hz)">halfF</data>
+      <data name="Shape (dB)">dbNorm</data>
+      <data name="Reference shape (dB)">refSpec</data>
+    </set>
+  </export>
+</phyphox>

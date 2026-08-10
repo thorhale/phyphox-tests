@@ -30,12 +30,16 @@ any extra hardware.
 | `vibration-census` | Which machines are actually running, from one floor recording | 0 |
 | `strobe-tacho` | Fan speed read by eye with the torch — the honest check on `fan-tacho` | 0 |
 | `tile-tap` | Finds loose or unsupported floor tiles by the note they ring at | 0 |
+| `acoustic-fingerprint` | Recognise a place by its echoes; how live the room is | 0 |
+| `rack-signature` | Find the odd one out in a row of identical machines | 0 |
+| `ultrasonic-leak` | Hunt compressed-air and valve leaks by high-frequency hiss | 0 |
 | `dimension-survey` | Distances, air temperature from sound speed, floor level | 0 |
 | `walk-logger` | Records everything at once while you walk around | 0 |
 | `wifi-walk` | Marks your spots so WiFi readings can be matched to them later | 0 |
 | `hall-survey` | Logs air pressure; you type in temperature and humidity | 1 |
 
-`capabilities.json` says what each one needs. `tools/check_tiers.py` opens every
+**Fifteen of the sixteen run on any phone** — a cheap A-series Android or an
+iPhone. `capabilities.json` says what each one needs. `tools/check_tiers.py` opens every
 file and fails if that claim is not true — so the table above cannot quietly stop
 matching the files, which is the usual way a compatibility list becomes a lie.
 

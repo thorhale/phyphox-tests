@@ -1,0 +1,327 @@
+<phyphox version="1.14" locale="en">
+  <title>Ultrasonic Leak Sweep</title>
+  <category>Data centre</category>
+  <icon>LEAK</icon>
+  <description>
+        Hunts compressed air and valve leaks by the hiss you cannot hear.
+
+        Gas escaping through a small hole is turbulent, and turbulence radiates noise across a very wide band - including well above human hearing. Room noise, fans and machinery are almost all low frequency, so the ratio of high-frequency to total energy rises sharply near a leak while the overall loudness barely changes. That ratio is what this measures.
+
+        Press Set baseline in clean air, then walk the pipe run watching the number. Sweep slowly and keep the phone's microphone pointed at joints, unions and valve stems.
+
+        Be honest about the limit: real leak detectors listen at 25 to 40 kHz, and no phone can. A microphone sampling at 48 kHz cannot represent anything above 24 kHz, and its filter is already rolling off below 22 kHz. This measures 15 to 22 kHz - the very bottom edge of the leak signature. It will find a decent leak in a quiet plant room. It will not find a small one, and it will not compete with a proper ultrasonic gun.
+    </description>
+
+  <data-containers>
+    <container size="16384">recording</container>
+    <container>micRate</container>
+    <container>micCnt</container>
+    <container>micFrom</container>
+    <container size="8192">block</container>
+    <container>blockN</container>
+
+    <container size="8192">winU</container>
+    <container size="8192">win</container>
+    <container size="8192">windowed</container>
+    <container size="8192">re</container>
+    <container size="8192">im</container>
+    <container>nHalf</container>
+    <container>nHalf1</container>
+    <container>rateHalf</container>
+    <container size="4097">freq</container>
+    <container size="4096">halfF</container>
+    <container size="4096">halfRe</container>
+    <container size="4096">halfIm</container>
+    <container size="4096">mag</container>
+    <container size="4096">power</container>
+
+    <container init="15000">fLow</container>
+    <container init="22000">fHigh</container>
+    <container>iLow</container>
+    <container>iHigh</container>
+    <container size="4096">bandPower</container>
+    <container>sumBand</container>
+    <container>sumTotal</container>
+    <container>ratio</container>
+    <container>lnRatio</container>
+    <container>ratioDb</container>
+
+    <container init="0">baseline</container>
+    <container init="0">hasBase</container>
+    <container init="0">setBase</container>
+    <container>excess</container>
+
+    <container size="0">hT</container>
+    <container size="0">hDb</container>
+    <container>peakRaw</container>
+    <container>peakExcess</container>
+    <container>now</container>
+  </data-containers>
+
+  <input>
+    <audio append="true">
+      <output>recording</output>
+      <output component="rate">micRate</output>
+    </audio>
+  </input>
+
+  <views>
+    <view label="Hunt">
+      <value label="Above the clean-air baseline" unit="dB" size="3" precision="1">
+        <input>excess</input>
+      </value>
+      <value label="Verdict">
+        <input>excess</input>
+        <map max="2">clean</map>
+        <map max="5">slightly raised - keep sweeping</map>
+        <map max="10">something is hissing near here</map>
+        <map>strong - you are close to it</map>
+      </value>
+      <separator height="0.5"/>
+      <value label="Loudest point found so far" unit="dB" precision="1">
+        <input>peakExcess</input>
+      </value>
+      <separator height="0.5"/>
+      <value label="Baseline set yet">
+        <input>hasBase</input>
+        <map max="0.5">NO - stand in clean air and set it</map>
+        <map>yes</map>
+      </value>
+      <button label="Set baseline here">
+        <input type="value">1</input>
+        <output>setBase</output>
+      </button>
+      <separator height="0.5"/>
+      <graph label="As you sweep" labelX="Time" unitX="s" labelY="High-frequency share" unitY="dB" partialUpdate="true">
+        <input axis="x">hT</input>
+        <input axis="y">hDb</input>
+      </graph>
+      <info label="Sweep slowly. The peak in this trace is where the leak is - walk back to it and narrow down by moving the phone a hand's width at a time."/>
+    </view>
+
+    <view label="Detail">
+      <value label="High-frequency share of all sound" unit="dB" precision="2">
+        <input>ratioDb</input>
+      </value>
+      <value label="Baseline" unit="dB" precision="2">
+        <input>baseline</input>
+      </value>
+      <value label="Microphone sample rate" unit="Hz" precision="0">
+        <input>micRate</input>
+      </value>
+      <value label="Highest frequency this phone can record" unit="Hz" precision="0">
+        <input>rateHalf</input>
+      </value>
+      <separator height="0.5"/>
+      <graph label="Spectrum" logX="true" logY="true" labelX="Frequency" unitX="Hz" labelY="Level" unitY="a.u.">
+        <input axis="x">halfF</input>
+        <input axis="y">mag</input>
+      </graph>
+      <info label="A leak shows as the right-hand end of this curve lifting. If the curve falls off a cliff before 20 kHz, that is your microphone's filter, not the room going quiet."/>
+      <separator height="0.5"/>
+      <edit label="Band from" unit="Hz" default="15000" decimal="false">
+        <output>fLow</output>
+      </edit>
+      <edit label="Band to" unit="Hz" default="22000" decimal="false">
+        <output>fHigh</output>
+      </edit>
+    </view>
+
+    <view label="Notes">
+      <info label="Why a ratio and not a level"/>
+      <info label="A plant room is loud, and walking about changes how loud. Nearly all of that noise is low frequency, so dividing the high-frequency energy by the total cancels most of it out. A leak raises the ratio because it adds energy at the top end that machinery does not."/>
+      <separator height="0.5"/>
+      <info label="What will fool it"/>
+      <info label="Anything else that hisses in the top octave: air moving fast through a grille, a coil whine from a power supply, some LED drivers, running water, and the phone's own microphone noise in a very quiet room. Confirm by ear where you can - most air leaks are audible from close up once you know where to listen."/>
+      <info label="Wind across the microphone will swamp it completely. In a hot aisle or in front of a fan, this reads nonsense."/>
+      <separator height="0.5"/>
+      <info label="The real limit"/>
+      <info label="Proper ultrasonic leak detectors work at 25 to 40 kHz precisely because so little else is up there. A phone samples at 44.1 or 48 kHz and cannot represent anything above 22 or 24 kHz at all, with the anti-alias filter already cutting in below that. So this looks at the bottom skirt of the signature, where competing noise still exists. Treat a positive as a reason to go and listen, and a negative as no information at all."/>
+      <separator height="0.5"/>
+      <info label="Never put your hand near a suspected compressed-air leak. A high-pressure jet can inject air or debris through skin. Locate it and report it."/>
+    </view>
+  </views>
+
+  <analysis sleep="0.25">
+    <timer>
+      <output as="out" clear="false">now</output>
+    </timer>
+
+    <count>
+      <input clear="false">recording</input>
+      <output>micCnt</output>
+    </count>
+    <formula formula="max([1]-8192,0)">
+      <input>micCnt</input>
+      <output>micFrom</output>
+    </formula>
+    <subrange>
+      <input as="from" clear="false">micFrom</input>
+      <input as="in" clear="false">recording</input>
+      <output>block</output>
+    </subrange>
+    <count>
+      <input clear="false">block</input>
+      <output clear="false">blockN</output>
+    </count>
+
+    <ramp>
+      <input as="start" type="value">0</input>
+      <input as="stop" type="value">1</input>
+      <input as="length" clear="false">blockN</input>
+      <output>winU</output>
+    </ramp>
+    <formula formula="0.5-0.5*cos(6.283185307179586*[1_])">
+      <input>winU</input>
+      <output>win</output>
+    </formula>
+    <multiply>
+      <input as="factor">block</input>
+      <input as="factor">win</input>
+      <output>windowed</output>
+    </multiply>
+    <fft>
+      <input>windowed</input>
+      <output as="re">re</output>
+      <output as="im">im</output>
+    </fft>
+    <divide>
+      <input clear="false">micRate</input>
+      <input type="value">2</input>
+      <output clear="false">rateHalf</output>
+    </divide>
+    <divide>
+      <input clear="false">blockN</input>
+      <input type="value">2</input>
+      <output clear="false">nHalf</output>
+    </divide>
+    <add>
+      <input clear="false">nHalf</input>
+      <input type="value">1</input>
+      <output>nHalf1</output>
+    </add>
+    <ramp>
+      <input as="start" type="value">0</input>
+      <input as="stop" clear="false">rateHalf</input>
+      <input as="length" clear="false">nHalf1</input>
+      <output>freq</output>
+    </ramp>
+    <subrange>
+      <input as="from" type="value">1</input>
+      <input as="to" clear="false">nHalf</input>
+      <input as="in">freq</input>
+      <input as="in">re</input>
+      <input as="in">im</input>
+      <output clear="false">halfF</output>
+      <output>halfRe</output>
+      <output>halfIm</output>
+    </subrange>
+    <formula formula="sqrt([1_]*[1_]+[2_]*[2_])">
+      <input>halfRe</input>
+      <input>halfIm</input>
+      <output clear="false">mag</output>
+    </formula>
+    <formula formula="[1_]*[1_]">
+      <input clear="false">mag</input>
+      <output clear="false">power</output>
+    </formula>
+
+    <formula formula="max(round([1]*[2]/[3])-1,1)">
+      <input clear="false">fLow</input>
+      <input clear="false">blockN</input>
+      <input clear="false">micRate</input>
+      <output>iLow</output>
+    </formula>
+    <formula formula="min(max(round([1]*[2]/[3])-1,2),[4]-2)">
+      <input clear="false">fHigh</input>
+      <input clear="false">blockN</input>
+      <input clear="false">micRate</input>
+      <input clear="false">nHalf</input>
+      <output>iHigh</output>
+    </formula>
+    <subrange>
+      <input as="from" clear="false">iLow</input>
+      <input as="to" clear="false">iHigh</input>
+      <input as="in" clear="false">power</input>
+      <output>bandPower</output>
+    </subrange>
+    <integrate>
+      <input>bandPower</input>
+      <output>sumBand</output>
+    </integrate>
+    <integrate>
+      <input>power</input>
+      <output>sumTotal</output>
+    </integrate>
+    <formula formula="([1]+0.000000000001)/([2]+0.000000000001)">
+      <input>sumBand</input>
+      <input>sumTotal</input>
+      <output>ratio</output>
+    </formula>
+    <log>
+      <input>ratio</input>
+      <output>lnRatio</output>
+    </log>
+    <formula formula="4.342944819032518*[1]">
+      <input>lnRatio</input>
+      <output clear="false">ratioDb</output>
+    </formula>
+
+    <if equal="true">
+      <input clear="false">setBase</input>
+      <input type="value">1</input>
+      <input clear="false">ratioDb</input>
+      <output clear="false">baseline</output>
+    </if>
+    <if equal="true">
+      <input clear="false">setBase</input>
+      <input type="value">1</input>
+      <input type="value">1</input>
+      <output clear="false">hasBase</output>
+    </if>
+    <append>
+      <input type="value">0</input>
+      <output>setBase</output>
+    </append>
+    <subtract>
+      <input clear="false">ratioDb</input>
+      <input clear="false">baseline</input>
+      <output clear="false">excess</output>
+    </subtract>
+
+    <append>
+      <input clear="false">now</input>
+      <output clear="false">hT</output>
+    </append>
+    <append>
+      <input clear="false">ratioDb</input>
+      <output clear="false">hDb</output>
+    </append>
+    <max>
+      <input as="y" clear="false">hDb</input>
+      <output as="max">peakRaw</output>
+    </max>
+    <subtract>
+      <input>peakRaw</input>
+      <input clear="false">baseline</input>
+      <output>peakExcess</output>
+    </subtract>
+  </analysis>
+
+  <export>
+    <set name="Sweep">
+      <data name="Time (s)">hT</data>
+      <data name="High-frequency share (dB)">hDb</data>
+    </set>
+    <set name="Reading">
+      <data name="High-frequency share (dB)">ratioDb</data>
+      <data name="Baseline (dB)">baseline</data>
+      <data name="Above baseline (dB)">excess</data>
+      <data name="Microphone rate (Hz)">micRate</data>
+    </set>
+    <set name="Spectrum">
+      <data name="Frequency (Hz)">halfF</data>
+      <data name="Level (a.u.)">mag</data>
+    </set>
+  </export>
+</phyphox>

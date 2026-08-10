@@ -107,7 +107,7 @@ def main():
 
     print(f"{len(on_disk)} experiments, {tier0_count} of them Tier 0")
 
-    guarantee = 12
+    guarantee = 15
     if tier0_count < guarantee:
         problems.append(
             f"only {tier0_count} Tier 0 experiments; the promise to basic phones is {guarantee}"

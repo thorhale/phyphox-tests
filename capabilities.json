@@ -177,6 +177,37 @@
       ],
       "optional": [],
       "purpose": "Finds loose or unsupported raised-floor tiles by their ring frequency."
+    },
+    "acoustic-fingerprint": {
+      "title": "Room Echo Signature",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "audio_in",
+        "audio_out"
+      ],
+      "optional": [],
+      "purpose": "Recognise a place by its echoes; also reports how live the space is."
+    },
+    "rack-signature": {
+      "title": "Rack Acoustic Signature",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "audio_in"
+      ],
+      "optional": [],
+      "purpose": "Finds the odd one out in a row of identical machines."
+    },
+    "ultrasonic-leak": {
+      "title": "Ultrasonic Leak Sweep",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "audio_in"
+      ],
+      "optional": [],
+      "purpose": "Hunts compressed air and valve leaks by high-frequency hiss."
     }
   }
 }

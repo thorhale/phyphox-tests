@@ -1,0 +1,416 @@
+<phyphox version="1.14" locale="en">
+  <title>Room Echo Signature</title>
+  <category>Data centre</category>
+  <icon>ECHO</icon>
+  <description>
+        Recognises a place by its echoes.
+
+        The phone chirps and listens to what comes back. Every surface within a few metres - the rack in front of you, the floor, the ceiling, the aisle behind - returns the chirp at its own delay, so the pattern of echoes is a fingerprint of where you are standing. Move a metre and it changes.
+
+        Stand somewhere, press Capture, then walk off. The mismatch number falls back towards zero when you return to the same spot.
+
+        Use it alongside Magnetic Landmark. That one reads steel, this one reads geometry, and they are fooled by completely different things - a trolley parked nearby ruins the echoes but barely moves the magnetic field, while a change in busbar current does the opposite. Two fixes that fail independently are worth far more than either alone.
+
+        It also reports how live the space is, which is the number you want when someone complains about noise.
+    </description>
+
+  <data-containers>
+    <container size="48000">recording</container>
+    <container init="48000">rate</container>
+    <container size="9000">recording_range</container>
+    <container size="240" static="true">chirp_t</container>
+    <container size="240" static="true">chirp_f</container>
+    <container size="240" static="true">chirp_temp1</container>
+    <container size="240" static="true">chirp_temp2</container>
+    <container size="240" static="true">chirp_temp3</container>
+    <container size="240" static="true">chirp_temp4</container>
+    <container size="240" static="true">chirp</container>
+    <container size="240" static="true">weighted_chirp</container>
+    <container size="1260" static="true">padding</container>
+    <container size="1500" static="true">padded_chirp</container>
+    <container size="7500" static="true">multi_chirp</container>
+    <container size="1500">crosscorrelation</container>
+    <container size="1500">crosscorrelation_smooth</container>
+    <container size="1500">ccTemp</container>
+    <container>max</container>
+    <container>startthreshold</container>
+    <container>t0</container>
+    <container>t1</container>
+    <container size="1200" static="true">count_t</container>
+    <container size="1200" static="true">relative_t</container>
+    <container size="1200">relative_cc</container>
+    <container size="1200" init="0">relative_cc_out</container>
+    <container size="1">size</container>
+
+    <container size="1200">ccSq</container>
+    <container>ccSum</container>
+    <container>ccNormFactor</container>
+    <container size="1200">ccNorm</container>
+
+    <container size="1200" init="0">refProfile</container>
+    <container init="0">hasRef</container>
+    <container init="0">setRef</container>
+    <container size="1200">diff</container>
+    <container size="1200">diffSq</container>
+    <container>sumDiffSq</container>
+    <container>nBins</container>
+    <container>mismatch</container>
+
+    <container size="300">earlyPart</container>
+    <container size="300">latePart</container>
+    <container>sumEarly</container>
+    <container>sumLate</container>
+    <container>revRatio</container>
+    <container>lnRev</container>
+    <container>revDb</container>
+
+    <container>now</container>
+    <container size="0">hT</container>
+    <container size="0">hMis</container>
+  </data-containers>
+
+  <input>
+    <audio>
+      <output>recording</output>
+      <output component="rate">rate</output>
+    </audio>
+  </input>
+  <output>
+    <audio>
+      <input>multi_chirp</input>
+    </audio>
+  </output>
+
+  <views>
+    <view label="Find the spot">
+      <value label="Mismatch" size="3" precision="3">
+        <input>mismatch</input>
+      </value>
+      <value label="How close are you">
+        <input>mismatch</input>
+        <map max="0.05">ON THE SPOT</map>
+        <map max="0.15">very close</map>
+        <map max="0.3">close</map>
+        <map max="0.6">same area, wrong place</map>
+        <map>somewhere else entirely</map>
+      </value>
+      <separator height="0.5"/>
+      <value label="Captured a spot yet">
+        <input>hasRef</input>
+        <map max="0.5">NO - stand still and press Capture</map>
+        <map>yes</map>
+      </value>
+      <button label="Capture this spot">
+        <input type="value">1</input>
+        <output>setRef</output>
+      </button>
+      <separator height="0.5"/>
+      <graph label="Mismatch as you move" labelX="Time" unitX="s" labelY="Mismatch" partialUpdate="true">
+        <input axis="x">hT</input>
+        <input axis="y">hMis</input>
+      </graph>
+      <info label="Hold the phone the same way each time - facing the same direction, at the same height. The echoes depend on where the speaker is pointing, so turning around changes the fingerprint as much as walking does."/>
+    </view>
+
+    <view label="Echo pattern">
+      <graph label="What comes back, and when" labelX="Delay" unitX="s" labelY="Echo strength" unitY="a.u." scaleMinX="fixed" scaleMaxX="fixed" minX="0" maxX="0.027">
+        <input axis="x">relative_t</input>
+        <input axis="y">ccNorm</input>
+      </graph>
+      <graph label="The captured spot" labelX="Delay" unitX="s" labelY="Echo strength" unitY="a.u." scaleMinX="fixed" scaleMaxX="fixed" minX="0" maxX="0.027">
+        <input axis="x">relative_t</input>
+        <input axis="y">refProfile</input>
+      </graph>
+      <info label="Each spike is a surface. Multiply the delay by 170 to get its distance in metres - sound travels there and back, so half of 340 m/s."/>
+    </view>
+
+    <view label="How live is this room">
+      <value label="Late echo, relative to early" unit="dB" size="2" precision="1">
+        <input>revDb</input>
+      </value>
+      <value label="Character">
+        <input>revDb</input>
+        <map max="-25">very dead - heavily absorbent</map>
+        <map max="-15">dead - normal for a hall packed with racks</map>
+        <map max="-8">somewhat live</map>
+        <map>live - hard surfaces, noise will carry</map>
+      </value>
+      <separator height="0.5"/>
+      <info label="This compares the energy still arriving 21 to 27 milliseconds after the chirp with the energy that arrived in the first 8. A dead space swallows the late part; a live one keeps it."/>
+      <info label="It is not a proper reverberation time - that needs far more sound energy than a phone speaker has, and a quiet room. Use it to compare spaces, or to check whether adding absorption changed anything."/>
+      <info label="Where this matters: a live aisle carries fan noise further and makes speech harder, and it is why two identical halls can measure the same in dB(A) and feel completely different to work in."/>
+    </view>
+
+    <view label="Notes">
+      <info label="Why two fingerprint methods"/>
+      <info label="This one reads the shape of the space. Magnetic Landmark reads the steel in it. They fail differently, which is the point: a trolley parked beside you wrecks the echoes and barely touches the magnetic field, while a big change in current in a nearby busbar does the reverse. Agreement between the two is strong evidence; disagreement tells you which kind of thing changed."/>
+      <separator height="0.5"/>
+      <info label="What breaks it"/>
+      <info label="Noise. This needs a reasonably quiet moment - it is listening for a faint echo of a small speaker. In a loud hall it may not work at all, and it will never work in front of a running CRAC."/>
+      <info label="Direction. The fingerprint is of the room AS SEEN from where the phone points. Face the other way and it is a different fingerprint. That is a limitation for matching and useful information if you want to tell which way you were facing."/>
+      <info label="Soft surfaces return almost nothing, so a spot surrounded by mesh doors and cable baskets gives a weak, unstable pattern. Hard flat surfaces nearby give the strongest and most repeatable fingerprints."/>
+      <separator height="0.5"/>
+      <info label="The chirp is audible - a short tick, several times a second. In an occupied office that will annoy people. It is nothing next to a running data hall."/>
+    </view>
+  </views>
+
+  <analysis sleep="0.5" requireFill="recording" requireFillThreshold="20000">
+    <timer>
+      <output as="out" clear="false">now</output>
+    </timer>
+
+    <ramp>
+      <input as="start" type="value">0</input>
+      <input as="stop" type="value">0.005</input>
+      <output>chirp_t</output>
+    </ramp>
+    <ramp>
+      <input as="start" type="value">1000</input>
+      <input as="stop" type="value">4000</input>
+      <output>chirp_f</output>
+    </ramp>
+    <ramp>
+      <input as="start" type="value">0</input>
+      <input as="stop" type="value">3.14159</input>
+      <output>chirp_temp1</output>
+    </ramp>
+    <sin>
+      <input>chirp_temp1</input>
+      <output>chirp_temp2</output>
+    </sin>
+    <power>
+      <input as="base">chirp_temp2</input>
+      <input as="exponent" type="value">0.25</input>
+      <output>chirp_temp3</output>
+    </power>
+    <multiply>
+      <input>chirp_f</input>
+      <input>chirp_t</input>
+      <input type="value">6.283185307</input>
+      <output>chirp_temp4</output>
+    </multiply>
+    <sin>
+      <input>chirp_temp4</input>
+      <output>chirp</output>
+    </sin>
+    <multiply>
+      <input>chirp</input>
+      <input>chirp_temp3</input>
+      <output>weighted_chirp</output>
+    </multiply>
+    <const>
+      <output>padding</output>
+    </const>
+    <append>
+      <input>weighted_chirp</input>
+      <input>padding</input>
+      <output>padded_chirp</output>
+    </append>
+    <append>
+      <input>padded_chirp</input>
+      <input>padded_chirp</input>
+      <input>padded_chirp</input>
+      <input>padded_chirp</input>
+      <input>padded_chirp</input>
+      <output>multi_chirp</output>
+    </append>
+
+    <ramp>
+      <input as="start" type="value">96</input>
+      <input as="stop" type="value">1295</input>
+      <output>count_t</output>
+    </ramp>
+    <divide>
+      <input>count_t</input>
+      <input clear="false">rate</input>
+      <output>relative_t</output>
+    </divide>
+
+    <max>
+      <input as="y" clear="false">recording</input>
+      <output as="max">max</output>
+    </max>
+    <multiply>
+      <input clear="false">max</input>
+      <input type="value">0.6</input>
+      <output>startthreshold</output>
+    </multiply>
+    <threshold>
+      <input as="y" clear="false">recording</input>
+      <input as="threshold" clear="false">startthreshold</input>
+      <output>t0</output>
+    </threshold>
+    <subtract>
+      <input clear="false">t0</input>
+      <input type="value">240</input>
+      <output>t1</output>
+    </subtract>
+    <subrange>
+      <input as="from" clear="false">t1</input>
+      <input as="length" type="value">9000</input>
+      <input as="in" clear="true">recording</input>
+      <output>recording_range</output>
+    </subrange>
+
+    <crosscorrelation>
+      <input clear="false">recording_range</input>
+      <input clear="false">multi_chirp</input>
+      <output>crosscorrelation</output>
+    </crosscorrelation>
+    <multiply>
+      <input clear="false">crosscorrelation</input>
+      <input clear="false">crosscorrelation</input>
+      <input type="value">1e5</input>
+      <output>ccTemp</output>
+    </multiply>
+    <gausssmooth sigma="3">
+      <input>ccTemp</input>
+      <output>crosscorrelation_smooth</output>
+    </gausssmooth>
+    <max>
+      <input as="y" clear="false">crosscorrelation_smooth</input>
+      <output as="position">t0</output>
+    </max>
+    <add>
+      <input clear="false">t0</input>
+      <input type="value">96</input>
+      <output>t1</output>
+    </add>
+    <subrange>
+      <input as="from">t1</input>
+      <input as="length" type="value">1200</input>
+      <input as="in" clear="false">crosscorrelation_smooth</input>
+      <output>relative_cc</output>
+    </subrange>
+
+    <count>
+      <input clear="false">crosscorrelation</input>
+      <output>size</output>
+    </count>
+    <if equal="true">
+      <input clear="false">size</input>
+      <input type="value">1500</input>
+      <input clear="false">relative_cc</input>
+      <output clear="true">relative_cc_out</output>
+    </if>
+
+    <!-- normalise so loudness and distance to the nearest wall drop out -->
+    <formula formula="[1_]*[1_]">
+      <input clear="false">relative_cc_out</input>
+      <output>ccSq</output>
+    </formula>
+    <integrate>
+      <input clear="false">ccSq</input>
+      <output>ccSum</output>
+    </integrate>
+    <formula formula="sqrt(([1]+0.000000001)/1200)">
+      <input clear="false">ccSum</input>
+      <output>ccNormFactor</output>
+    </formula>
+    <formula formula="[1_]/[2]">
+      <input clear="false">relative_cc_out</input>
+      <input>ccNormFactor</input>
+      <output clear="false">ccNorm</output>
+    </formula>
+
+    <if equal="true">
+      <input clear="false">setRef</input>
+      <input type="value">1</input>
+      <input clear="false">ccNorm</input>
+      <output clear="false">refProfile</output>
+    </if>
+    <if equal="true">
+      <input clear="false">setRef</input>
+      <input type="value">1</input>
+      <input type="value">1</input>
+      <output clear="false">hasRef</output>
+    </if>
+    <append>
+      <input type="value">0</input>
+      <output>setRef</output>
+    </append>
+
+    <formula formula="[1_]-[2_]">
+      <input clear="false">ccNorm</input>
+      <input clear="false">refProfile</input>
+      <output>diff</output>
+    </formula>
+    <formula formula="[1_]*[1_]">
+      <input>diff</input>
+      <output clear="false">diffSq</output>
+    </formula>
+    <integrate>
+      <input>diffSq</input>
+      <output>sumDiffSq</output>
+    </integrate>
+    <count>
+      <input clear="false">diffSq</input>
+      <output>nBins</output>
+    </count>
+    <formula formula="sqrt([1]/max([2],1))">
+      <input>sumDiffSq</input>
+      <input>nBins</input>
+      <output clear="false">mismatch</output>
+    </formula>
+
+    <!-- how much energy is still arriving late, against how much arrived early -->
+    <subrange>
+      <input as="from" type="value">0</input>
+      <input as="to" type="value">300</input>
+      <input as="in" clear="false">ccSq</input>
+      <output>earlyPart</output>
+    </subrange>
+    <subrange>
+      <input as="from" type="value">900</input>
+      <input as="to" type="value">1200</input>
+      <input as="in" clear="false">ccSq</input>
+      <output>latePart</output>
+    </subrange>
+    <integrate>
+      <input>earlyPart</input>
+      <output>sumEarly</output>
+    </integrate>
+    <integrate>
+      <input>latePart</input>
+      <output>sumLate</output>
+    </integrate>
+    <formula formula="([1]+0.000000001)/([2]+0.000000001)">
+      <input>sumLate</input>
+      <input>sumEarly</input>
+      <output>revRatio</output>
+    </formula>
+    <log>
+      <input>revRatio</input>
+      <output>lnRev</output>
+    </log>
+    <formula formula="4.342944819032518*[1]">
+      <input>lnRev</input>
+      <output clear="false">revDb</output>
+    </formula>
+
+    <append>
+      <input clear="false">now</input>
+      <output clear="false">hT</output>
+    </append>
+    <append>
+      <input clear="false">mismatch</input>
+      <output clear="false">hMis</output>
+    </append>
+  </analysis>
+
+  <export>
+    <set name="Echo profile">
+      <data name="Delay (s)">relative_t</data>
+      <data name="Echo strength, normalised">ccNorm</data>
+      <data name="Captured spot">refProfile</data>
+    </set>
+    <set name="Track">
+      <data name="Time (s)">hT</data>
+      <data name="Mismatch">hMis</data>
+    </set>
+    <set name="Room">
+      <data name="Late-to-early energy (dB)">revDb</data>
+      <data name="Mismatch">mismatch</data>
+    </set>
+  </export>
+</phyphox>
