@@ -1,0 +1,41 @@
+<phyphox version="1.14" locale="en">
+  <title>Probe 1: analysis modules run</title>
+  <category>Probes</category>
+  <description>
+        Diagnostic. Takes ten seconds and tells you one thing: whether the analysis chain runs at all
+
+        Run the probes in order. The FIRST one that fails to import, or shows nothing, names the feature your phyphox version will not do - which turns "none of it works and I have no idea why" into a single specific problem.
+    </description>
+
+  <data-containers>
+    <container size="64">raw</container>
+    <container>probe</container>
+  </data-containers>
+
+  <input>
+    <sensor type="accelerometer" rate="0">
+      <output component="abs">raw</output>
+    </sensor>
+  </input>
+
+  <views>
+    <view label="Result">
+      <value label="Average acceleration" unit="m/s^2" size="3" precision="4">
+        <input>probe</input>
+      </value>
+      <info label="This number is computed, not read straight from the sensor. If probe 0 worked and this shows nothing, the analysis block is not running."/>
+    </view>
+  </views>
+  <analysis sleep="0.2">
+    <average>
+      <input as="buffer" clear="false">raw</input>
+      <output as="average">probe</output>
+    </average>
+  </analysis>
+
+  <export>
+    <set name="Probe">
+      <data name="value">probe</data>
+    </set>
+  </export>
+</phyphox>

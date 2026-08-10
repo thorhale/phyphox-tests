@@ -1,0 +1,46 @@
+<phyphox version="1.14" locale="en">
+  <title>Probe 2: formulas and their functions work</title>
+  <category>Probes</category>
+  <description>
+        Diagnostic. Takes ten seconds and tells you one thing: whether the formula parser accepts the functions everything else relies on
+
+        Run the probes in order. The FIRST one that fails to import, or shows nothing, names the feature your phyphox version will not do - which turns "none of it works and I have no idea why" into a single specific problem.
+    </description>
+
+  <data-containers>
+    <container size="64">raw</container>
+    <container>avg</container>
+    <container>probe</container>
+  </data-containers>
+
+  <input>
+    <sensor type="accelerometer" rate="0">
+      <output component="abs">raw</output>
+    </sensor>
+  </input>
+
+  <views>
+    <view label="Result">
+      <value label="Should equal the acceleration" unit="m/s^2" size="3" precision="4">
+        <input>probe</input>
+      </value>
+      <info label="This uses sqrt, cos, acos, max, min, round and abs in one expression, and the added terms are all zero, so the answer must equal plain acceleration - about 9.8 standing still. A blank or a wrong number means one of those functions is not supported, and several experiments depend on them."/>
+    </view>
+  </views>
+  <analysis sleep="0.2">
+    <average>
+      <input as="buffer" clear="false">raw</input>
+      <output as="average">avg</output>
+    </average>
+    <formula formula="sqrt([1]*[1])+0*cos(0)+0*acos(1)+0*max([1],0)+0*round(1.4)+0*abs(-1)+0*min([1],99)">
+      <input>avg</input>
+      <output>probe</output>
+    </formula>
+  </analysis>
+
+  <export>
+    <set name="Probe">
+      <data name="value">probe</data>
+    </set>
+  </export>
+</phyphox>

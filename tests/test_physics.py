@@ -27,8 +27,9 @@ import os
 import random
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
 from formula import evaluate, formula_for  # noqa: E402
+from dsp import fft  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EXP = os.path.join(ROOT, "experiments")
@@ -62,24 +63,6 @@ def close(got, want, tol, what):
 def contains(name, needle, why):
     if needle not in source(name):
         raise AssertionError(f"{name}.phyphox no longer contains {needle!r} - {why}")
-
-
-# --------------------------------------------------------------------------
-# a radix-2 FFT, so the level tests need no numpy
-# --------------------------------------------------------------------------
-def fft(x):
-    n = len(x)
-    if n == 1:
-        return list(x)
-    if n & (n - 1):
-        raise ValueError("length must be a power of two")
-    ev, od = fft(x[0::2]), fft(x[1::2])
-    out = [0j] * n
-    for k in range(n // 2):
-        t = cmath.exp(-2j * math.pi * k / n) * od[k]
-        out[k] = ev[k] + t
-        out[k + n // 2] = ev[k] - t
-    return out
 
 
 # ==========================================================================

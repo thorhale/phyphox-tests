@@ -1,0 +1,90 @@
+<phyphox version="1.14" locale="en">
+  <title>Probe 3: the FFT and buffer slicing work</title>
+  <category>Probes</category>
+  <description>
+        Diagnostic. Takes ten seconds and tells you one thing: whether the Fourier transform, ramps and subranges behave
+
+        Run the probes in order. The FIRST one that fails to import, or shows nothing, names the feature your phyphox version will not do - which turns "none of it works and I have no idea why" into a single specific problem.
+    </description>
+
+  <data-containers>
+    <container size="256">raw</container>
+    <container>n</container>
+    <container>nHalf</container>
+    <container size="256">re</container>
+    <container size="256">im</container>
+    <container size="129">freq</container>
+    <container size="128">halfF</container>
+    <container size="128">halfRe</container>
+    <container size="128">halfIm</container>
+    <container size="128">mag</container>
+    <container>probe</container>
+  </data-containers>
+
+  <input>
+    <sensor type="accelerometer" rate="0">
+      <output component="abs">raw</output>
+    </sensor>
+  </input>
+
+  <views>
+    <view label="Result">
+      <value label="Strongest wobble" size="2" precision="2">
+        <input>probe</input>
+      </value>
+      <info label="Shake the phone gently and this should move. A graph below should show a curve. If probe 2 worked but this is blank, the FFT or the subrange is the problem - which would take out the sound meter, the fan tacho and most of the rest."/>
+      <graph label="Spectrum" labelX="Bin" labelY="Level">
+        <input axis="x">halfF</input>
+        <input axis="y">mag</input>
+      </graph>
+    </view>
+  </views>
+  <analysis sleep="0.5">
+    <count>
+      <input clear="false">raw</input>
+      <output clear="false">n</output>
+    </count>
+    <fft>
+      <input clear="false">raw</input>
+      <output as="re">re</output>
+      <output as="im">im</output>
+    </fft>
+    <divide>
+      <input clear="false">n</input>
+      <input type="value">2</input>
+      <output clear="false">nHalf</output>
+    </divide>
+    <ramp>
+      <input as="start" type="value">0</input>
+      <input as="stop" type="value">100</input>
+      <input as="length" clear="false">n</input>
+      <output>freq</output>
+    </ramp>
+    <subrange>
+      <input as="from" type="value">1</input>
+      <input as="to" clear="false">nHalf</input>
+      <input as="in">freq</input>
+      <input as="in">re</input>
+      <input as="in">im</input>
+      <output>halfF</output>
+      <output>halfRe</output>
+      <output>halfIm</output>
+    </subrange>
+    <formula formula="sqrt([1_]*[1_]+[2_]*[2_])">
+      <input>halfRe</input>
+      <input>halfIm</input>
+      <output>mag</output>
+    </formula>
+    <max>
+      <input as="x" clear="false">halfF</input>
+      <input as="y" clear="false">mag</input>
+      <output as="position">probe</output>
+    </max>
+  </analysis>
+
+  <export>
+    <set name="Probe">
+      <data name="value">probe</data>
+    </set>
+  </export>
+</phyphox>

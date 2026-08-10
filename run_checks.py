@@ -14,9 +14,12 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 PY = sys.executable or "python3"
 
 STEPS = [
-    ("file structure", [PY, "tools/lint.py"] + sorted(glob.glob(os.path.join(ROOT, "experiments/*.phyphox")))),
+    ("file structure", [PY, "tools/lint.py"]
+        + sorted(glob.glob(os.path.join(ROOT, "experiments/*.phyphox")))
+        + sorted(glob.glob(os.path.join(ROOT, "probes/*.phyphox")))),
     ("capability claims", [PY, "tools/check_tiers.py"]),
     ("physics and maths", [PY, "tests/test_physics.py"]),
+    ("offline analyser (the backup)", [PY, "tests/test_analyser.py"]),
     ("do the tests have teeth", [PY, "tests/test_mutations.py"]),
 ]
 

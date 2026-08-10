@@ -1,0 +1,54 @@
+<phyphox version="1.14" locale="en">
+  <title>Probe 4: the speaker works</title>
+  <category>Probes</category>
+  <description>
+        Diagnostic. Takes ten seconds and tells you one thing: whether phyphox can play a tone, which the sonar and echo tests need
+
+        Run the probes in order. The FIRST one that fails to import, or shows nothing, names the feature your phyphox version will not do - which turns "none of it works and I have no idea why" into a single specific problem.
+    </description>
+
+  <data-containers>
+    <container size="64">raw</container>
+    <container>probe</container>
+    <container init="440">tone</container>
+    <container init="0.3">amp</container>
+  </data-containers>
+
+  <input>
+    <sensor type="accelerometer" rate="0">
+      <output component="abs">raw</output>
+    </sensor>
+  </input>
+  <output>
+    <audio rate="48000" loop="true">
+      <tone>
+        <input parameter="frequency">tone</input>
+        <input parameter="amplitude">amp</input>
+      </tone>
+    </audio>
+  </output>
+
+  <views>
+    <view label="Result">
+      <info label="You should HEAR a steady tone while this is running. If you do not, the speaker output is not working and the Dimension Survey and Room Echo experiments cannot work either."/>
+      <value label="Tone" unit="Hz" precision="0">
+        <input>tone</input>
+      </value>
+      <value label="(this number just proves the analysis ran)" precision="2">
+        <input>probe</input>
+      </value>
+    </view>
+  </views>
+  <analysis sleep="0.5">
+    <average>
+      <input as="buffer" clear="false">raw</input>
+      <output as="average">probe</output>
+    </average>
+  </analysis>
+
+  <export>
+    <set name="Probe">
+      <data name="value">probe</data>
+    </set>
+  </export>
+</phyphox>

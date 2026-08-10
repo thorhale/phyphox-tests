@@ -1,0 +1,34 @@
+<phyphox version="1.14" locale="en">
+  <title>Probe 0: does anything load at all</title>
+  <category>Probes</category>
+  <description>
+        Diagnostic. Takes ten seconds and tells you one thing: whether phyphox accepts a hand-written file
+
+        Run the probes in order. The FIRST one that fails to import, or shows nothing, names the feature your phyphox version will not do - which turns "none of it works and I have no idea why" into a single specific problem.
+    </description>
+
+  <data-containers>
+    <container size="64">probe</container>
+  </data-containers>
+
+  <input>
+    <sensor type="accelerometer" rate="0">
+      <output component="abs">probe</output>
+    </sensor>
+  </input>
+
+  <views>
+    <view label="Result">
+      <value label="Acceleration" unit="m/s^2" size="3" precision="3">
+        <input>probe</input>
+      </value>
+      <info label="A number above, near 9.8 when the phone is still, means the file format and the import both work. If this probe will not even import, the problem is the version number at the top of the file - try changing 1.14 to 1.7 and importing again."/>
+    </view>
+  </views>
+
+  <export>
+    <set name="Probe">
+      <data name="value">probe</data>
+    </set>
+  </export>
+</phyphox>

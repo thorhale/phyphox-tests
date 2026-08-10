@@ -1,0 +1,54 @@
+<phyphox version="1.14" locale="en">
+  <title>Probe 5: the torch can strobe</title>
+  <category>Probes</category>
+  <description>
+        Diagnostic. Takes ten seconds and tells you one thing: whether the flashlight output exists, which only the Strobe Tacho needs
+
+        Run the probes in order. The FIRST one that fails to import, or shows nothing, names the feature your phyphox version will not do - which turns "none of it works and I have no idea why" into a single specific problem.
+    </description>
+
+  <data-containers>
+    <container size="64">raw</container>
+    <container>probe</container>
+    <container init="4">hz</container>
+    <container init="1">bright</container>
+    <container init="0.2">duty</container>
+  </data-containers>
+
+  <input>
+    <sensor type="accelerometer" rate="0">
+      <output component="abs">raw</output>
+    </sensor>
+  </input>
+  <output>
+    <flashlight>
+      <input parameter="intensity">bright</input>
+      <input parameter="frequency">hz</input>
+      <input parameter="dutycycle">duty</input>
+    </flashlight>
+  </output>
+
+  <views>
+    <view label="Result">
+      <info label="The torch should be flashing about four times a second while this runs. If it stays dark, your phyphox version has no flashlight output and only the Strobe Tacho is affected - everything else still works."/>
+      <value label="Flash rate" unit="Hz" precision="0">
+        <input>hz</input>
+      </value>
+      <value label="(this number just proves the analysis ran)" precision="2">
+        <input>probe</input>
+      </value>
+    </view>
+  </views>
+  <analysis sleep="0.5">
+    <average>
+      <input as="buffer" clear="false">raw</input>
+      <output as="average">probe</output>
+    </average>
+  </analysis>
+
+  <export>
+    <set name="Probe">
+      <data name="value">probe</data>
+    </set>
+  </export>
+</phyphox>

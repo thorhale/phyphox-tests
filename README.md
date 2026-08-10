@@ -160,6 +160,14 @@ experiment files clean, and deliberately reintroducing each of the three bugs
 above makes it complain. A checker that has never caught anything is just a
 green light with no bulb behind it.
 
+## If something doesn't work
+
+See **[BACKUP-PLAN.md](BACKUP-PLAN.md)**. Short version: run the six files in
+`probes/` in order — the first one that fails names the problem. And if phyphox
+turns out to be unusable, `tools/analyse_export.py` does the same maths on a
+computer from any built-in experiment's CSV export, using the formulas read
+straight out of these files.
+
 ## Checking the physics
 
 ```sh
