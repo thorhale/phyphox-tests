@@ -186,7 +186,7 @@
     <subrange>
       <input as="from" clear="false">micFrom</input>
       <input as="in" clear="false">recording</input>
-      <output clear="false">micBlock</output>
+      <output>micBlock</output>
     </subrange>
     <count>
       <input clear="false">micBlock</input>

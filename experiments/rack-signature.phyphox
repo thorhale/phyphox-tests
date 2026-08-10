@@ -252,14 +252,14 @@
       <input as="in">freq</input>
       <input as="in">re</input>
       <input as="in">im</input>
-      <output clear="false">halfF</output>
+      <output>halfF</output>
       <output>halfRe</output>
       <output>halfIm</output>
     </subrange>
     <formula formula="sqrt([1_]*[1_]+[2_]*[2_])+0.000000001">
       <input>halfRe</input>
       <input>halfIm</input>
-      <output clear="false">mag</output>
+      <output>mag</output>
     </formula>
 
     <!-- smooth the spectrum over time so a steady machine settles -->
@@ -273,7 +273,7 @@
       <input type="value">0.5</input>
       <input clear="false">mag</input>
       <input>avgNew</input>
-      <output clear="false">avgMag</output>
+      <output>avgMag</output>
     </if>
     <append>
       <input type="value">1</input>
@@ -287,7 +287,7 @@
     </log>
     <formula formula="8.685889638065035*[1_]">
       <input>lnMag</input>
-      <output clear="false">dbMag</output>
+      <output>dbMag</output>
     </formula>
     <average>
       <input as="buffer" clear="false">dbMag</input>
@@ -296,14 +296,14 @@
     <formula formula="[1_]-[2]">
       <input clear="false">dbMag</input>
       <input>dbMean</input>
-      <output clear="false">dbNorm</output>
+      <output>dbNorm</output>
     </formula>
 
     <if equal="true">
       <input clear="false">setRef</input>
       <input type="value">1</input>
       <input clear="false">dbNorm</input>
-      <output clear="false">refSpec</output>
+      <output>refSpec</output>
     </if>
     <if equal="true">
       <input clear="false">setRef</input>
@@ -323,10 +323,10 @@
     </formula>
     <formula formula="[1_]*[1_]">
       <input>diff</input>
-      <output clear="false">diffSq</output>
+      <output>diffSq</output>
     </formula>
     <integrate>
-      <input>diffSq</input>
+      <input clear="false">diffSq</input>
       <output>sumDiffSq</output>
     </integrate>
     <count>

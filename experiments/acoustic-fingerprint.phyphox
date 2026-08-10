@@ -310,14 +310,14 @@
     <formula formula="[1_]/[2]">
       <input clear="false">relative_cc_out</input>
       <input>ccNormFactor</input>
-      <output clear="false">ccNorm</output>
+      <output>ccNorm</output>
     </formula>
 
     <if equal="true">
       <input clear="false">setRef</input>
       <input type="value">1</input>
       <input clear="false">ccNorm</input>
-      <output clear="false">refProfile</output>
+      <output>refProfile</output>
     </if>
     <if equal="true">
       <input clear="false">setRef</input>
@@ -337,10 +337,10 @@
     </formula>
     <formula formula="[1_]*[1_]">
       <input>diff</input>
-      <output clear="false">diffSq</output>
+      <output>diffSq</output>
     </formula>
     <integrate>
-      <input>diffSq</input>
+      <input clear="false">diffSq</input>
       <output>sumDiffSq</output>
     </integrate>
     <count>

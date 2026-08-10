@@ -209,14 +209,14 @@
       <input as="in">freq</input>
       <input as="in">re</input>
       <input as="in">im</input>
-      <output clear="false">halfF</output>
+      <output>halfF</output>
       <output>halfRe</output>
       <output>halfIm</output>
     </subrange>
     <formula formula="sqrt([1_]*[1_]+[2_]*[2_])">
       <input>halfRe</input>
       <input>halfIm</input>
-      <output clear="false">mag</output>
+      <output>mag</output>
     </formula>
 
     <!-- peak hold: keep the highest level ever seen in each bin -->
@@ -230,7 +230,7 @@
       <input type="value">0.5</input>
       <input clear="false">mag</input>
       <input>peakNew</input>
-      <output clear="false">peakHold</output>
+      <output>peakHold</output>
     </if>
     <append>
       <input type="value">1</input>

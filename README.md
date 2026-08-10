@@ -141,16 +141,24 @@ Not built yet.
 python3 tools/lint.py experiments/*.phyphox
 ```
 
-This catches the mistakes that make phyphox silently refuse a file. Two that bit
-me while writing these:
+This catches the mistakes that make phyphox refuse a file, or worse, quietly
+produce wrong numbers. Three that bit me while writing these:
 
 1. An XML comment can't contain `--`, so a `<!-- ---- section ---- -->` divider
    makes the file unopenable.
-2. Buffers are fixed-size rings. Write 2047 values into a 2048 slot without
+2. Buffers are fixed-size rings. Write 4095 values into a 4096 slot without
    clearing and one stale value stays at the front, shifting everything after it.
+   In a spectrum that puts every frequency reading one bin out — silently. I did
+   this in eight files before catching it.
+3. Reading a buffer consumes it. If one step totals an array and a later step
+   counts the same array, the count is zero and any average built on it is wrong
+   by a factor of the square root of the array length. This one cost the room-echo
+   and rack-signature tests a factor of 35 and 64 respectively.
 
-The checker is verified against phyphox's own official experiment files — it
-passes them clean, which is how you know it isn't just making things up.
+The checker is verified in both directions: it passes phyphox's own official
+experiment files clean, and deliberately reintroducing each of the three bugs
+above makes it complain. A checker that has never caught anything is just a
+green light with no bulb behind it.
 
 ## Editing them
 

@@ -246,7 +246,7 @@
     <subrange>
       <input as="from" clear="false">micFrom</input>
       <input as="in" clear="false">recording</input>
-      <output clear="false">micBlock</output>
+      <output>micBlock</output>
     </subrange>
     <count>
       <input clear="false">micBlock</input>
@@ -391,14 +391,14 @@
       <input as="in">aFreq</input>
       <input as="in">aRe</input>
       <input as="in">aIm</input>
-      <output clear="false">aHalfF</output>
+      <output>aHalfF</output>
       <output>aHalfRe</output>
       <output>aHalfIm</output>
     </subrange>
     <formula formula="sqrt([1_]*[1_]+[2_]*[2_])">
       <input>aHalfRe</input>
       <input>aHalfIm</input>
-      <output clear="false">aMag</output>
+      <output>aMag</output>
     </formula>
     <formula formula="max(round(1.2*[1]/[2])-1,0)">
       <input clear="false">aCnt</input>

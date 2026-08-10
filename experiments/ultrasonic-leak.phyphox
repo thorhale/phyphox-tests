@@ -212,18 +212,18 @@
       <input as="in">freq</input>
       <input as="in">re</input>
       <input as="in">im</input>
-      <output clear="false">halfF</output>
+      <output>halfF</output>
       <output>halfRe</output>
       <output>halfIm</output>
     </subrange>
     <formula formula="sqrt([1_]*[1_]+[2_]*[2_])">
       <input>halfRe</input>
       <input>halfIm</input>
-      <output clear="false">mag</output>
+      <output>mag</output>
     </formula>
     <formula formula="[1_]*[1_]">
       <input clear="false">mag</input>
-      <output clear="false">power</output>
+      <output>power</output>
     </formula>
 
     <formula formula="max(round([1]*[2]/[3])-1,1)">

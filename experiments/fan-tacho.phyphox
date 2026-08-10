@@ -246,14 +246,14 @@
       <input as="in">micFreq</input>
       <input as="in">micRe</input>
       <input as="in">micIm</input>
-      <output clear="false">micHalfF</output>
+      <output>micHalfF</output>
       <output>micHalfRe</output>
       <output>micHalfIm</output>
     </subrange>
     <formula formula="sqrt([1_]*[1_]+[2_]*[2_])">
       <input>micHalfRe</input>
       <input>micHalfIm</input>
-      <output clear="false">micMag</output>
+      <output>micMag</output>
     </formula>
 
     <!-- restrict to the search band and find the loudest tone -->
@@ -327,7 +327,7 @@
     <formula formula="[1_]-[2]">
       <input clear="false">vibAbs</input>
       <input clear="false">vibMean</input>
-      <output clear="false">vibDetrend</output>
+      <output>vibDetrend</output>
     </formula>
     <formula formula="abs([1_])">
       <input clear="false">vibDetrend</input>
@@ -391,14 +391,14 @@
       <input as="in">vibFreq</input>
       <input as="in">vibRe</input>
       <input as="in">vibIm</input>
-      <output clear="false">vibHalfF</output>
+      <output>vibHalfF</output>
       <output>vibHalfRe</output>
       <output>vibHalfIm</output>
     </subrange>
     <formula formula="sqrt([1_]*[1_]+[2_]*[2_])">
       <input>vibHalfRe</input>
       <input>vibHalfIm</input>
-      <output clear="false">vibMag</output>
+      <output>vibMag</output>
     </formula>
     <!-- ignore the lowest bins, which carry sway and drift rather than rotation -->
     <formula formula="max(round(3*[1]/[2])-1,0)">
