@@ -1,0 +1,442 @@
+<phyphox version="1.14" locale="en">
+  <title>0. Device Check</title>
+  <category>Data centre</category>
+  <icon>CHK</icon>
+  <description>
+        Run this first, on any new phone.
+
+        It opens every sensor and watches whether anything actually comes back. Phones differ a lot: cheaper models often have no barometer, the cheapest have no gyroscope, and phyphox cannot read the light sensor on an iPhone at all. Rather than finding that out halfway through a survey, this tells you up front.
+
+        It also measures the REAL sample rate of each sensor, which is not the rate that was asked for and is often very different. That number matters: it sets the highest frequency any vibration test can possibly see, which is half the accelerometer rate. If your accelerometer runs at 100 Hz you cannot see anything above 50 Hz, no matter what the test claims.
+
+        Put the phone on a table, press start, and leave it completely still for ten seconds.
+    </description>
+
+  <data-containers>
+    <container size="256">accV</container>
+    <container size="256">accT</container>
+    <container>accN</container>
+    <container>accT0</container>
+    <container>accTL</container>
+    <container>accSpan</container>
+    <container>accRate</container>
+    <container>accMean</container>
+    <container>accNoise</container>
+    <container size="256">gyrV</container>
+    <container size="256">gyrT</container>
+    <container>gyrN</container>
+    <container>gyrT0</container>
+    <container>gyrTL</container>
+    <container>gyrSpan</container>
+    <container>gyrRate</container>
+    <container>gyrMean</container>
+    <container>gyrNoise</container>
+    <container size="256">magV</container>
+    <container size="256">magT</container>
+    <container>magN</container>
+    <container>magT0</container>
+    <container>magTL</container>
+    <container>magSpan</container>
+    <container>magRate</container>
+    <container>magMean</container>
+    <container>magNoise</container>
+    <container size="256">preV</container>
+    <container size="256">preT</container>
+    <container>preN</container>
+    <container>preT0</container>
+    <container>preTL</container>
+    <container>preSpan</container>
+    <container>preRate</container>
+    <container size="256">lgtV</container>
+    <container size="256">lgtT</container>
+    <container>lgtN</container>
+    <container>lgtT0</container>
+    <container>lgtTL</container>
+    <container>lgtSpan</container>
+    <container>lgtRate</container>
+    <container size="256">prxV</container>
+    <container size="256">prxT</container>
+    <container>prxN</container>
+    <container>prxT0</container>
+    <container>prxTL</container>
+    <container>prxSpan</container>
+    <container>prxRate</container>
+
+    <container size="4096">recording</container>
+    <container>micRate</container>
+    <container>micN</container>
+
+    <container>coreOk</container>
+    <container>vibMax</container>
+  </data-containers>
+
+  <input>
+    <sensor type="accelerometer" rate="0" ignoreUnavailable="true">
+      <output component="abs">accV</output>
+      <output component="t">accT</output>
+    </sensor>
+    <sensor type="gyroscope" rate="0" ignoreUnavailable="true">
+      <output component="abs">gyrV</output>
+      <output component="t">gyrT</output>
+    </sensor>
+    <sensor type="magnetic_field" rate="0" ignoreUnavailable="true">
+      <output component="abs">magV</output>
+      <output component="t">magT</output>
+    </sensor>
+    <sensor type="pressure" rate="0" ignoreUnavailable="true">
+      <output component="value">preV</output>
+      <output component="t">preT</output>
+    </sensor>
+    <sensor type="light" rate="0" ignoreUnavailable="true">
+      <output component="value">lgtV</output>
+      <output component="t">lgtT</output>
+    </sensor>
+    <sensor type="proximity" rate="0" ignoreUnavailable="true">
+      <output component="value">prxV</output>
+      <output component="t">prxT</output>
+    </sensor>
+    <audio append="true">
+      <output>recording</output>
+      <output component="rate">micRate</output>
+    </audio>
+  </input>
+
+  <views>
+    <view label="Sensors">
+      <info label="Leave the phone still on a table for ten seconds. Anything reading zero samples is not fitted to this phone."/>
+      <separator height="0.5"/>
+      <value label="Accelerometer">
+        <input>accN</input>
+        <map max="0.5">NOT FITTED</map>
+        <map max="20">starting up...</map>
+        <map>working</map>
+      </value>
+      <value label="   its real sample rate" unit="Hz" precision="1">
+        <input>accRate</input>
+      </value>
+      <value label="Gyroscope">
+        <input>gyrN</input>
+        <map max="0.5">NOT FITTED</map>
+        <map max="20">starting up...</map>
+        <map>working</map>
+      </value>
+      <value label="   its real sample rate" unit="Hz" precision="1">
+        <input>gyrRate</input>
+      </value>
+      <value label="Magnetometer">
+        <input>magN</input>
+        <map max="0.5">NOT FITTED</map>
+        <map max="20">starting up...</map>
+        <map>working</map>
+      </value>
+      <value label="   its real sample rate" unit="Hz" precision="1">
+        <input>magRate</input>
+      </value>
+      <value label="Barometer">
+        <input>preN</input>
+        <map max="0.5">NOT FITTED</map>
+        <map max="20">starting up...</map>
+        <map>working</map>
+      </value>
+      <value label="   its real sample rate" unit="Hz" precision="1">
+        <input>preRate</input>
+      </value>
+      <value label="Light sensor">
+        <input>lgtN</input>
+        <map max="0.5">NOT FITTED</map>
+        <map max="20">starting up...</map>
+        <map>working</map>
+      </value>
+      <value label="   its real sample rate" unit="Hz" precision="1">
+        <input>lgtRate</input>
+      </value>
+      <value label="Proximity">
+        <input>prxN</input>
+        <map max="0.5">NOT FITTED</map>
+        <map max="20">starting up...</map>
+        <map>working</map>
+      </value>
+      <value label="   its real sample rate" unit="Hz" precision="1">
+        <input>prxRate</input>
+      </value>
+      <separator height="0.5"/>
+      <value label="Microphone">
+        <input>micN</input>
+        <map max="0.5">NOT WORKING - check the permission</map>
+        <map>working</map>
+      </value>
+      <value label="   its real sample rate" unit="Hz" precision="0">
+        <input>micRate</input>
+      </value>
+    </view>
+
+    <view label="Noise floor">
+      <info label="How much each sensor wobbles while sitting perfectly still. This is the smallest change that test results can be trusted to show - anything below this is the sensor talking to itself."/>
+      <separator height="0.5"/>
+      <value label="Accelerometer noise" unit="m/s^2" precision="4">
+        <input>accNoise</input>
+      </value>
+      <value label="Verdict">
+        <input>accNoise</input>
+        <map max="0.005">excellent</map>
+        <map max="0.02">normal</map>
+        <map max="0.1">noisy - is the phone really still?</map>
+        <map>very noisy - something is vibrating, or the phone was moving</map>
+      </value>
+      <separator height="0.5"/>
+      <value label="Magnetometer noise" unit="uT" precision="4">
+        <input>magNoise</input>
+      </value>
+      <value label="Verdict">
+        <input>magNoise</input>
+        <map max="0.1">excellent</map>
+        <map max="0.5">normal</map>
+        <map max="2">noisy - move away from anything electrical</map>
+        <map>very noisy - you are next to something magnetic already</map>
+      </value>
+      <separator height="0.5"/>
+      <value label="Gyroscope noise" unit="rad/s" precision="5">
+        <input>gyrNoise</input>
+      </value>
+    </view>
+
+    <view label="What you can run">
+      <value label="The 15 core tests">
+        <input>coreOk</input>
+        <map max="0.5">NO - a core sensor is missing</map>
+        <map max="20">checking...</map>
+        <map>YES - all of them work on this phone</map>
+      </value>
+      <info label="The core tests need only the accelerometer, magnetometer, microphone and speaker. That is everything from the sound meter to the fan tacho to magnetic positioning."/>
+      <separator height="0.5"/>
+      <value label="Pressure tests (hall survey, containment)">
+        <input>preN</input>
+        <map max="0.5">NO - this phone has no barometer</map>
+        <map max="20">checking...</map>
+        <map>YES</map>
+      </value>
+      <value label="Light readings in the walk logger">
+        <input>lgtN</input>
+        <map max="0.5">NO - normal on iPhone, phyphox cannot read it there</map>
+        <map max="20">checking...</map>
+        <map>YES</map>
+      </value>
+      <value label="Rotation tests">
+        <input>gyrN</input>
+        <map max="0.5">NO - this phone has no gyroscope</map>
+        <map max="20">checking...</map>
+        <map>YES</map>
+      </value>
+      <separator height="0.5"/>
+      <value label="Highest vibration frequency this phone can see" unit="Hz" size="2" precision="0">
+        <input>vibMax</input>
+      </value>
+      <info label="Above this frequency the accelerometer is blind, and worse, real vibration above it gets folded down and shows up as a fake peak at some lower frequency. It is half the accelerometer's real sample rate."/>
+    </view>
+
+    <view label="Notes">
+      <info label="Why the sample rate matters so much"/>
+      <info label="Every test that looks at frequency - fan speed, bearing wear, machine census - is limited by how fast the sensor is read. A phone that samples the accelerometer 100 times a second can only show frequencies up to 50 Hz. That is enough for imbalance and looseness, but bearing damage lives in the thousands of Hz and no phone accelerometer reaches it. That is why the fan test uses crest factor, which senses the impacts in time rather than needing to resolve their frequency."/>
+      <separator height="0.5"/>
+      <info label="Why the noise floor matters"/>
+      <info label="A sensor sitting still still jitters. If a test claims to detect a change smaller than that jitter, it is reading its own noise. The magnetometer noise figure is the one to watch - it tells you the smallest field change the EMI and busway tests can honestly resolve on this phone."/>
+      <separator height="0.5"/>
+      <info label="If something says NOT FITTED"/>
+      <info label="That is information, not a fault. Cheaper phones leave out the barometer and sometimes the gyroscope. iPhones do not expose the light sensor to phyphox. The suite is built so that a phone with only accelerometer, magnetometer, microphone and speaker still runs fifteen tests."/>
+      <separator height="0.5"/>
+      <info label="Export this and keep it. It is the record of what this particular phone can and cannot measure, and every later result should be read against it."/>
+    </view>
+  </views>
+
+  <analysis sleep="0.5">
+    <count>
+      <input clear="false">accT</input>
+      <output clear="false">accN</output>
+    </count>
+    <first>
+      <input as="value" clear="false">accT</input>
+      <output as="first">accT0</output>
+    </first>
+    <max>
+      <input as="y" clear="false">accT</input>
+      <output as="max">accTL</output>
+    </max>
+    <subtract>
+      <input>accTL</input>
+      <input>accT0</input>
+      <output>accSpan</output>
+    </subtract>
+    <formula formula="max([1]-1,0)/max([2],0.001)">
+      <input clear="false">accN</input>
+      <input>accSpan</input>
+      <output clear="false">accRate</output>
+    </formula>
+    <average>
+      <input as="buffer" clear="false">accV</input>
+      <output as="average">accMean</output>
+      <output as="stddev" clear="false">accNoise</output>
+    </average>
+    <count>
+      <input clear="false">gyrT</input>
+      <output clear="false">gyrN</output>
+    </count>
+    <first>
+      <input as="value" clear="false">gyrT</input>
+      <output as="first">gyrT0</output>
+    </first>
+    <max>
+      <input as="y" clear="false">gyrT</input>
+      <output as="max">gyrTL</output>
+    </max>
+    <subtract>
+      <input>gyrTL</input>
+      <input>gyrT0</input>
+      <output>gyrSpan</output>
+    </subtract>
+    <formula formula="max([1]-1,0)/max([2],0.001)">
+      <input clear="false">gyrN</input>
+      <input>gyrSpan</input>
+      <output clear="false">gyrRate</output>
+    </formula>
+    <average>
+      <input as="buffer" clear="false">gyrV</input>
+      <output as="average">gyrMean</output>
+      <output as="stddev" clear="false">gyrNoise</output>
+    </average>
+    <count>
+      <input clear="false">magT</input>
+      <output clear="false">magN</output>
+    </count>
+    <first>
+      <input as="value" clear="false">magT</input>
+      <output as="first">magT0</output>
+    </first>
+    <max>
+      <input as="y" clear="false">magT</input>
+      <output as="max">magTL</output>
+    </max>
+    <subtract>
+      <input>magTL</input>
+      <input>magT0</input>
+      <output>magSpan</output>
+    </subtract>
+    <formula formula="max([1]-1,0)/max([2],0.001)">
+      <input clear="false">magN</input>
+      <input>magSpan</input>
+      <output clear="false">magRate</output>
+    </formula>
+    <average>
+      <input as="buffer" clear="false">magV</input>
+      <output as="average">magMean</output>
+      <output as="stddev" clear="false">magNoise</output>
+    </average>
+    <count>
+      <input clear="false">preT</input>
+      <output clear="false">preN</output>
+    </count>
+    <first>
+      <input as="value" clear="false">preT</input>
+      <output as="first">preT0</output>
+    </first>
+    <max>
+      <input as="y" clear="false">preT</input>
+      <output as="max">preTL</output>
+    </max>
+    <subtract>
+      <input>preTL</input>
+      <input>preT0</input>
+      <output>preSpan</output>
+    </subtract>
+    <formula formula="max([1]-1,0)/max([2],0.001)">
+      <input clear="false">preN</input>
+      <input>preSpan</input>
+      <output clear="false">preRate</output>
+    </formula>
+    <count>
+      <input clear="false">lgtT</input>
+      <output clear="false">lgtN</output>
+    </count>
+    <first>
+      <input as="value" clear="false">lgtT</input>
+      <output as="first">lgtT0</output>
+    </first>
+    <max>
+      <input as="y" clear="false">lgtT</input>
+      <output as="max">lgtTL</output>
+    </max>
+    <subtract>
+      <input>lgtTL</input>
+      <input>lgtT0</input>
+      <output>lgtSpan</output>
+    </subtract>
+    <formula formula="max([1]-1,0)/max([2],0.001)">
+      <input clear="false">lgtN</input>
+      <input>lgtSpan</input>
+      <output clear="false">lgtRate</output>
+    </formula>
+    <count>
+      <input clear="false">prxT</input>
+      <output clear="false">prxN</output>
+    </count>
+    <first>
+      <input as="value" clear="false">prxT</input>
+      <output as="first">prxT0</output>
+    </first>
+    <max>
+      <input as="y" clear="false">prxT</input>
+      <output as="max">prxTL</output>
+    </max>
+    <subtract>
+      <input>prxTL</input>
+      <input>prxT0</input>
+      <output>prxSpan</output>
+    </subtract>
+    <formula formula="max([1]-1,0)/max([2],0.001)">
+      <input clear="false">prxN</input>
+      <input>prxSpan</input>
+      <output clear="false">prxRate</output>
+    </formula>
+
+    <count>
+      <input clear="false">recording</input>
+      <output clear="false">micN</output>
+    </count>
+
+    <formula formula="min(min([1],[2]),[3])">
+      <input clear="false">accN</input>
+      <input clear="false">magN</input>
+      <input clear="false">micN</input>
+      <output>coreOk</output>
+    </formula>
+    <divide>
+      <input clear="false">accRate</input>
+      <input type="value">2</input>
+      <output>vibMax</output>
+    </divide>
+  </analysis>
+
+  <export>
+    <set name="Device report">
+      <data name="Accelerometer rate (Hz)">accRate</data>
+      <data name="Gyroscope rate (Hz)">gyrRate</data>
+      <data name="Magnetometer rate (Hz)">magRate</data>
+      <data name="Barometer rate (Hz)">preRate</data>
+      <data name="Light rate (Hz)">lgtRate</data>
+      <data name="Proximity rate (Hz)">prxRate</data>
+      <data name="Microphone rate (Hz)">micRate</data>
+      <data name="Accelerometer noise (m/s^2)">accNoise</data>
+      <data name="Magnetometer noise (uT)">magNoise</data>
+      <data name="Gyroscope noise (rad/s)">gyrNoise</data>
+      <data name="Highest vibration frequency (Hz)">vibMax</data>
+    </set>
+    <set name="Sample counts">
+      <data name="Accelerometer">accN</data>
+      <data name="Gyroscope">gyrN</data>
+      <data name="Magnetometer">magN</data>
+      <data name="Barometer">preN</data>
+      <data name="Light">lgtN</data>
+      <data name="Proximity">prxN</data>
+      <data name="Microphone">micN</data>
+    </set>
+  </export>
+</phyphox>

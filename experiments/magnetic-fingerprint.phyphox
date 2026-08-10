@@ -1,0 +1,369 @@
+<phyphox version="1.14" locale="en">
+  <title>Magnetic Landmark</title>
+  <category>Data centre</category>
+  <icon>MAG</icon>
+  <description>
+        Finds an exact spot again, using the building's own steel as the map.
+
+        All the metal in a hall - racks, floor pedestals, structure, cable tray - bends the Earth's magnetic field into a pattern that is different at every point and does not move. That distortion is what makes a compass useless indoors. Here it is the whole point: it is a fingerprint for a location.
+
+        Stand somewhere worth remembering and press Capture. Later, walk around and watch the mismatch number. It falls to near zero when you are standing where you were before.
+
+        The clever bit is that it does not care which way you hold the phone. It uses two things that stay the same however you turn it: how strong the field is, and the angle between the field and straight down. Rotate the phone all you like - both numbers hold still.
+
+        Works on every phone, including iPhone, and needs nothing installed anywhere in the building.
+    </description>
+
+  <data-containers>
+    <container size="64">bx</container>
+    <container size="64">by</container>
+    <container size="64">bz</container>
+    <container size="64">bt</container>
+    <container size="64">ax</container>
+    <container size="64">ay</container>
+    <container size="64">az</container>
+
+    <container>bxm</container>
+    <container>bym</container>
+    <container>bzm</container>
+    <container>axm</container>
+    <container>aym</container>
+    <container>azm</container>
+
+    <container>bMag</container>
+    <container>gMag</container>
+    <container>dot</container>
+    <container>cosAng</container>
+    <container>incAng</container>
+
+    <container init="0">refB</container>
+    <container init="0">refAng</container>
+    <container init="0">hasRef</container>
+    <container init="0">setRef</container>
+    <container>dB</container>
+    <container>dAng</container>
+    <container>mismatch</container>
+
+    <container>now</container>
+    <container>epochOffset</container>
+    <container>epochNow</container>
+
+    <container size="0">hT</container>
+    <container size="0">hB</container>
+    <container size="0">hAng</container>
+    <container size="0">hMis</container>
+
+    <container init="1">wpId</container>
+    <container>wpIdNext</container>
+    <container init="0">logNow</container>
+    <container size="0">wpEpoch</container>
+    <container size="0">wpNum</container>
+    <container size="0">wpB</container>
+    <container size="0">wpAng</container>
+    <container>wpCount</container>
+  </data-containers>
+
+  <input>
+    <sensor type="magnetic_field" rate="0">
+      <output component="x">bx</output>
+      <output component="y">by</output>
+      <output component="z">bz</output>
+      <output component="t">bt</output>
+    </sensor>
+    <sensor type="accelerometer" rate="0">
+      <output component="x">ax</output>
+      <output component="y">ay</output>
+      <output component="z">az</output>
+    </sensor>
+  </input>
+
+  <views>
+    <view label="Find the spot">
+      <value label="Mismatch" size="3" precision="2">
+        <input>mismatch</input>
+      </value>
+      <value label="How close are you">
+        <input>mismatch</input>
+        <map max="0.5">ON THE SPOT</map>
+        <map max="2">very close - within a step</map>
+        <map max="5">close</map>
+        <map max="15">warm</map>
+        <map>cold - wrong part of the room</map>
+      </value>
+      <separator height="0.5"/>
+      <value label="Have you captured a spot yet">
+        <input>hasRef</input>
+        <map max="0.5">NO - press Capture somewhere first</map>
+        <map>yes</map>
+      </value>
+      <button label="Capture this spot">
+        <input type="value">1</input>
+        <output>setRef</output>
+      </button>
+      <separator height="0.5"/>
+      <graph label="Mismatch as you walk" labelX="Time" unitX="s" labelY="Mismatch" partialUpdate="true">
+        <input axis="x">hT</input>
+        <input axis="y">hMis</input>
+      </graph>
+      <info label="Hold the phone away from your body and walk slowly. The number drops as you approach and rises again as you pass."/>
+    </view>
+
+    <view label="Signature">
+      <info label="These two numbers are the fingerprint. Neither changes when you rotate the phone, which is what makes them usable while walking."/>
+      <separator height="0.5"/>
+      <value label="Field strength" unit="uT" size="2" precision="2">
+        <input>bMag</input>
+      </value>
+      <value label="Angle from straight down" unit="deg" size="2" precision="2">
+        <input>incAng</input>
+      </value>
+      <separator height="0.5"/>
+      <value label="Captured field strength" unit="uT" precision="2">
+        <input>refB</input>
+      </value>
+      <value label="Captured angle" unit="deg" precision="2">
+        <input>refAng</input>
+      </value>
+      <separator height="0.5"/>
+      <graph label="Field strength as you walk" labelX="Time" unitX="s" labelY="Field" unitY="uT" partialUpdate="true">
+        <input axis="x">hT</input>
+        <input axis="y">hB</input>
+      </graph>
+      <graph label="Angle as you walk" labelX="Time" unitX="s" labelY="Angle" unitY="deg" partialUpdate="true">
+        <input axis="x">hT</input>
+        <input axis="y">hAng</input>
+      </graph>
+    </view>
+
+    <view label="Record a route">
+      <info label="Walk the aisle and press at each point you can identify again - a rack number, a floor tile, a column. That builds a magnetic map you can match against later."/>
+      <separator height="0.5"/>
+      <value label="Next point number" size="2" precision="0">
+        <input>wpId</input>
+      </value>
+      <value label="Points recorded" precision="0">
+        <input>wpCount</input>
+      </value>
+      <button label="Record this point">
+        <input type="value">1</input>
+        <output>logNow</output>
+      </button>
+      <separator height="0.5"/>
+      <edit label="Set the next number" default="1" decimal="false">
+        <output>wpId</output>
+      </edit>
+      <button label="Clear the route">
+        <input type="empty"/>
+        <output>wpEpoch</output>
+        <input type="empty"/>
+        <output>wpNum</output>
+        <input type="empty"/>
+        <output>wpB</output>
+        <input type="empty"/>
+        <output>wpAng</output>
+      </button>
+    </view>
+
+    <view label="Notes">
+      <info label="Why this works when a compass does not"/>
+      <info label="A compass needs the Earth's field to be undisturbed, and indoors it never is. Every steel rack and floor pedestal bends it. That is a fatal problem if you want a heading and a gift if you want a location, because the bending is fixed in place - the racks are not going anywhere."/>
+      <separator height="0.5"/>
+      <info label="What can fool it"/>
+      <info label="Anything magnetic that MOVES. A rack rolled into a new position, a trolley left nearby, a door propped open, or a large change in current in a nearby busbar will all shift the reading. If a spot that used to match stops matching, something near it changed - which is sometimes the more interesting finding."/>
+      <info label="Two different places can also share a signature by coincidence, since this is only two numbers. It is reliable for 'am I back at the same rack', not for 'where am I in the building' on its own. Combine it with knowing roughly which aisle you are in."/>
+      <separator height="0.5"/>
+      <info label="How the mismatch number is built"/>
+      <info label="It is the distance between the current reading and the captured one, counting 1 uT of field strength as equivalent to 2 degrees of angle. Zero means identical. Under about 0.5 is closer than you can reliably stand twice."/>
+      <separator height="0.5"/>
+      <info label="Check the noise floor in the Device Check first. If your phone's magnetometer noise is above about 0.5 uT, the mismatch number will not settle below that and the sharpest resolution you can get is correspondingly worse."/>
+    </view>
+  </views>
+
+  <analysis sleep="0.1">
+    <timer>
+      <output as="out">now</output>
+      <output as="offset1970">epochOffset</output>
+    </timer>
+    <add>
+      <input clear="false">now</input>
+      <input>epochOffset</input>
+      <output>epochNow</output>
+    </add>
+
+    <average>
+      <input as="buffer" clear="false">bx</input>
+      <output as="average">bxm</output>
+    </average>
+    <average>
+      <input as="buffer" clear="false">by</input>
+      <output as="average">bym</output>
+    </average>
+    <average>
+      <input as="buffer" clear="false">bz</input>
+      <output as="average">bzm</output>
+    </average>
+    <average>
+      <input as="buffer" clear="false">ax</input>
+      <output as="average">axm</output>
+    </average>
+    <average>
+      <input as="buffer" clear="false">ay</input>
+      <output as="average">aym</output>
+    </average>
+    <average>
+      <input as="buffer" clear="false">az</input>
+      <output as="average">azm</output>
+    </average>
+
+    <formula formula="sqrt([1]*[1]+[2]*[2]+[3]*[3])">
+      <input clear="false">bxm</input>
+      <input clear="false">bym</input>
+      <input clear="false">bzm</input>
+      <output clear="false">bMag</output>
+    </formula>
+    <formula formula="sqrt([1]*[1]+[2]*[2]+[3]*[3])">
+      <input clear="false">axm</input>
+      <input clear="false">aym</input>
+      <input clear="false">azm</input>
+      <output>gMag</output>
+    </formula>
+    <formula formula="[1]*[4]+[2]*[5]+[3]*[6]">
+      <input clear="false">bxm</input>
+      <input clear="false">bym</input>
+      <input clear="false">bzm</input>
+      <input clear="false">axm</input>
+      <input clear="false">aym</input>
+      <input clear="false">azm</input>
+      <output>dot</output>
+    </formula>
+    <formula formula="min(max([1]/max([2]*[3],0.000001),-1),1)">
+      <input>dot</input>
+      <input clear="false">bMag</input>
+      <input>gMag</input>
+      <output>cosAng</output>
+    </formula>
+    <formula formula="57.29577951308232*acos([1])">
+      <input>cosAng</input>
+      <output clear="false">incAng</output>
+    </formula>
+
+    <if equal="true">
+      <input clear="false">setRef</input>
+      <input type="value">1</input>
+      <input clear="false">bMag</input>
+      <output clear="false">refB</output>
+    </if>
+    <if equal="true">
+      <input clear="false">setRef</input>
+      <input type="value">1</input>
+      <input clear="false">incAng</input>
+      <output clear="false">refAng</output>
+    </if>
+    <if equal="true">
+      <input clear="false">setRef</input>
+      <input type="value">1</input>
+      <input type="value">1</input>
+      <output clear="false">hasRef</output>
+    </if>
+    <append>
+      <input type="value">0</input>
+      <output>setRef</output>
+    </append>
+
+    <subtract>
+      <input clear="false">bMag</input>
+      <input clear="false">refB</input>
+      <output>dB</output>
+    </subtract>
+    <subtract>
+      <input clear="false">incAng</input>
+      <input clear="false">refAng</input>
+      <output>dAng</output>
+    </subtract>
+    <formula formula="sqrt([1]*[1]+[2]*[2]/4)">
+      <input>dB</input>
+      <input>dAng</input>
+      <output clear="false">mismatch</output>
+    </formula>
+
+    <append>
+      <input clear="false">now</input>
+      <output clear="false">hT</output>
+    </append>
+    <append>
+      <input clear="false">bMag</input>
+      <output clear="false">hB</output>
+    </append>
+    <append>
+      <input clear="false">incAng</input>
+      <output clear="false">hAng</output>
+    </append>
+    <append>
+      <input clear="false">mismatch</input>
+      <output clear="false">hMis</output>
+    </append>
+
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input clear="false">epochNow</input>
+      <output clear="false">wpEpoch</output>
+    </if>
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input clear="false">wpId</input>
+      <output clear="false">wpNum</output>
+    </if>
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input clear="false">bMag</input>
+      <output clear="false">wpB</output>
+    </if>
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input clear="false">incAng</input>
+      <output clear="false">wpAng</output>
+    </if>
+    <add>
+      <input clear="false">wpId</input>
+      <input type="value">1</input>
+      <output>wpIdNext</output>
+    </add>
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input>wpIdNext</input>
+      <output clear="false">wpId</output>
+    </if>
+    <append>
+      <input type="value">0</input>
+      <output>logNow</output>
+    </append>
+    <count>
+      <input clear="false">wpEpoch</input>
+      <output>wpCount</output>
+    </count>
+  </analysis>
+
+  <export>
+    <set name="Route points">
+      <data name="Timestamp (Unix s)">wpEpoch</data>
+      <data name="Point">wpNum</data>
+      <data name="Field strength (uT)">wpB</data>
+      <data name="Angle from vertical (deg)">wpAng</data>
+    </set>
+    <set name="Continuous track">
+      <data name="Time (s)">hT</data>
+      <data name="Field strength (uT)">hB</data>
+      <data name="Angle from vertical (deg)">hAng</data>
+      <data name="Mismatch">hMis</data>
+    </set>
+    <set name="Captured spot">
+      <data name="Field strength (uT)">refB</data>
+      <data name="Angle from vertical (deg)">refAng</data>
+    </set>
+  </export>
+</phyphox>

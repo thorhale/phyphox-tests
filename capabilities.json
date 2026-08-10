@@ -1,0 +1,182 @@
+{
+  "_comment": [
+    "Single source of truth for what each experiment needs.",
+    "tools/check_tiers.py reads this, opens each .phyphox file, and fails if the",
+    "hardware a file actually declares does not match what is claimed here. That",
+    "stops the docs drifting away from the files, which is the usual way a",
+    "compatibility table becomes a lie.",
+    "",
+    "'required' must be present or the experiment is useless.",
+    "'optional' is declared with ignoreUnavailable=true, so the experiment still",
+    "runs without it and simply leaves those readings empty."
+  ],
+  "tiers": {
+    "0": "Runs on any phone, including a cheap A-series and an iPhone. Accelerometer, magnetometer, microphone, speaker, torch only.",
+    "1": "Needs a barometer and/or gyroscope. Most phones, not the cheapest.",
+    "2": "Needs a native app - camera frames, NFC, WiFi RTT, or haptics.",
+    "3": "Needs extra hardware - a pickup coil, an ESP32, or UWB tags."
+  },
+  "tier0_hardware": [
+    "accelerometer",
+    "magnetic_field",
+    "audio_in",
+    "audio_out",
+    "flashlight"
+  ],
+  "not_on_ios": {
+    "light": "phyphox cannot read the ambient light sensor on Apple devices",
+    "bluetooth": "phyphox Bluetooth input is Android only"
+  },
+  "experiments": {
+    "device-check": {
+      "title": "0. Device Check",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "audio_in"
+      ],
+      "optional": [
+        "accelerometer",
+        "gyroscope",
+        "light",
+        "magnetic_field",
+        "pressure",
+        "proximity"
+      ],
+      "purpose": "Reports what this phone actually has, and its real sample rates."
+    },
+    "sound-level-meter": {
+      "title": "Sound Level Meter (A/C/Z)",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "audio_in"
+      ],
+      "optional": [],
+      "purpose": "Weighted sound level, Leq, Lmax/Lmin, peak, noise dose."
+    },
+    "emi-survey": {
+      "title": "EMI Survey",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "magnetic_field"
+      ],
+      "optional": [],
+      "purpose": "Finds live conductors, for routing copper away from power."
+    },
+    "busway-load": {
+      "title": "Busway Load Indicator",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "magnetic_field"
+      ],
+      "optional": [],
+      "purpose": "Relative loading of a busway or feed, without contact."
+    },
+    "magnetic-fingerprint": {
+      "title": "Magnetic Landmark",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "magnetic_field",
+        "accelerometer"
+      ],
+      "optional": [],
+      "purpose": "Find an exact spot again using the building's steel as the map."
+    },
+    "fan-tacho": {
+      "title": "Fan Tacho and Bearing Check",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "audio_in",
+        "accelerometer"
+      ],
+      "optional": [],
+      "purpose": "Fan RPM from blade-passing tone, plus bearing crest factor."
+    },
+    "vibration-census": {
+      "title": "Vibration Census",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "accelerometer"
+      ],
+      "optional": [],
+      "purpose": "Which machines are actually running, from one floor recording."
+    },
+    "strobe-tacho": {
+      "title": "Strobe Tachometer",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "flashlight"
+      ],
+      "optional": [],
+      "purpose": "Fan speed read by eye, as an independent check on the audio method."
+    },
+    "dimension-survey": {
+      "title": "Dimension and Level Survey",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "audio_in",
+        "audio_out",
+        "accelerometer"
+      ],
+      "optional": [],
+      "purpose": "Sonar distances, air temperature from sound speed, floor level."
+    },
+    "walk-logger": {
+      "title": "Synchronised Walk Logger",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "audio_in",
+        "accelerometer"
+      ],
+      "optional": [
+        "magnetic_field",
+        "light",
+        "pressure"
+      ],
+      "purpose": "Everything at once on one clock, with a waypoint button."
+    },
+    "wifi-walk": {
+      "title": "WiFi Walk Survey",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "audio_in"
+      ],
+      "optional": [
+        "magnetic_field",
+        "pressure",
+        "light"
+      ],
+      "purpose": "Waypoints to be joined with a separate WiFi survey."
+    },
+    "hall-survey": {
+      "title": "Hall Survey",
+      "tier": 1,
+      "ios": true,
+      "required": [
+        "pressure"
+      ],
+      "optional": [],
+      "purpose": "Barometric trace plus a logged point per location."
+    },
+    "tile-tap": {
+      "title": "Floor Tile Tap Test",
+      "tier": 0,
+      "ios": true,
+      "required": [
+        "audio_in"
+      ],
+      "optional": [],
+      "purpose": "Finds loose or unsupported raised-floor tiles by their ring frequency."
+    }
+  }
+}

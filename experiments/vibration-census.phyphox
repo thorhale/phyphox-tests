@@ -1,0 +1,280 @@
+<phyphox version="1.14" locale="en">
+  <title>Vibration Census</title>
+  <category>Data centre</category>
+  <icon>VIB</icon>
+  <description>
+        Counts the machines that are actually running, by listening to the floor.
+
+        Every rotating machine in the building pushes a tone into the structure at its own turning speed. A CRAC fan, a chiller, a UPS transformer and a pump all sit at different frequencies, so a single recording of the floor contains a line for each of them. Read the lines and you know what is running and how fast - without opening a panel or asking the BMS.
+
+        Put the phone flat on the floor, or on the frame of the thing you are interested in, press start and leave it alone for a minute. The peak-hold display keeps the highest level ever seen in each frequency bin, so a machine that cycles on partway through still leaves its mark.
+
+        This works on any phone. But check the Device Check first: the highest frequency you can see is half your accelerometer's sample rate, and on a slow phone that may be only 50 Hz.
+    </description>
+
+  <data-containers>
+    <container size="2048">aAbs</container>
+    <container size="2048">aT</container>
+    <container>aN</container>
+    <container>aT0</container>
+    <container>aTL</container>
+    <container>aSpan</container>
+    <container>aRate</container>
+    <container>aRateHalf</container>
+    <container>aMean</container>
+    <container>aRms</container>
+
+    <container size="2048">aDet</container>
+    <container size="2048">winU</container>
+    <container size="2048">win</container>
+    <container size="2048">windowed</container>
+    <container size="2048">re</container>
+    <container size="2048">im</container>
+    <container>nHalf</container>
+    <container>nHalf1</container>
+    <container size="1025">freq</container>
+    <container size="1024">halfF</container>
+    <container size="1024">halfRe</container>
+    <container size="1024">halfIm</container>
+    <container size="1024">mag</container>
+
+    <container init="0">seeded</container>
+    <container size="1024">peakNew</container>
+    <container size="1024" init="0">peakHold</container>
+
+    <container>iFrom</container>
+    <container size="1024">bandF</container>
+    <container size="1024">bandMag</container>
+    <container>peakF</container>
+    <container>peakRpm</container>
+    <container>peakLevel</container>
+
+  </data-containers>
+
+  <input>
+    <sensor type="accelerometer" rate="0">
+      <output component="abs">aAbs</output>
+      <output component="t">aT</output>
+    </sensor>
+  </input>
+
+  <views>
+    <view label="Census">
+      <info label="Phone flat on the floor. Leave it for a minute - the longer it runs, the more machines it catches."/>
+      <separator height="0.5"/>
+      <value label="Strongest machine tone" unit="Hz" size="2" precision="2">
+        <input>peakF</input>
+      </value>
+      <value label="which is a shaft turning at" unit="RPM" size="2" precision="0">
+        <input>peakRpm</input>
+      </value>
+      <separator height="0.5"/>
+      <graph label="Peak hold - every tone seen so far" logY="true" labelX="Frequency" unitX="Hz" labelY="Level" unitY="a.u.">
+        <input axis="x">halfF</input>
+        <input axis="y">peakHold</input>
+      </graph>
+      <info label="Each bump is a machine. Read its frequency off the bottom axis and multiply by 60 for RPM."/>
+      <button label="Clear the peak hold">
+        <input type="value">0</input>
+        <output>seeded</output>
+      </button>
+    </view>
+
+    <view label="Live spectrum">
+      <graph label="Right now" logY="true" labelX="Frequency" unitX="Hz" labelY="Level" unitY="a.u.">
+        <input axis="x">halfF</input>
+        <input axis="y">mag</input>
+      </graph>
+      <separator height="0.5"/>
+      <value label="Overall vibration" unit="m/s^2" precision="4">
+        <input>aRms</input>
+      </value>
+      <value label="Is anything actually running">
+        <input>aRms</input>
+        <map max="0.003">nothing - the floor is dead still</map>
+        <map max="0.02">faint - something is running somewhere</map>
+        <map max="0.1">clear machinery nearby</map>
+        <map>strong - you are on or beside a running machine</map>
+      </value>
+    </view>
+
+    <view label="This phone's limits">
+      <value label="Accelerometer sample rate" unit="Hz" precision="1">
+        <input>aRate</input>
+      </value>
+      <value label="Highest frequency visible" unit="Hz" size="2" precision="1">
+        <input>aRateHalf</input>
+      </value>
+      <value label="Highest shaft speed visible" unit="RPM" precision="0">
+        <input>peakRpm</input>
+      </value>
+      <separator height="0.5"/>
+      <info label="Anything spinning faster than the limit above is invisible here - and worse, it does not simply vanish. It folds back down and appears as a peak at some lower frequency that does not correspond to any real machine. If you see a line you cannot account for, that is the first thing to suspect."/>
+      <separator height="0.5"/>
+      <info label="The frequency resolution is the sample rate divided by 2048. At 200 Hz that is about 0.1 Hz, or 6 RPM - fine enough to tell two nominally identical fans apart when one is running slightly slow."/>
+    </view>
+
+    <view label="Notes">
+      <info label="What the numbers mean"/>
+      <info label="A peak at frequency f means something is turning at f revolutions per second, so f times 60 RPM. A 50 Hz line is a 3000 RPM shaft - or mains-driven magnetostriction in a transformer, which sits at twice mains, 100 or 120 Hz. Transformers hum at twice mains because the core is squeezed twice per cycle."/>
+      <info label="Two peaks close together that beat slowly against each other are two machines running at almost the same speed. That beat is audible as a slow throb in the room and is a common source of complaints."/>
+      <separator height="0.5"/>
+      <info label="What this cannot do"/>
+      <info label="It cannot tell you WHICH machine, only that something at that speed is running. Confirm by putting the phone directly on a specific unit and watching which line grows."/>
+      <info label="The floor couples everything together, so a reading taken on a raised floor picks up the whole room. That is useful for a census and useless for blaming one machine - for that, go and sit on the machine."/>
+      <separator height="0.5"/>
+      <info label="Levels are in arbitrary units and are not comparable between phones. Comparing the same phone in two places, or before and after a change, is exactly what this is for."/>
+    </view>
+  </views>
+
+  <analysis sleep="0.5">
+    <count>
+      <input clear="false">aT</input>
+      <output clear="false">aN</output>
+    </count>
+    <first>
+      <input as="value" clear="false">aT</input>
+      <output as="first">aT0</output>
+    </first>
+    <max>
+      <input as="y" clear="false">aT</input>
+      <output as="max">aTL</output>
+    </max>
+    <subtract>
+      <input>aTL</input>
+      <input>aT0</input>
+      <output>aSpan</output>
+    </subtract>
+    <formula formula="max([1]-1,1)/max([2],0.001)">
+      <input clear="false">aN</input>
+      <input>aSpan</input>
+      <output clear="false">aRate</output>
+    </formula>
+    <divide>
+      <input clear="false">aRate</input>
+      <input type="value">2</input>
+      <output clear="false">aRateHalf</output>
+    </divide>
+
+    <average>
+      <input as="buffer" clear="false">aAbs</input>
+      <output as="average">aMean</output>
+      <output as="stddev" clear="false">aRms</output>
+    </average>
+    <formula formula="[1_]-[2]">
+      <input clear="false">aAbs</input>
+      <input>aMean</input>
+      <output>aDet</output>
+    </formula>
+
+    <ramp>
+      <input as="start" type="value">0</input>
+      <input as="stop" type="value">1</input>
+      <input as="length" clear="false">aN</input>
+      <output>winU</output>
+    </ramp>
+    <formula formula="0.5-0.5*cos(6.283185307179586*[1_])">
+      <input>winU</input>
+      <output>win</output>
+    </formula>
+    <multiply>
+      <input as="factor">aDet</input>
+      <input as="factor">win</input>
+      <output>windowed</output>
+    </multiply>
+    <fft>
+      <input>windowed</input>
+      <output as="re">re</output>
+      <output as="im">im</output>
+    </fft>
+    <divide>
+      <input clear="false">aN</input>
+      <input type="value">2</input>
+      <output clear="false">nHalf</output>
+    </divide>
+    <add>
+      <input clear="false">nHalf</input>
+      <input type="value">1</input>
+      <output>nHalf1</output>
+    </add>
+    <ramp>
+      <input as="start" type="value">0</input>
+      <input as="stop" clear="false">aRateHalf</input>
+      <input as="length" clear="false">nHalf1</input>
+      <output>freq</output>
+    </ramp>
+    <subrange>
+      <input as="from" type="value">1</input>
+      <input as="to" clear="false">nHalf</input>
+      <input as="in">freq</input>
+      <input as="in">re</input>
+      <input as="in">im</input>
+      <output clear="false">halfF</output>
+      <output>halfRe</output>
+      <output>halfIm</output>
+    </subrange>
+    <formula formula="sqrt([1_]*[1_]+[2_]*[2_])">
+      <input>halfRe</input>
+      <input>halfIm</input>
+      <output clear="false">mag</output>
+    </formula>
+
+    <!-- peak hold: keep the highest level ever seen in each bin -->
+    <formula formula="max([1_],[2_])">
+      <input clear="false">peakHold</input>
+      <input clear="false">mag</input>
+      <output>peakNew</output>
+    </formula>
+    <if less="true">
+      <input clear="false">seeded</input>
+      <input type="value">0.5</input>
+      <input clear="false">mag</input>
+      <input>peakNew</input>
+      <output clear="false">peakHold</output>
+    </if>
+    <append>
+      <input type="value">1</input>
+      <output>seeded</output>
+    </append>
+
+    <!-- strongest tone, ignoring the lowest bins which carry drift -->
+    <formula formula="max(round(2*[1]/[2])-1,0)">
+      <input clear="false">aN</input>
+      <input clear="false">aRate</input>
+      <output>iFrom</output>
+    </formula>
+    <subrange>
+      <input as="from" clear="false">iFrom</input>
+      <input as="in" clear="false">halfF</input>
+      <input as="in" clear="false">peakHold</input>
+      <output>bandF</output>
+      <output>bandMag</output>
+    </subrange>
+    <max>
+      <input as="x">bandF</input>
+      <input as="y">bandMag</input>
+      <output as="position" clear="false">peakF</output>
+      <output as="max">peakLevel</output>
+    </max>
+    <multiply>
+      <input as="factor" clear="false">peakF</input>
+      <input as="factor" type="value">60</input>
+      <output>peakRpm</output>
+    </multiply>
+  </analysis>
+
+  <export>
+    <set name="Peak hold spectrum">
+      <data name="Frequency (Hz)">halfF</data>
+      <data name="Highest level seen (a.u.)">peakHold</data>
+      <data name="Level right now (a.u.)">mag</data>
+    </set>
+    <set name="Summary">
+      <data name="Strongest tone (Hz)">peakF</data>
+      <data name="Implied shaft speed (RPM)">peakRpm</data>
+      <data name="Overall vibration (m/s^2)">aRms</data>
+      <data name="Accelerometer rate (Hz)">aRate</data>
+      <data name="Highest visible frequency (Hz)">aRateHalf</data>
+    </set>
+  </export>
+</phyphox>

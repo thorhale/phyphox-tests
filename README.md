@@ -6,18 +6,42 @@ measuring things in a data hall with the phone you already have.
 **None of these have been tried on a real phone yet.** They're checked by a
 script and the maths is verified, but that's not the same as working.
 
+## Start here
+
+**Run `device-check` first on any new phone.** It opens every sensor, sees what
+actually answers, measures the real sample rates, and tells you plainly which of
+these tests that phone can run. Phones differ a lot and it is better to find out
+in the office than halfway down an aisle.
+
 ## The experiments
 
-| File | What it does |
-|---|---|
-| `sound-level-meter` | How loud it is, in proper dB(A) |
-| `hall-survey` | Logs air pressure; you type in temperature and humidity |
-| `emi-survey` | Finds live power cables, so you can route network cable away from them |
-| `busway-load` | Shows which power feed is working harder, without touching anything |
-| `fan-tacho` | Fan speed, and whether a bearing is starting to fail |
-| `dimension-survey` | Measures distances, and checks floors and racks are level |
-| `walk-logger` | Records everything at once while you walk around |
-| `wifi-walk` | Marks your position so WiFi readings can be matched to it later |
+Tier 0 means it runs on anything — a cheap A-series Android *and* an iPhone.
+Nothing in Tier 0 needs a barometer, a gyroscope, the light sensor, Bluetooth or
+any extra hardware.
+
+| File | What it does | Tier |
+|---|---|---|
+| `device-check` | What this phone has, its real sample rates and noise floors | 0 |
+| `sound-level-meter` | How loud it is, in proper dB(A) | 0 |
+| `emi-survey` | Finds live power cables, so you can route network cable away | 0 |
+| `busway-load` | Which power feed is working harder, without touching anything | 0 |
+| `magnetic-fingerprint` | Find an exact spot again, using the building's steel as the map | 0 |
+| `fan-tacho` | Fan speed, and whether a bearing is starting to fail | 0 |
+| `vibration-census` | Which machines are actually running, from one floor recording | 0 |
+| `strobe-tacho` | Fan speed read by eye with the torch — the honest check on `fan-tacho` | 0 |
+| `tile-tap` | Finds loose or unsupported floor tiles by the note they ring at | 0 |
+| `dimension-survey` | Distances, air temperature from sound speed, floor level | 0 |
+| `walk-logger` | Records everything at once while you walk around | 0 |
+| `wifi-walk` | Marks your spots so WiFi readings can be matched to them later | 0 |
+| `hall-survey` | Logs air pressure; you type in temperature and humidity | 1 |
+
+`capabilities.json` says what each one needs. `tools/check_tiers.py` opens every
+file and fails if that claim is not true — so the table above cannot quietly stop
+matching the files, which is the usual way a compatibility list becomes a lie.
+
+```sh
+python3 tools/check_tiers.py
+```
 
 ## How to install one
 

@@ -1,0 +1,137 @@
+<phyphox version="1.14" locale="en">
+  <title>Strobe Tachometer</title>
+  <category>Data centre</category>
+  <icon>STB</icon>
+  <description>
+        Measures fan speed with your eyes instead of maths.
+
+        The torch flashes at a rate you control. Point it at the fan and slide the frequency until the blades appear to stop dead. At that moment the fan is turning exactly once between flashes, and the speed is the flash rate times 60.
+
+        No signal processing, nothing to misinterpret - you can see it working. That makes it the honest check on the Fan Tacho experiment, which infers speed from sound and can be fooled by a harmonic or by the wrong fan. If the two disagree, believe this one.
+
+        Two warnings before you use it. Phones cannot flash faster than about 40 times a second, which caps direct reading at 2400 RPM - above that you read a submultiple and multiply up. And a strobe makes moving machinery appear stationary, which is exactly as dangerous as it sounds. Never use it as your reason to believe something has stopped.
+    </description>
+
+  <data-containers>
+    <container init="25">strobeHz</container>
+    <container init="1">intensity</container>
+    <container init="0.1">duty</container>
+
+    <container>rpm1</container>
+    <container>rpm2</container>
+    <container>rpmHalf</container>
+    <container>rpmThird</container>
+    <container init="1">divisor</container>
+    <container>rpmTrue</container>
+  </data-containers>
+
+  <output>
+    <flashlight>
+      <input parameter="intensity">intensity</input>
+      <input parameter="frequency">strobeHz</input>
+      <input parameter="dutycycle">duty</input>
+    </flashlight>
+  </output>
+
+  <views>
+    <view label="Strobe">
+      <info label="Slide until the blades freeze. Start high and come down slowly - the first place it freezes as you come down is the real speed."/>
+      <separator height="0.5"/>
+      <slider label="Flash rate" type="normal" default="25" minValue="1" maxValue="40" stepSize="0.05" precision="2" showValue="true">
+        <output>strobeHz</output>
+      </slider>
+      <separator height="0.5"/>
+      <value label="Fan speed if frozen at this rate" unit="RPM" size="3" precision="0">
+        <input>rpm1</input>
+      </value>
+      <separator height="0.5"/>
+      <info label="If you had to go below the fan's real speed to freeze it, divide the true rate here and read the corrected figure."/>
+      <edit label="Flashes per revolution" default="1" decimal="false">
+        <output>divisor</output>
+      </edit>
+      <value label="Corrected speed" unit="RPM" size="2" precision="0">
+        <input>rpmTrue</input>
+      </value>
+    </view>
+
+    <view label="Is it really frozen">
+      <info label="A strobe freezes the image at the true speed AND at every whole fraction of it. These are the other speeds that would look identical at the current flash rate."/>
+      <separator height="0.5"/>
+      <value label="If one flash per turn" unit="RPM" precision="0">
+        <input>rpm1</input>
+      </value>
+      <value label="If it is really turning twice as fast" unit="RPM" precision="0">
+        <input>rpm2</input>
+      </value>
+      <value label="If it is really half this" unit="RPM" precision="0">
+        <input>rpmHalf</input>
+      </value>
+      <value label="If it is really a third of this" unit="RPM" precision="0">
+        <input>rpmThird</input>
+      </value>
+      <separator height="0.5"/>
+      <info label="How to tell them apart: at the true speed a fan with identical blades shows the normal number of blades, standing still. At half the true speed you see twice as many blades as the fan has. Count the blades in the frozen image and compare with the real fan - that resolves it every time."/>
+      <separator height="0.5"/>
+      <info label="Slower is safer for finding the fundamental. Start at 40 and walk the slider down; the FIRST rate that gives a clean single frozen image is the fundamental. Rates below that give doubled and tripled images."/>
+    </view>
+
+    <view label="Torch settings">
+      <slider label="Brightness" type="normal" default="1" minValue="0.05" maxValue="1" stepSize="0.05" precision="2" showValue="true">
+        <output>intensity</output>
+      </slider>
+      <slider label="Flash length" type="normal" default="0.1" minValue="0.02" maxValue="0.5" stepSize="0.01" precision="2" showValue="true">
+        <output>duty</output>
+      </slider>
+      <info label="Shorter flashes freeze the image more sharply but look dimmer. If the blades are blurry rather than frozen, shorten the flash before anything else."/>
+    </view>
+
+    <view label="Notes">
+      <info label="Read this before pointing it at a machine"/>
+      <info label="A strobe at the right rate makes a spinning fan look completely stationary. People have put their hands into machinery that looked stopped. Treat anything you have strobed as running, always, and never use this to confirm something is off. Isolate it properly instead."/>
+      <separator height="0.5"/>
+      <info label="Flashing lights can trigger seizures in people with photosensitive epilepsy, most strongly between about 5 and 30 flashes per second - which is precisely this range. Do not use it where people cannot avoid seeing it, and warn anyone nearby first."/>
+      <separator height="0.5"/>
+      <info label="The 40 Hz ceiling"/>
+      <info label="Most phones cannot switch the flash faster than about every 25 ms, so roughly 40 Hz is the practical limit. That reads up to 2400 RPM directly. A 6000 RPM fan will not freeze at any rate on the slider - but it will freeze at 3000 RPM's worth of flashing, 25 Hz, showing two images. Use the flashes-per-revolution box to correct it."/>
+      <separator height="0.5"/>
+      <info label="In bright light this will not work at all. A phone torch cannot compete with hall lighting. It works best in a dim aisle, or with the fan shaded."/>
+    </view>
+  </views>
+
+  <analysis sleep="0.2">
+    <multiply>
+      <input as="factor" clear="false">strobeHz</input>
+      <input as="factor" type="value">60</input>
+      <output clear="false">rpm1</output>
+    </multiply>
+    <multiply>
+      <input as="factor" clear="false">rpm1</input>
+      <input as="factor" type="value">2</input>
+      <output>rpm2</output>
+    </multiply>
+    <divide>
+      <input clear="false">rpm1</input>
+      <input type="value">2</input>
+      <output>rpmHalf</output>
+    </divide>
+    <divide>
+      <input clear="false">rpm1</input>
+      <input type="value">3</input>
+      <output>rpmThird</output>
+    </divide>
+    <formula formula="[1]/max([2],1)">
+      <input clear="false">rpm1</input>
+      <input clear="false">divisor</input>
+      <output>rpmTrue</output>
+    </formula>
+  </analysis>
+
+  <export>
+    <set name="Reading">
+      <data name="Flash rate (Hz)">strobeHz</data>
+      <data name="Speed at one flash per turn (RPM)">rpm1</data>
+      <data name="Flashes per revolution">divisor</data>
+      <data name="Corrected speed (RPM)">rpmTrue</data>
+    </set>
+  </export>
+</phyphox>

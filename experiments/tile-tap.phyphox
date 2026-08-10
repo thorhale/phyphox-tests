@@ -1,0 +1,370 @@
+<phyphox version="1.14" locale="en">
+  <title>Floor Tile Tap Test</title>
+  <category>Data centre</category>
+  <icon>TAP</icon>
+  <description>
+        Finds loose, cracked and unsupported floor tiles by the sound they make.
+
+        A raised floor tile sitting properly on four pedestals rings at a high, short note. Take away a pedestal, crack the tile, or leave a stringer loose, and it rings lower and longer - the same reason a cracked mug sounds dull. Engineers have tapped structures and listened for a hundred years; this just puts a number on what your ear already notices.
+
+        Tap a tile firmly in the middle with a knuckle or a screwdriver handle. The peak hold catches the ring. Press Next tile and move on.
+
+        Do a known-good tile first and press Set as reference. Then every tile afterwards is scored against it, which is far more reliable than any absolute number - it cancels out the tile type, the floor height and how hard you happen to tap.
+    </description>
+
+  <data-containers>
+    <container size="16384">recording</container>
+    <container>micRate</container>
+    <container>micCnt</container>
+    <container>micFrom</container>
+    <container size="8192">block</container>
+    <container>blockN</container>
+
+    <container size="8192">winU</container>
+    <container size="8192">win</container>
+    <container size="8192">windowed</container>
+    <container size="8192">re</container>
+    <container size="8192">im</container>
+    <container>nHalf</container>
+    <container>nHalf1</container>
+    <container>rateHalf</container>
+    <container size="4097">freq</container>
+    <container size="4096">halfF</container>
+    <container size="4096">halfRe</container>
+    <container size="4096">halfIm</container>
+    <container size="4096">mag</container>
+
+    <container init="0">seeded</container>
+    <container size="4096">peakNew</container>
+    <container size="4096" init="0">peakHold</container>
+
+    <container init="80">fLow</container>
+    <container init="2000">fHigh</container>
+    <container>iFrom</container>
+    <container>iTo</container>
+    <container size="4096">bandF</container>
+    <container size="4096">bandMag</container>
+    <container>ringF</container>
+    <container>ringLevel</container>
+
+    <container init="0">refF</container>
+    <container init="0">hasRef</container>
+    <container init="0">setRef</container>
+    <container>ratio</container>
+    <container>percent</container>
+
+    <container init="1">tileId</container>
+    <container>tileNext</container>
+    <container init="0">logNow</container>
+    <container size="0">logTile</container>
+    <container size="0">logF</container>
+    <container size="0">logPct</container>
+    <container>logCount</container>
+  </data-containers>
+
+  <input>
+    <audio append="true">
+      <output>recording</output>
+      <output component="rate">micRate</output>
+    </audio>
+  </input>
+
+  <views>
+    <view label="Tap a tile">
+      <value label="Ring frequency" unit="Hz" size="3" precision="0">
+        <input>ringF</input>
+      </value>
+      <separator height="0.5"/>
+      <value label="Compared with the good tile" unit="%" size="2" precision="0">
+        <input>percent</input>
+      </value>
+      <value label="Verdict">
+        <input>percent</input>
+        <map max="-30">MUCH lower - suspect this tile</map>
+        <map max="-12">lower than the reference - worth a look</map>
+        <map max="12">same as the reference</map>
+        <map>higher than the reference</map>
+      </value>
+      <separator height="0.5"/>
+      <button label="Next tile">
+        <input type="value">0</input>
+        <output>seeded</output>
+      </button>
+      <info label="Press this before every tap. It clears the previous ring so the new one is measured cleanly."/>
+      <separator height="0.5"/>
+      <value label="Reference set yet">
+        <input>hasRef</input>
+        <map max="0.5">NO - tap a good tile and set it below</map>
+        <map>yes</map>
+      </value>
+      <value label="Reference ring" unit="Hz" precision="0">
+        <input>refF</input>
+      </value>
+      <button label="Set this tile as the reference">
+        <input type="value">1</input>
+        <output>setRef</output>
+      </button>
+    </view>
+
+    <view label="Log the run">
+      <value label="Tile number" size="2" precision="0">
+        <input>tileId</input>
+      </value>
+      <value label="Tiles logged" precision="0">
+        <input>logCount</input>
+      </value>
+      <button label="Log this tile">
+        <input type="value">1</input>
+        <output>logNow</output>
+      </button>
+      <separator height="0.5"/>
+      <edit label="Set the tile number" default="1" decimal="false">
+        <output>tileId</output>
+      </edit>
+      <button label="Clear the log">
+        <input type="empty"/>
+        <output>logTile</output>
+        <input type="empty"/>
+        <output>logF</output>
+        <input type="empty"/>
+        <output>logPct</output>
+      </button>
+      <separator height="0.5"/>
+      <graph label="Ring frequency by tile" labelX="Tile" labelY="Ring" unitY="Hz" style="dots" partialUpdate="true">
+        <input axis="x">logTile</input>
+        <input axis="y">logF</input>
+      </graph>
+      <info label="Walk a grid and log every tile. The outliers on this chart are the ones to lift."/>
+    </view>
+
+    <view label="Spectrum">
+      <graph label="What the tap sounded like" logX="true" logY="true" labelX="Frequency" unitX="Hz" labelY="Level" unitY="a.u.">
+        <input axis="x">halfF</input>
+        <input axis="y">peakHold</input>
+      </graph>
+      <separator height="0.5"/>
+      <info label="A healthy tile gives one clear peak. Several peaks close together, or a broad smear instead of a peak, usually means the tile is moving against its stringers rather than ringing - which is itself worth reporting."/>
+      <separator height="0.5"/>
+      <edit label="Search from" unit="Hz" default="80" decimal="false">
+        <output>fLow</output>
+      </edit>
+      <edit label="Search to" unit="Hz" default="2000" decimal="false">
+        <output>fHigh</output>
+      </edit>
+    </view>
+
+    <view label="Notes">
+      <info label="How to tap"/>
+      <info label="Same spot, same object, same force, every time - the middle of the tile, with a knuckle or a screwdriver handle. Tapping over a pedestal gives a dead thud on every tile, good or bad, and tells you nothing. The comparison only means something if the tap is repeatable."/>
+      <separator height="0.5"/>
+      <info label="Why compare rather than measure"/>
+      <info label="The absolute frequency depends on the tile type, its size, the floor height and what is stacked on it. None of that is worth calibrating. A tile that rings 30 percent below its identical neighbours is the finding, and that comparison survives all of it."/>
+      <separator height="0.5"/>
+      <info label="What it cannot tell you"/>
+      <info label="It says a tile is different, not why. Lower ring means less stiffness or more mass - a missing pedestal, a crack, a loose stringer, or simply a heavy cabinet standing on it. Lift it and look."/>
+      <info label="A hall is noisy and the peak hold catches the loudest thing it hears, not necessarily your tap. If a reading looks wrong, press Next tile and tap again harder. If the room is very loud this test may not work at all."/>
+      <separator height="0.5"/>
+      <info label="Never lift a tile without checking what is standing on it and what is underneath. This test finds candidates; it is not permission to open the floor."/>
+    </view>
+  </views>
+
+  <analysis sleep="0.3">
+    <count>
+      <input clear="false">recording</input>
+      <output>micCnt</output>
+    </count>
+    <formula formula="max([1]-8192,0)">
+      <input>micCnt</input>
+      <output>micFrom</output>
+    </formula>
+    <subrange>
+      <input as="from" clear="false">micFrom</input>
+      <input as="in" clear="false">recording</input>
+      <output>block</output>
+    </subrange>
+    <count>
+      <input clear="false">block</input>
+      <output clear="false">blockN</output>
+    </count>
+
+    <ramp>
+      <input as="start" type="value">0</input>
+      <input as="stop" type="value">1</input>
+      <input as="length" clear="false">blockN</input>
+      <output>winU</output>
+    </ramp>
+    <formula formula="0.5-0.5*cos(6.283185307179586*[1_])">
+      <input>winU</input>
+      <output>win</output>
+    </formula>
+    <multiply>
+      <input as="factor">block</input>
+      <input as="factor">win</input>
+      <output>windowed</output>
+    </multiply>
+    <fft>
+      <input>windowed</input>
+      <output as="re">re</output>
+      <output as="im">im</output>
+    </fft>
+    <divide>
+      <input clear="false">micRate</input>
+      <input type="value">2</input>
+      <output>rateHalf</output>
+    </divide>
+    <divide>
+      <input clear="false">blockN</input>
+      <input type="value">2</input>
+      <output clear="false">nHalf</output>
+    </divide>
+    <add>
+      <input clear="false">nHalf</input>
+      <input type="value">1</input>
+      <output>nHalf1</output>
+    </add>
+    <ramp>
+      <input as="start" type="value">0</input>
+      <input as="stop">rateHalf</input>
+      <input as="length" clear="false">nHalf1</input>
+      <output>freq</output>
+    </ramp>
+    <subrange>
+      <input as="from" type="value">1</input>
+      <input as="to" clear="false">nHalf</input>
+      <input as="in">freq</input>
+      <input as="in">re</input>
+      <input as="in">im</input>
+      <output clear="false">halfF</output>
+      <output>halfRe</output>
+      <output>halfIm</output>
+    </subrange>
+    <formula formula="sqrt([1_]*[1_]+[2_]*[2_])">
+      <input>halfRe</input>
+      <input>halfIm</input>
+      <output clear="false">mag</output>
+    </formula>
+
+    <formula formula="max([1_],[2_])">
+      <input clear="false">peakHold</input>
+      <input clear="false">mag</input>
+      <output>peakNew</output>
+    </formula>
+    <if less="true">
+      <input clear="false">seeded</input>
+      <input type="value">0.5</input>
+      <input clear="false">mag</input>
+      <input>peakNew</input>
+      <output clear="false">peakHold</output>
+    </if>
+    <append>
+      <input type="value">1</input>
+      <output>seeded</output>
+    </append>
+
+    <formula formula="max(round([1]*[2]/[3])-1,0)">
+      <input clear="false">fLow</input>
+      <input clear="false">blockN</input>
+      <input clear="false">micRate</input>
+      <output>iFrom</output>
+    </formula>
+    <formula formula="max(round([1]*[2]/[3])-1,1)">
+      <input clear="false">fHigh</input>
+      <input clear="false">blockN</input>
+      <input clear="false">micRate</input>
+      <output>iTo</output>
+    </formula>
+    <subrange>
+      <input as="from" clear="false">iFrom</input>
+      <input as="to" clear="false">iTo</input>
+      <input as="in" clear="false">halfF</input>
+      <input as="in" clear="false">peakHold</input>
+      <output>bandF</output>
+      <output>bandMag</output>
+    </subrange>
+    <max>
+      <input as="x">bandF</input>
+      <input as="y">bandMag</input>
+      <output as="position" clear="false">ringF</output>
+      <output as="max">ringLevel</output>
+    </max>
+
+    <if equal="true">
+      <input clear="false">setRef</input>
+      <input type="value">1</input>
+      <input clear="false">ringF</input>
+      <output clear="false">refF</output>
+    </if>
+    <if equal="true">
+      <input clear="false">setRef</input>
+      <input type="value">1</input>
+      <input type="value">1</input>
+      <output clear="false">hasRef</output>
+    </if>
+    <append>
+      <input type="value">0</input>
+      <output>setRef</output>
+    </append>
+    <formula formula="[1]/max([2],1)">
+      <input clear="false">ringF</input>
+      <input clear="false">refF</input>
+      <output>ratio</output>
+    </formula>
+    <formula formula="100*([1]-1)">
+      <input>ratio</input>
+      <output clear="false">percent</output>
+    </formula>
+
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input clear="false">tileId</input>
+      <output clear="false">logTile</output>
+    </if>
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input clear="false">ringF</input>
+      <output clear="false">logF</output>
+    </if>
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input clear="false">percent</input>
+      <output clear="false">logPct</output>
+    </if>
+    <add>
+      <input clear="false">tileId</input>
+      <input type="value">1</input>
+      <output>tileNext</output>
+    </add>
+    <if equal="true">
+      <input clear="false">logNow</input>
+      <input type="value">1</input>
+      <input>tileNext</input>
+      <output clear="false">tileId</output>
+    </if>
+    <append>
+      <input type="value">0</input>
+      <output>logNow</output>
+    </append>
+    <count>
+      <input clear="false">logTile</input>
+      <output>logCount</output>
+    </count>
+  </analysis>
+
+  <export>
+    <set name="Tiles">
+      <data name="Tile">logTile</data>
+      <data name="Ring frequency (Hz)">logF</data>
+      <data name="Difference from reference (%)">logPct</data>
+    </set>
+    <set name="Reference">
+      <data name="Reference ring (Hz)">refF</data>
+    </set>
+    <set name="Last tap spectrum">
+      <data name="Frequency (Hz)">halfF</data>
+      <data name="Level (a.u.)">peakHold</data>
+    </set>
+  </export>
+</phyphox>
