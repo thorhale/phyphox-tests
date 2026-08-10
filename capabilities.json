@@ -38,10 +38,12 @@
       "optional": [
         "accelerometer",
         "gyroscope",
+        "humidity",
         "light",
         "magnetic_field",
         "pressure",
-        "proximity"
+        "proximity",
+        "temperature"
       ],
       "purpose": "Reports what this phone actually has, and its real sample rates."
     },

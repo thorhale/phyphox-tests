@@ -61,6 +61,20 @@
     <container>prxTL</container>
     <container>prxSpan</container>
     <container>prxRate</container>
+    <container size="256">tmpV</container>
+    <container size="256">tmpT</container>
+    <container>tmpN</container>
+    <container>tmpT0</container>
+    <container>tmpTL</container>
+    <container>tmpSpan</container>
+    <container>tmpRate</container>
+    <container size="256">humV</container>
+    <container size="256">humT</container>
+    <container>humN</container>
+    <container>humT0</container>
+    <container>humTL</container>
+    <container>humSpan</container>
+    <container>humRate</container>
 
     <container size="4096">recording</container>
     <container>micRate</container>
@@ -94,6 +108,14 @@
     <sensor type="proximity" rate="0" ignoreUnavailable="true">
       <output component="value">prxV</output>
       <output component="t">prxT</output>
+    </sensor>
+    <sensor type="temperature" rate="0" ignoreUnavailable="true">
+      <output component="value">tmpV</output>
+      <output component="t">tmpT</output>
+    </sensor>
+    <sensor type="humidity" rate="0" ignoreUnavailable="true">
+      <output component="value">humV</output>
+      <output component="t">humT</output>
     </sensor>
     <audio append="true">
       <output>recording</output>
@@ -158,6 +180,24 @@
       </value>
       <value label="   its real sample rate" unit="Hz" precision="1">
         <input>prxRate</input>
+      </value>
+      <value label="Ambient temperature">
+        <input>tmpN</input>
+        <map max="0.5">NOT FITTED</map>
+        <map max="20">starting up...</map>
+        <map>working</map>
+      </value>
+      <value label="   its real sample rate" unit="Hz" precision="1">
+        <input>tmpRate</input>
+      </value>
+      <value label="Humidity">
+        <input>humN</input>
+        <map max="0.5">NOT FITTED</map>
+        <map max="20">starting up...</map>
+        <map>working</map>
+      </value>
+      <value label="   its real sample rate" unit="Hz" precision="1">
+        <input>humRate</input>
       </value>
       <separator height="0.5"/>
       <value label="Microphone">
@@ -243,6 +283,10 @@
       <separator height="0.5"/>
       <info label="If something says NOT FITTED"/>
       <info label="That is information, not a fault. Cheaper phones leave out the barometer and sometimes the gyroscope. iPhones do not expose the light sensor to phyphox. The suite is built so that a phone with only accelerometer, magnetometer, microphone and speaker still runs fifteen tests."/>
+      <separator height="0.5"/>
+      <separator height="0.5"/>
+      <info label="Humidity and ambient temperature"/>
+      <info label="phyphox offers both, and its Add-simple-experiment dialog lists them whether or not your phone has them - which is why they are checked here. Almost no phone made since about 2014 has either, and the phone's internal temperature sensors read its own electronics rather than the room. If either says working, say so, because it would mean the Hall Survey could measure what it currently asks you to type in."/>
       <separator height="0.5"/>
       <info label="Export this and keep it. It is the record of what this particular phone can and cannot measure, and every later result should be read against it."/>
     </view>
@@ -396,6 +440,50 @@
       <input>prxSpan</input>
       <output clear="false">prxRate</output>
     </formula>
+    <count>
+      <input clear="false">tmpT</input>
+      <output clear="false">tmpN</output>
+    </count>
+    <first>
+      <input as="value" clear="false">tmpT</input>
+      <output as="first">tmpT0</output>
+    </first>
+    <max>
+      <input as="y" clear="false">tmpT</input>
+      <output as="max">tmpTL</output>
+    </max>
+    <subtract>
+      <input>tmpTL</input>
+      <input>tmpT0</input>
+      <output>tmpSpan</output>
+    </subtract>
+    <formula formula="max([1]-1,0)/max([2],0.001)">
+      <input clear="false">tmpN</input>
+      <input>tmpSpan</input>
+      <output clear="false">tmpRate</output>
+    </formula>
+    <count>
+      <input clear="false">humT</input>
+      <output clear="false">humN</output>
+    </count>
+    <first>
+      <input as="value" clear="false">humT</input>
+      <output as="first">humT0</output>
+    </first>
+    <max>
+      <input as="y" clear="false">humT</input>
+      <output as="max">humTL</output>
+    </max>
+    <subtract>
+      <input>humTL</input>
+      <input>humT0</input>
+      <output>humSpan</output>
+    </subtract>
+    <formula formula="max([1]-1,0)/max([2],0.001)">
+      <input clear="false">humN</input>
+      <input>humSpan</input>
+      <output clear="false">humRate</output>
+    </formula>
 
     <count>
       <input clear="false">recording</input>
@@ -423,6 +511,8 @@
       <data name="Barometer rate (Hz)">preRate</data>
       <data name="Light rate (Hz)">lgtRate</data>
       <data name="Proximity rate (Hz)">prxRate</data>
+      <data name="Ambient temperature rate (Hz)">tmpRate</data>
+      <data name="Humidity rate (Hz)">humRate</data>
       <data name="Microphone rate (Hz)">micRate</data>
       <data name="Accelerometer noise (m/s^2)">accNoise</data>
       <data name="Magnetometer noise (uT)">magNoise</data>
@@ -436,6 +526,8 @@
       <data name="Barometer">preN</data>
       <data name="Light">lgtN</data>
       <data name="Proximity">prxN</data>
+      <data name="Ambient temperature">tmpN</data>
+      <data name="Humidity">humN</data>
       <data name="Microphone">micN</data>
     </set>
   </export>

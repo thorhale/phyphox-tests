@@ -3,6 +3,33 @@
 Sixteen experiments have never run on a phone. This is what to do when
 something doesn't work, in the order that finds the problem fastest.
 
+## Step 0: getting them onto the phone at all
+
+phyphox's **+** menu offers three ways in: QR code, Bluetooth device, or a
+simple built-in experiment. **There is no "open a file" option.**
+
+Emailing yourself the `.phyphox` file and tapping it *sometimes* works, and
+phyphox's own documentation explains why it is unreliable: on Android the file is
+identified by MIME type rather than extension, and a `.phyphox` file reports as an
+unknown type. Some mail apps and file managers hand it over, others do not.
+
+**The route that works is the QR code**, and it needs the files reachable without
+a login — phyphox downloads them from the address in the code, so a private
+repository just gives the phone a 404.
+
+```sh
+python3 tools/make_qr.py --base https://raw.githubusercontent.com/USER/REPO/main
+```
+
+That writes `install.html`: open it on a computer and scan from the screen with
+phyphox's own scanner. If a code fails, paste its URL into a browser first — if
+that needs a login, so does the phone.
+
+There is also an offline QR format that embeds the whole experiment, needing no
+hosting. It is a partial ZIP behind a 13-byte header, and I have deliberately not
+implemented it: it cannot be tested from here, and shipping an untested encoder
+would just add another thing that can silently fail.
+
 ## Step 1: run the probes
 
 `probes/` holds six tiny diagnostic files. Install them in order. **The first
