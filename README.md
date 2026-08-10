@@ -160,6 +160,46 @@ experiment files clean, and deliberately reintroducing each of the three bugs
 above makes it complain. A checker that has never caught anything is just a
 green light with no bulb behind it.
 
+## Checking the physics
+
+```sh
+python3 run_checks.py
+```
+
+Runs everything: file structure, the capability claims, 28 physics tests, and a
+mutation test. No dependencies, so it works in Pydroid on the phone too.
+
+The physics tests read the **actual formula out of the `.phyphox` file** and
+evaluate it. They don't re-implement the maths in Python and compare — that
+would only prove I can type the same thing twice. Editing a file in a way that
+breaks a documented claim fails the tests.
+
+What's pinned:
+
+- **A- and C-weighting** against the IEC 61672 table at 34 frequencies, worst
+  case 0.274 dB
+- **The level chain** — a full-scale sine must read −3.010 dBFS, and stay linear
+  across 40 dB. That one number proves the window power, the half-spectrum
+  doubling and the 1/N² are all right *together*
+- **Noise dose** — 8 hours at the criterion level, halving for every doubling of
+  energy
+- **Speed of sound** — round trip, absolute values from 0–40 °C, and the
+  sensitivity warning (1 % distance error = 5.97 °C)
+- **Magnetic signature** — unchanged across 200 random phone orientations
+- **Every magic number** in every file, checked against what it should be
+
+And `tests/test_mutations.py` breaks one constant at a time — rounding 331.3 to
+340, swapping the power and amplitude decibel constants, mistyping eight hours —
+and requires each to be caught. All 10 are. **A test suite that has never failed
+proves nothing**, and writing that mutation test found two real gaps: nothing
+was testing the peak/clipping chain, and the speed-of-sound round trip passed
+happily with absolute zero rounded to 273, because both directions changed
+together.
+
+It also caught two places where my *documentation* was wrong rather than the
+code: the step-count error was quoted at twice its real value, and I'd asserted
+a round 3 dB halves the allowed exposure time when the true figure is 3.0103 dB.
+
 ## Editing them
 
 They're XML. The [file format docs](https://phyphox.org/wiki/index.php/Phyphox_file_format)
