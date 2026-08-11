@@ -3,11 +3,30 @@
   <category>Environment</category>
   <icon>EMI</icon>
   <description>
-        A magnetic field walk-round for finding the high-current conductors that copper data cabling should be routed away from: busbars, PDU whips, transformers, UPS cabling and motor feeds.
+        WHAT IT DOES
+        Finds live power cables through walls, floors and ceilings.
 
-        It shows the total field, a rolling average, and the size of the fluctuating (AC) part of the field, which is what tells a live power run apart from a lump of steel. Use it as a finder: walk the cable route and watch where the AC activity climbs.
+        HOW
+        Any wire with current running through it makes a magnetic field around it, and that field fades fast as you move away. Your phone can measure it. Walk along, watch the number climb, and you have found the cable.
 
-        Honest limit: a phone magnetometer samples at roughly 50 to 100 Hz, so 50/60 Hz mains is above or near the Nyquist limit and gets aliased. The AC activity number still rises reliably near a live conductor, but there is deliberately no frequency readout here, because any frequency this sensor reported at mains would be an artefact.
+        WHY YOU CARE
+        Running network cable alongside power cable is a classic mistake. The power cable's field pushes noise into the data cable, and you get errors that look like a bad cable, a bad port or a bad switch. You will replace all three before anyone suspects the tray it is lying in.
+
+        It also finds live conductors where nothing is labelled, which happens more often than anyone admits.
+
+        HOW TO RUN IT
+        1. Press play and hold the phone flat.
+        2. Walk SLOWLY along walls, trays, containment and floors. The field fades fast, so walking briskly past at arm's length will miss it.
+        3. Watch peak hold - it keeps the highest value seen so you do not have to stare at the screen while walking.
+        4. Press Reset to start a fresh sweep.
+
+        WHAT TO LOOK AT
+        Watch the AC activity number, not the total. Here is why: the Earth has its own magnetic field, and every piece of steel in the building bends it. So the total is large and lumpy everywhere and means nothing. But steel does not FLICKER. Alternating current does. So the flickering part is the part that says live cable.
+
+        THE HONEST LIMIT
+        Your phone reads its magnetometer about 100 times a second. Mains power alternates 50 or 60 times a second. To measure something you must sample MORE THAN TWICE as fast as it changes, and 100 is not more than twice 60.
+
+        So this cannot prove a field is mains by its frequency, and it deliberately shows no frequency reading, because any number it gave you there would be false. It tells you this route is busier than that one. That is genuinely useful, and it is all it claims.
     </description>
 
   <data-containers>
@@ -112,15 +131,22 @@
     </view>
 
     <view label="Notes">
-      <info label="How to read this"/>
-      <info label="The Earth's own field is 25 to 65 uT depending on where you are, and it is steady. Steel racks, floor tiles and door frames bend that field and change the total reading without meaning anything is energised - that is why the AC activity number, not the total, is the one to watch."/>
-      <info label="Walk slowly. A phone magnetometer is a point sensor and field from a cable falls off quickly with distance, so a hot spot can be missed by walking past it at arm's length."/>
+      <info label="WATCH THE FLICKER, NOT THE TOTAL"/>
+      <info label="The Earth makes its own magnetic field, somewhere between 25 and 65 microtesla depending where you live. Every piece of steel around you bends it - racks, floor tiles, door frames, beams. So the total number is big and lumpy everywhere and tells you nothing about whether a cable is live."/>
+      <info label="Steel does not flicker. Alternating current does. So the AC activity number is the one that means something."/>
       <separator height="0.5"/>
-      <info label="Why there is no frequency readout"/>
-      <info label="The magnetometer is sampled at roughly 50 to 100 Hz. Mains at 50 or 60 Hz is at or above half that, so it aliases: a 60 Hz field sampled at 100 Hz appears as a 40 Hz wobble that is not real. The fluctuation is still a genuine sign of alternating current nearby, which is why this experiment reports its size and not its frequency."/>
+      <info label="WALK SLOWLY"/>
+      <info label="The field falls away sharply with distance. The sensor is a single point in the phone. Walk past a live cable briskly at arm's length and you will miss it completely, and the screen will look calm and reassuring while you do."/>
       <separator height="0.5"/>
-      <info label="What this cannot tell you"/>
-      <info label="This measures magnetic field, not the interference actually coupled into a cable. Screened cable, the twist in a balanced pair, and the routing geometry all matter, and none of them are visible here. Treat a strong reading as a reason to check the cable route, not as a measurement of crosstalk or bit errors. For an actual link problem, test the link."/>
+      <info label="WHY THERE IS NO FREQUENCY DISPLAY"/>
+      <info label="Because it would lie to you, and this is worth understanding once."/>
+      <info label="To measure how fast something repeats, you must sample MORE THAN TWICE as fast as it repeats. Your phone reads the magnetometer around 100 times a second. Mains alternates 50 or 60 times a second. That is not fast enough."/>
+      <info label="When you sample too slowly, you do not get a poor answer, you get a confident wrong one. A 60 Hz field sampled 100 times a second shows up as a 40 Hz wobble that does not exist anywhere in reality. Same reason wagon wheels appear to spin backwards on film."/>
+      <info label="So this reports HOW MUCH the field flickers, which is real, and refuses to report how fast, which would not be."/>
+      <separator height="0.5"/>
+      <info label="WHAT IT CANNOT TELL YOU"/>
+      <info label="It measures the field in the air. It does NOT measure the interference that actually ends up inside your data cable. Screening, the twist in a pair, and how the cable is routed all change that enormously and none of them are visible here."/>
+      <info label="So treat a strong reading as a reason to look at the cable route. It is not a measurement of crosstalk, and it is not evidence of bit errors. If you have a link problem, test the link."/>
     </view>
   </views>
 

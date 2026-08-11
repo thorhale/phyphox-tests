@@ -3,13 +3,29 @@
   <category>Data centre</category>
   <icon>RPM</icon>
   <description>
-        Reads fan speed two ways and looks for the early signs of a failing bearing.
+        WHAT IT DOES
+        Two jobs at once: how fast a fan is spinning, and whether its bearing is starting to fail.
 
-        Sound: the microphone spectrum is searched inside a frequency band you set, and the strongest tone is taken as the blade-passing frequency. Divide by the number of blades and you have shaft speed in RPM, without a strobe and without opening anything.
+        HOW THE SPEED WORKS
+        A fan with 7 blades turning 20 times a second pushes 140 puffs of air past any fixed point every second. That makes a tone at 140 Hz. Tell the app how many blades there are, it divides, and you get RPM. No strobe, no stopping the fan, nothing opened.
 
-        Vibration: rest the phone on the unit's frame. The accelerometer gives an overall vibration level, the strongest low-frequency peak (which is the once-per-revolution imbalance), and the crest factor - the ratio of peak to RMS. A healthy machine sits near a crest factor of about 1.4 to 3. Rolling-element bearing damage produces short sharp impacts that lift the crest factor well before the overall level moves, which is what makes it an early warning.
+        HOW THE BEARING CHECK WORKS
+        A healthy bearing makes a smooth even buzz. A failing one makes sharp little cracks, one for every time a ball rolls over a damaged patch. The app measures how SPIKY the vibration is compared with its average. That is the crest factor. Smooth buzz gives a low number, cracking gives a high one.
 
-        Both are comparative. Take a reading on every identical unit in the row and look for the odd one out - that is far more reliable than any absolute threshold.
+        The useful part is that the spikes appear long before the overall vibration rises. That is what makes it an early warning rather than a post mortem.
+
+        HOW TO RUN IT
+        1. Count the blades on the impeller and type the number in. Get this wrong and the RPM is wrong by exactly that ratio.
+        2. Fan speed tab: hold the phone within a metre or two of the fan.
+        3. Vibration tab: press the phone flat against the fan housing or frame and hold it firmly.
+
+        WHAT GOOD LOOKS LIKE
+        Crest factor around 3 to 4 is a healthy bearing. Past about 6, keep an eye on it. Past 10, get someone to look at it.
+
+        But the TREND beats the number every time. A fan that has read 3.5 all year and is suddenly 5 is far more interesting than one that has always read 6.
+
+        WHEN
+        Commissioning, or as a routine round. Write the numbers down. They are worth little alone and a great deal in a series.
     </description>
 
   <data-containers>
@@ -167,15 +183,22 @@
     </view>
 
     <view label="Notes">
-      <info label="Reading the sound number"/>
-      <info label="What the microphone finds is the loudest tone in the band, which is normally blade passing: shaft speed multiplied by blade count. If the RPM comes out at an implausible multiple of what you expect, the peak found was a harmonic - narrow the search band around the fundamental."/>
-      <info label="A variable speed fan under PWM control can produce a switching tone as well, often a clean high whistle that has nothing to do with shaft speed. If the number will not settle, look at the spectrum and pick the band by eye."/>
+      <info label="IF THE RPM LOOKS WRONG"/>
+      <info label="The app takes the loudest tone in the range you set. Usually that is the blades. Sometimes it is not."/>
+      <info label="If the answer comes out at almost exactly double, half, or a third of what you expected, it locked onto a harmonic - a whole number multiple of the real tone, which is always present alongside it. Narrow the search range around the pitch you actually want and try again."/>
+      <info label="A speed controlled fan can also whine at its own switching rate. It is usually a clean high whistle with nothing to do with the shaft. If the number will not settle, look at the spectrum and choose the range by eye."/>
+      <info label="And check your blade count. That is the most common cause of a confidently wrong answer, because nothing about the reading looks suspicious - it is just multiplied by the wrong number."/>
       <separator height="0.5"/>
-      <info label="Reading the vibration numbers"/>
-      <info label="Phone accelerometers sample at roughly 100 to 500 Hz, so the highest frequency visible is 50 to 250 Hz. That covers imbalance and looseness. It does NOT reach the bearing defect frequencies proper, which live in the kilohertz - this is why the crest factor matters, since it senses the impacts in the time domain without needing to resolve their frequency."/>
-      <info label="Overall RMS here is acceleration, not the velocity in mm/s that ISO 10816 severity charts are drawn in, so do not read it against those charts. Compare unit to unit instead."/>
+      <info label="WHY THE BEARING CHECK USES SPIKINESS RATHER THAN PITCH"/>
+      <info label="Bearing damage rattles at thousands of times per second. Your phone reads its accelerometer a few hundred times a second at best, so it can never hear that pitch. Not a limitation of this app - a limitation of the hardware, and no software fixes it."/>
+      <info label="But it can still feel that the shaking has become spiky rather than smooth, and that is enough. That is what crest factor measures, and it is why this works on a phone at all."/>
       <separator height="0.5"/>
-      <info label="A phone resting on a frame also picks up everything else bolted to that frame, including neighbouring units and the floor. If two adjacent machines read the same, suspect the structure rather than believing both."/>
+      <info label="DO NOT COMPARE THE VIBRATION NUMBER TO PUBLISHED CHARTS"/>
+      <info label="The standard vibration severity charts are drawn in millimetres per second - a speed. This measures acceleration, which is a different quantity. The numbers are not interchangeable and putting one into the other's chart gives a confident, meaningless answer."/>
+      <info label="Compare unit against identical unit, and each unit against its own history. That is the honest use."/>
+      <separator height="0.5"/>
+      <info label="THE FRAME CARRIES EVERYTHING"/>
+      <info label="A phone resting on a frame feels every machine bolted to that frame, plus the floor. If two neighbouring units read the same, do not conclude both are faulty. Suspect you are measuring the structure they share."/>
     </view>
   </views>
 

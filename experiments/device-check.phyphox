@@ -3,13 +3,24 @@
   <category>Data centre</category>
   <icon>CHK</icon>
   <description>
-        Run this first, on any new phone.
+        WHAT IT DOES
+        Finds out what your phone actually has inside it, and how good each part is.
 
-        It opens every sensor and watches whether anything actually comes back. Phones differ a lot: cheaper models often have no barometer, the cheapest have no gyroscope, and phyphox cannot read the light sensor on an iPhone at all. Rather than finding that out halfway through a survey, this tells you up front.
+        WHY YOU CARE
+        Phones do not tell you what sensors they contain, and they differ enormously. Cheaper models often have no barometer. The cheapest have no gyroscope. Almost no phone has a real thermometer. Better to learn that at a desk than halfway down an aisle.
 
-        It also measures the REAL sample rate of each sensor, which is not the rate that was asked for and is often very different. That number matters: it sets the highest frequency any vibration test can possibly see, which is half the accelerometer rate. If your accelerometer runs at 100 Hz you cannot see anything above 50 Hz, no matter what the test claims.
+        It also measures something no spec sheet gives you: how many readings per second each sensor really produces. That number puts a hard ceiling on every other test here. A sensor read 100 times a second cannot detect anything vibrating faster than 50 times a second. That is arithmetic, not a software limit, and no clever programming gets around it.
 
-        Put the phone on a table, press start, and leave it completely still for ten seconds.
+        HOW TO RUN IT
+        1. Put the phone flat on a table and take your hand off it.
+        2. Press play.
+        3. Wait about 30 seconds without touching it.
+        4. Read the Sensors tab, then the What you can run tab.
+
+        Do not hold it. A held phone is a moving phone, and your hand ruins the noise readings.
+
+        WHEN
+        Once per phone, ever. Then never again.
     </description>
 
   <data-containers>
@@ -275,20 +286,29 @@
     </view>
 
     <view label="Notes">
-      <info label="Why the sample rate matters so much"/>
-      <info label="Every test that looks at frequency - fan speed, bearing wear, machine census - is limited by how fast the sensor is read. A phone that samples the accelerometer 100 times a second can only show frequencies up to 50 Hz. That is enough for imbalance and looseness, but bearing damage lives in the thousands of Hz and no phone accelerometer reaches it. That is why the fan test uses crest factor, which senses the impacts in time rather than needing to resolve their frequency."/>
+      <info label="WHAT A SAMPLE RATE IS, AND WHY IT DECIDES EVERYTHING"/>
+      <info label="A sensor does not watch continuously. It takes snapshots. The sample rate is how many snapshots it takes each second."/>
+      <info label="There is a rule with no exceptions: to detect something that repeats, you must take snapshots MORE THAN TWICE as fast as it repeats. Miss that and you do not get a poor reading, you get a wrong one. So a sensor read 100 times a second tops out at 50 Hz, and everything above that is invisible to it."/>
+      <info label="Hz just means times per second. 50 Hz is fifty times a second."/>
+      <info label="This is why the fan test judges bearings by how SPIKY the vibration is rather than by its pitch. Bearing damage rattles at thousands of Hz and no phone accelerometer is anywhere near fast enough to hear that pitch. But it can still feel the spikes."/>
       <separator height="0.5"/>
-      <info label="Why the noise floor matters"/>
-      <info label="A sensor sitting still still jitters. If a test claims to detect a change smaller than that jitter, it is reading its own noise. The magnetometer noise figure is the one to watch - it tells you the smallest field change the EMI and busway tests can honestly resolve on this phone."/>
+      <info label="WHAT THE NOISE FLOOR IS"/>
+      <info label="Leave a sensor completely still and it still twitches slightly. That twitch is the noise floor. It is the smallest change the sensor can honestly tell apart from its own fidgeting."/>
+      <info label="If a test claims to spot something smaller than that, it is reading its own noise and reporting it as a finding. Watch the magnetometer figure in particular: it sets the smallest magnetic change the EMI and busway tests can truthfully see on this phone."/>
+      <info label="If the numbers here look high, you were holding the phone. Put it down and run it again."/>
       <separator height="0.5"/>
-      <info label="If something says NOT FITTED"/>
-      <info label="That is information, not a fault. Cheaper phones leave out the barometer and sometimes the gyroscope. iPhones do not expose the light sensor to phyphox. The suite is built so that a phone with only accelerometer, magnetometer, microphone and speaker still runs fifteen tests."/>
+      <info label="IF SOMETHING SAYS NOT FITTED"/>
+      <info label="That is information, not a fault. Cheaper phones leave out the barometer and sometimes the gyroscope. The tests are built so a phone with only an accelerometer, a magnetometer, a microphone and a speaker still runs fourteen of them."/>
       <separator height="0.5"/>
+      <info label="IF LIGHT OR PROXIMITY SHOWS A VERY LOW RATE"/>
+      <info label="Also normal, also not a fault. Those two only speak up when the reading CHANGES. A phone lying still under a steady light has nothing to report, so it reports almost nothing. Wave your hand over the top of the screen and you will see them react."/>
       <separator height="0.5"/>
-      <info label="Humidity and ambient temperature"/>
-      <info label="phyphox offers both, and its Add-simple-experiment dialog lists them whether or not your phone has them - which is why they are checked here. Almost no phone made since about 2014 has either, and the phone's internal temperature sensors read its own electronics rather than the room. If either says working, say so, because it would mean the Hall Survey could measure what it currently asks you to type in."/>
+      <info label="TEMPERATURE AND HUMIDITY WILL ALMOST CERTAINLY SAY NOT FITTED"/>
+      <info label="Expected. Hardly any phone built since about 2014 has either one. phyphox still offers them in its menus whether your phone has them or not, which is exactly why they are checked here."/>
+      <info label="Phones do contain temperature sensors, but they measure the phone's own electronics warming up, not the room. That is why the Hall Survey asks you to type the temperature in by hand. If either ever says working on some phone, that is worth knowing."/>
       <separator height="0.5"/>
-      <info label="Export this and keep it. It is the record of what this particular phone can and cannot measure, and every later result should be read against it."/>
+      <info label="KEEP THIS RESULT"/>
+      <info label="Export it and save it somewhere. It is the record of what this particular phone can and cannot measure, and every later reading should be read against it. A number is only as good as the sensor that produced it."/>
     </view>
   </views>
 

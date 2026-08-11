@@ -3,13 +3,32 @@
   <category>Data centre</category>
   <icon>VIB</icon>
   <description>
-        Counts the machines that are actually running, by listening to the floor.
+        WHAT IT DOES
+        Tells you which machines are actually running, by feeling the floor.
 
-        Every rotating machine in the building pushes a tone into the structure at its own turning speed. A CRAC fan, a chiller, a UPS transformer and a pump all sit at different frequencies, so a single recording of the floor contains a line for each of them. Read the lines and you know what is running and how fast - without opening a panel or asking the BMS.
+        HOW
+        Every spinning machine shakes the building slightly, at a rate set by how fast it turns. A CRAC fan, a chiller, a pump and a transformer all turn at different speeds, so they each leave their own line. One recording of the floor contains a line for each of them.
 
-        Put the phone flat on the floor, or on the frame of the thing you are interested in, press start and leave it alone for a minute. The peak-hold display keeps the highest level ever seen in each frequency bin, so a machine that cycles on partway through still leaves its mark.
+        WHY YOU CARE
+        Machines running that should not be. A backup unit quietly running alongside the duty unit for months, burning double the energy for nothing, is a real and common fault - and it is invisible on a walk round, because both units look completely normal.
 
-        This works on any phone. But check the Device Check first: the highest frequency you can see is half your accelerometer's sample rate, and on a slow phone that may be only 50 Hz.
+        HOW TO RUN IT
+        1. Put the phone FLAT ON THE FLOOR, screen up, and take your hand off it.
+        2. Press play and leave it for a minute.
+        3. Read the Census tab.
+
+        Holding it ruins the reading completely. Your hand shakes far more than the building does. This is the single most common way to get a meaningless result.
+
+        On a raised floor, put it directly over a pedestal if you can. The middle of a tile flexes and blurs everything.
+
+        READING IT
+        Divide any peak by 60 to get roughly the RPM. 50 or 60 Hz is mains. 100 or 120 Hz is usually a transformer or motor humming at twice mains. Hard disk shelves show up near 90 Hz for 5400 rpm drives, or 120 Hz for 7200 rpm.
+
+        WHEN
+        Take a baseline once, then repeat monthly and compare. A new line that was not there before means something new is running, or something old has changed. As a one off it tells you very little. As a habit it is one of the most useful things here.
+
+        CHECK FIRST
+        Run Device Check. The fastest vibration you can see is half your accelerometer's rate. On a slow phone that ceiling may be only 50 Hz.
     </description>
 
   <data-containers>
@@ -115,15 +134,21 @@
     </view>
 
     <view label="Notes">
-      <info label="What the numbers mean"/>
-      <info label="A peak at frequency f means something is turning at f revolutions per second, so f times 60 RPM. A 50 Hz line is a 3000 RPM shaft - or mains-driven magnetostriction in a transformer, which sits at twice mains, 100 or 120 Hz. Transformers hum at twice mains because the core is squeezed twice per cycle."/>
-      <info label="Two peaks close together that beat slowly against each other are two machines running at almost the same speed. That beat is audible as a slow throb in the room and is a common source of complaints."/>
+      <info label="TURNING A PEAK INTO SOMETHING YOU RECOGNISE"/>
+      <info label="A peak at 50 means something is turning 50 times a second. Multiply by 60 for RPM, so that is a 3000 RPM shaft."/>
+      <info label="50 or 60 Hz is mains electricity itself. 100 or 120 Hz is usually a transformer. Transformers hum at TWICE mains because the core is squeezed twice in every cycle, once in each direction - so a 60 Hz supply gives a 120 Hz hum."/>
+      <info label="Around 90 Hz is a 5400 rpm hard disk. Around 120 Hz is a 7200 rpm one."/>
       <separator height="0.5"/>
-      <info label="What this cannot do"/>
-      <info label="It cannot tell you WHICH machine, only that something at that speed is running. Confirm by putting the phone directly on a specific unit and watching which line grows."/>
-      <info label="The floor couples everything together, so a reading taken on a raised floor picks up the whole room. That is useful for a census and useless for blaming one machine - for that, go and sit on the machine."/>
+      <info label="TWO PEAKS ALMOST TOUCHING"/>
+      <info label="Two machines running at nearly the same speed produce a slow throb as they drift in and out of step. You can hear it in the room as a rhythmic pulsing, and it is a very common source of noise complaints - more annoying to people than a louder but steady sound."/>
       <separator height="0.5"/>
-      <info label="Levels are in arbitrary units and are not comparable between phones. Comparing the same phone in two places, or before and after a change, is exactly what this is for."/>
+      <info label="IT CANNOT TELL YOU WHICH MACHINE"/>
+      <info label="Only that something at that speed is running somewhere. The floor ties the whole room together, which is exactly what makes it useful for a census and useless for blaming one unit."/>
+      <info label="To pin it down, put the phone directly on a specific machine and watch which line grows."/>
+      <separator height="0.5"/>
+      <info label="THE LEVELS ARE NOT REAL UNITS"/>
+      <info label="Do not compare these numbers with another phone's, or with anything published. They only mean something compared with THIS phone, in another place, or in the same place at another time."/>
+      <info label="That is not a weakness for this job. Which machines are running, and has that changed, are both comparisons."/>
     </view>
   </views>
 

@@ -3,11 +3,36 @@
   <category>Acoustics</category>
   <icon>dB</icon>
   <description>
-        A weighted sound level meter: A-, C- and Z-weighted levels, Leq, Lmax/Lmin, peak level and a noise-exposure calculator.
+        WHAT IT DOES
+        Measures how loud it is, the way noise rules measure it.
 
-        Every block of 4096 audio samples (about 85 ms at 48 kHz) is Hann-windowed, Fourier transformed and integrated with the IEC 61672 A- and C-weighting curves applied in the frequency domain. Levels are therefore true frequency-weighted levels, not a raw amplitude.
+        WHY YOU CARE
+        Loudness is what turns up in complaints, in commissioning paperwork, and in arguments about hearing protection. And a room that gets louder over months is a machine going wrong.
 
-        IMPORTANT: your phone's microphone is not a calibrated measurement microphone. The experiment starts with a generic offset of 120 dB, which is only a plausible guess. Use the Calibration tab and a reference (a real sound level meter, or a calibrator) before you trust an absolute number. Relative changes, spectra and C-A differences are meaningful even without calibration.
+        THE THREE LETTERS
+        A, C and Z are three ways of adding the noise up.
+        A is what everyone means by decibels. It ignores deep rumble, because human ears largely do.
+        C keeps the rumble in.
+        Z is raw, nothing ignored.
+
+        A trick worth knowing: look at C minus A. A BIG gap means the noise is mostly low rumble, so fans, transformers or structure. A SMALL gap means it is hiss and whine. That tells you what kind of problem you have before you have done anything else.
+
+        HOW TO RUN IT
+        1. Press play.
+        2. Hold the phone at head height, arm out, away from your body. Your chest reflects sound and skews it.
+        3. Wait at least 30 seconds.
+        4. Read Leq, not the jumpy live number. Leq is the average since you pressed play, and it is the one to write down.
+
+        THE CATCH, AND IT IS A REAL ONE
+        Your phone has no idea how loud a sound truly is. It measures a signal, and turning that signal into decibels needs a fixed number added on. This starts at 120, which is a plausible guess and nothing more.
+
+        What that means in practice:
+        Comparing two places works perfectly right now, because the guess cancels out on both sides.
+        Watching one place change over time works right now, same reason.
+        The single absolute number is a guess until you calibrate. See the Calibration tab.
+
+        NEVER USE IT FOR
+        Hearing protection decisions, or anything with a legal limit. Phones distort above roughly 100 dB and a phone microphone is not a measuring instrument. If someone's hearing depends on the answer, borrow a real meter.
     </description>
 
   <data-containers>
@@ -237,9 +262,20 @@
     </view>
 
     <view label="Calibration">
-      <info label="The phone microphone is uncalibrated, so the absolute level depends entirely on the offset below. It ships at 120 dB, which is a plausible value for a typical phone but is NOT a measurement."/>
+      <info label="WHAT CALIBRATION MEANS HERE"/>
+      <info label="The phone measures a signal, not a sound level. To turn one into the other, a fixed number is added on. That number is the offset below. It starts at 120, which is a plausible value for a typical phone and is NOT a measurement."/>
+      <info label="Everything comparative already works without doing this. Two places, or one place across two months, both cancel the offset out. You only need to calibrate if you want to quote a single number with dB after it."/>
       <separator height="0.5"/>
-      <info label="To calibrate: put the phone next to a reference sound level meter (or use an acoustic calibrator), expose both to a steady sound, read the reference in dB(A), type it in below and press Calibrate while this experiment is running. Calibration uses the 1 s average, so let the reading settle first."/>
+      <info label="WHERE TO GET A REFERENCE WITHOUT BUYING ONE"/>
+      <info label="Ask whoever does hearing checks on site - safety, industrial hygiene, facilities. They own a proper meter and it is calibrated yearly because it has to be. Ten minutes standing next to them is the whole job."/>
+      <info label="Failing that: an existing noise survey for the building gives you numbers at known spots. Stand there and match. Or borrow from an acoustic or HVAC contractor. A basic meter is also only about thirty pounds or dollars new, which surprises people."/>
+      <separator height="0.5"/>
+      <info label="HOW TO DO IT, STEP BY STEP"/>
+      <info label="1. Stand in noise of about the level you actually care about, so 75 to 85 dB in a hall. Do NOT do this in a quiet office - phone microphones misbehave at the extremes and you would be calibrating the wrong end of the scale."/>
+      <info label="2. Put the reference meter and the phone side by side, same height, microphones pointing the same way."/>
+      <info label="3. Let both settle for 30 seconds. Averaged against averaged, never a jumping number against a jumping number."/>
+      <info label="4. Read the reference in dB(A), type it into Reference level below, and press Calibrate while this experiment is running."/>
+      <info label="5. WRITE THE RESULTING OFFSET DOWN. It is not saved between sessions, and it is the whole result of the exercise."/>
       <edit label="Reference level" unit="dB(A)" default="85" decimal="true">
         <output>targetDB</output>
       </edit>
@@ -270,17 +306,30 @@
     </view>
 
     <view label="Notes">
-      <info label="What this does exactly"/>
-      <info label="Each 4096-sample block is multiplied by a Hann window, Fourier transformed, and the power in every bin is multiplied by the squared A- or C-weighting response from IEC 61672 before being summed. The sum is normalised so that a full-scale sine reads -3.01 dBFS, then the calibration offset is added."/>
+      <info label="WHICH NUMBER DO I ACTUALLY WRITE DOWN"/>
+      <info label="Leq. It is the average since you pressed play, and it is what noise reports quote. The big live number jumps around far too much to mean anything on its own - quote it and the next person to measure will get something different and think you were wrong."/>
+      <info label="Lmax and Lmin are the loudest and quietest moments. Useful for spotting a door slam or a fan surge inside an otherwise steady reading."/>
       <separator height="0.5"/>
-      <info label="Where it differs from a real sound level meter"/>
-      <info label="1. The microphone is uncalibrated and its frequency response is unknown - typically poor below about 100 Hz and above 10 kHz, and most phones roll off bass sharply."/>
-      <info label="2. LA and LA slow are rectangular block averages (85 ms and 1 s), not the exponential Fast and Slow time weightings of IEC 61672."/>
-      <info label="3. Lpeak is the largest sample in a block, unweighted; a real meter uses C-weighted peak with a defined rise time."/>
-      <info label="4. Android and iOS may apply automatic gain control or noise suppression to the microphone stream. If the reading drifts down while a steady sound continues, that is AGC, and no calibration can fix it."/>
-      <info label="5. Anything above roughly 100-110 dB(A) will clip the input long before it damages the phone. Watch the clipping check."/>
+      <info label="WHAT DECIBELS ACTUALLY ARE, BRIEFLY"/>
+      <info label="They are not a normal scale. Every 10 dB is TEN TIMES the sound energy, and roughly twice as loud to a human ear. So 70 and 80 are not a small difference - the second one has ten times the energy of the first."/>
+      <info label="This also means you cannot add them like ordinary numbers. Two machines at 70 dB each give about 73 dB together, not 140."/>
       <separator height="0.5"/>
-      <info label="Do not use this for hearing-protection decisions, legal noise limits, or anything where being wrong matters. Use it to compare, to find tones, and to see trends."/>
+      <info label="HOW TO HOLD IT SO THE READING MEANS SOMETHING"/>
+      <info label="Head height, arm extended, microphone pointing into the room. Your body reflects sound, so a phone held against your chest reads high. Keep it in the same position every time or you cannot compare two readings."/>
+      <info label="Take the case off, or at least know where the microphone is - usually the bottom edge near the charging port. A case lip over it can cost several dB, and it will cost the same several dB every time, silently."/>
+      <separator height="0.5"/>
+      <info label="THE FIVE WAYS THIS DIFFERS FROM A PROPER METER"/>
+      <info label="1. The microphone is uncalibrated, and how it responds to different pitches is unknown. Most phones are poor below about 100 Hz and above 10 kHz, and cut bass sharply. In a hall full of low fan rumble that matters."/>
+      <info label="2. A real meter averages with a smooth decay, defined by standard. This averages in flat blocks, 85 milliseconds and 1 second. Close, not identical."/>
+      <info label="3. The peak reading here is simply the largest single sample. A real meter measures peak differently and to a defined standard."/>
+      <info label="4. Your phone may quietly turn its own microphone gain up and down - it is built to make voices sound even, which is the opposite of what measuring needs. If the reading slides downward while a steady noise continues, that is what is happening, and NO calibration can fix it."/>
+      <info label="5. Above roughly 100 to 110 dB the input clips - the signal is simply too big to record and the tops get cut off. Everything above that reads too low. Watch the clipping indicator."/>
+      <separator height="0.5"/>
+      <info label="WHAT IT IS GOOD FOR"/>
+      <info label="Comparing places. Watching one place over time. Finding which pitch a noise sits at. Deciding where to send someone with a proper meter."/>
+      <separator height="0.5"/>
+      <info label="WHAT IT IS NOT FOR"/>
+      <info label="Hearing protection, legal limits, or anything where being wrong has consequences. This is a phone."/>
     </view>
   </views>
 

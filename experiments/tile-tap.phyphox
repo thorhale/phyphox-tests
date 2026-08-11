@@ -3,13 +3,30 @@
   <category>Data centre</category>
   <icon>TAP</icon>
   <description>
-        Finds loose, cracked and unsupported floor tiles by the sound they make.
+        WHAT IT DOES
+        Finds loose, cracked and unsupported raised floor tiles by the note they make when you tap them.
 
-        A raised floor tile sitting properly on four pedestals rings at a high, short note. Take away a pedestal, crack the tile, or leave a stringer loose, and it rings lower and longer - the same reason a cracked mug sounds dull. Engineers have tapped structures and listened for a hundred years; this just puts a number on what your ear already notices.
+        HOW
+        A tile sitting properly on four pedestals rings high and dies away quickly. Take a pedestal away, crack the tile, or leave a stringer loose, and it rings lower and rumbles on. It is exactly why a cracked mug sounds dull compared with a good one.
 
-        Tap a tile firmly in the middle with a knuckle or a screwdriver handle. The peak hold catches the ring. Press Next tile and move on.
+        Engineers have tapped things and listened for a hundred years. This just puts a number on what your ear already notices, so you can compare a hundred tiles without trusting your memory of the first one.
 
-        Do a known-good tile first and press Set as reference. Then every tile afterwards is scored against it, which is far more reliable than any absolute number - it cancels out the tile type, the floor height and how hard you happen to tap.
+        WHY YOU CARE
+        Loose tiles trip people, they leak air out of the underfloor plenum, and they are a sign the grid is going. The usual way to find them is to walk on every one and hope you notice.
+
+        HOW TO RUN IT
+        1. Find a tile you KNOW is solid. Tap it, then press Set this tile as the reference.
+        2. Walk the room. Tap each tile, press Log this tile.
+        3. Press Next tile to advance the number so your log matches the floor plan.
+        4. Anything ringing well below the reference is worth lifting.
+
+        THE ONE THING THAT MATTERS
+        Tap the same way every single time. Middle of the tile, same knuckle or same screwdriver handle, same force. Consistency beats technique - a sloppy tap repeated identically is more useful than a perfect tap done differently each time.
+
+        Do not tap over a pedestal. Every tile sounds dead there, good or bad, and you will learn nothing.
+
+        SAFETY
+        This finds candidates. It is not permission to open the floor. Check what is standing on a tile and what runs underneath it before lifting anything.
     </description>
 
   <data-containers>
@@ -154,17 +171,25 @@
     </view>
 
     <view label="Notes">
-      <info label="How to tap"/>
-      <info label="Same spot, same object, same force, every time - the middle of the tile, with a knuckle or a screwdriver handle. Tapping over a pedestal gives a dead thud on every tile, good or bad, and tells you nothing. The comparison only means something if the tap is repeatable."/>
+      <info label="HOW TO TAP"/>
+      <info label="Middle of the tile. Same object every time - a knuckle, or the handle of a screwdriver. Same force."/>
+      <info label="Never over a pedestal. There the tile cannot move, so it thuds dully whether it is perfect or broken, and every tile scores the same."/>
+      <info label="Being consistent matters more than being skilful. A rough tap repeated identically a hundred times is far more useful than a perfect tap done slightly differently each time."/>
       <separator height="0.5"/>
-      <info label="Why compare rather than measure"/>
-      <info label="The absolute frequency depends on the tile type, its size, the floor height and what is stacked on it. None of that is worth calibrating. A tile that rings 30 percent below its identical neighbours is the finding, and that comparison survives all of it."/>
+      <info label="WHY IT COMPARES INSTEAD OF MEASURING"/>
+      <info label="The actual pitch depends on the type of tile, its size, how high the floor is, and what is stacked on top. None of that is worth trying to calibrate away, and it would change in the next room anyway."/>
+      <info label="So the finding is never a number on its own. The finding is: this tile rings well below its identical neighbours. That comparison survives everything above, which is why it works."/>
       <separator height="0.5"/>
-      <info label="What it cannot tell you"/>
-      <info label="It says a tile is different, not why. Lower ring means less stiffness or more mass - a missing pedestal, a crack, a loose stringer, or simply a heavy cabinet standing on it. Lift it and look."/>
-      <info label="A hall is noisy and the peak hold catches the loudest thing it hears, not necessarily your tap. If a reading looks wrong, press Next tile and tap again harder. If the room is very loud this test may not work at all."/>
+      <info label="IT TELLS YOU A TILE IS DIFFERENT, NOT WHY"/>
+      <info label="A lower ring means the tile is either less stiff or carrying more weight. That could be a missing pedestal, a crack, a loose stringer - or just a heavy cabinet standing on it, which is not a fault at all."/>
+      <info label="Go and look. This narrows a room full of tiles down to a handful worth checking, and that is the whole job."/>
       <separator height="0.5"/>
-      <info label="Never lift a tile without checking what is standing on it and what is underneath. This test finds candidates; it is not permission to open the floor."/>
+      <info label="WHEN IT WILL NOT WORK"/>
+      <info label="A data hall is loud, and the app catches the loudest thing it hears - which is not always your tap. If a reading looks obviously wrong, press Next tile and tap harder."/>
+      <info label="In a really loud room this test may simply not work. That is worth knowing before you spend an hour on it."/>
+      <separator height="0.5"/>
+      <info label="SAFETY"/>
+      <info label="Never lift a tile without checking what is standing on it and what runs underneath. This test produces a list of candidates. It is not permission to open the floor."/>
     </view>
   </views>
 
