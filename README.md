@@ -8,6 +8,19 @@ measuring things in a data hall with the phone you already have.
 reports correctly. The other 14 experiments are checked by script and the maths
 is verified, but have not each been run in a hall yet.
 
+## Read this first
+
+**[GUIDE.md](GUIDE.md)** — every test in plain English: what it does, why you'd
+care, how to run it, and an honest verdict on whether it's worth your time. Not
+all sixteen are equally good and that page says so, including a proposal to merge
+the ones that overlap.
+
+**[CALIBRATION.md](CALIBRATION.md)** — how to make the sound meter's absolute
+number trustworthy, and why you probably don't need to.
+
+The same explanations are now inside each experiment too — phyphox shows the
+description when you open it, and every test has a Notes tab.
+
 ## Start here
 
 **Run `device-check` first on any new phone.** It opens every sensor, sees what
@@ -75,11 +88,19 @@ matching the files, which is the usual way a compatibility list becomes a lie.
 python3 tools/check_tiers.py
 ```
 
-## How to install one
+## How to install
 
-Open **`open.html`** on the phone and tap the experiment you want. Each button
-hands the file straight to phyphox, which asks whether to add it. It then sits in
-your experiment list like any built-in one.
+**All of them at once — one scan.** phyphox lists every `.phyphox` file it finds
+inside a zip and asks which to add, so a single code pointing at `all-tests.zip`
+replaces the whole sheet. It's the big code at the top of `install.html`, and the
+big button at the top of `open.html`.
+
+That code also never goes stale: it points at the zip rather than at any one
+experiment, so updating the zip updates everyone who already scanned it. Print it
+once.
+
+**One at a time.** Open `open.html` on the phone and tap the experiment you want.
+Each button hands the file straight to phyphox, which asks whether to add it.
 
 ```sh
 python3 tools/make_qr.py --base https://raw.githubusercontent.com/thorhale/phyphox-tests/main
