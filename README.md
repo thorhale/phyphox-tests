@@ -200,6 +200,34 @@ is (and which are clearest), and — the thing WiFiAnalyzer can't do, because it
 live-only — tells you what you could actually reach at each spot you marked. Open
 it in any browser; it needs no internet.
 
+### The troubleshooting map
+
+To actually *see* where WiFi is weak or jammed, paint the survey onto the floor:
+
+```sh
+python3 tools/wifi_map.py survey.csv positions.csv -o map.html
+```
+
+It draws three heatmaps — **coverage** (where a network is weak), **interference**
+(where overlapping channels crowd the air), and **quality** (coverage minus
+interference: the map that actually shows where WiFi will struggle, which is not
+always where the signal is weakest).
+
+It needs one extra thing the survey doesn't have: **where each waypoint was on the
+floor**. That's a tiny CSV, `waypoint,x,y`, in metres on a grid you choose. In a
+data hall the aisles already *are* a grid, so "aisle 2, third rack" is a
+coordinate. Run the tool with no positions file and it prints a blank template
+listing your waypoints to fill in:
+
+```sh
+python3 tools/wifi_map.py survey.csv          # prints the template
+```
+
+**Read the map honestly:** between waypoints the colours are interpolated — a
+guess from the nearest points. A wall the survey walked past but not through won't
+show as the sharp drop it really is. More waypoints make a truer map. Treat a red
+zone as a place to go stand and confirm.
+
 There's a nasty trap it handles for you. phyphox records time in UTC (a single
 world clock), and WiFiAnalyzer records local time without saying so. Join them the
 naive way and everything is shifted by a few hours — and the result still *looks*
