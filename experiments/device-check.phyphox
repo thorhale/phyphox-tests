@@ -125,12 +125,12 @@
 
   <views>
     <view label="Sensors">
-      <info label="Leave the phone still on a table for ten seconds. Anything reading zero samples is not fitted to this phone."/>
+      <info label="Leave the phone still on a table for ten seconds - genuinely still, not held. Anything reading zero samples is not fitted to this phone. The light and proximity sensors are event driven: they report only when the reading changes, so a low sample rate from them is normal and not a fault."/>
       <separator height="0.5"/>
       <value label="Accelerometer">
         <input>accN</input>
         <map max="0.5">NOT FITTED</map>
-        <map max="20">starting up...</map>
+        <map max="20">fitted - reports only when it changes</map>
         <map>working</map>
       </value>
       <value label="   its real sample rate" unit="Hz" precision="1">
@@ -139,7 +139,7 @@
       <value label="Gyroscope">
         <input>gyrN</input>
         <map max="0.5">NOT FITTED</map>
-        <map max="20">starting up...</map>
+        <map max="20">fitted - reports only when it changes</map>
         <map>working</map>
       </value>
       <value label="   its real sample rate" unit="Hz" precision="1">
@@ -148,7 +148,7 @@
       <value label="Magnetometer">
         <input>magN</input>
         <map max="0.5">NOT FITTED</map>
-        <map max="20">starting up...</map>
+        <map max="20">fitted - reports only when it changes</map>
         <map>working</map>
       </value>
       <value label="   its real sample rate" unit="Hz" precision="1">
@@ -157,7 +157,7 @@
       <value label="Barometer">
         <input>preN</input>
         <map max="0.5">NOT FITTED</map>
-        <map max="20">starting up...</map>
+        <map max="20">fitted - reports only when it changes</map>
         <map>working</map>
       </value>
       <value label="   its real sample rate" unit="Hz" precision="1">
@@ -166,7 +166,7 @@
       <value label="Light sensor">
         <input>lgtN</input>
         <map max="0.5">NOT FITTED</map>
-        <map max="20">starting up...</map>
+        <map max="20">fitted - reports only when it changes</map>
         <map>working</map>
       </value>
       <value label="   its real sample rate" unit="Hz" precision="1">
@@ -175,7 +175,7 @@
       <value label="Proximity">
         <input>prxN</input>
         <map max="0.5">NOT FITTED</map>
-        <map max="20">starting up...</map>
+        <map max="20">fitted - reports only when it changes</map>
         <map>working</map>
       </value>
       <value label="   its real sample rate" unit="Hz" precision="1">
@@ -184,7 +184,7 @@
       <value label="Ambient temperature">
         <input>tmpN</input>
         <map max="0.5">NOT FITTED</map>
-        <map max="20">starting up...</map>
+        <map max="20">fitted - reports only when it changes</map>
         <map>working</map>
       </value>
       <value label="   its real sample rate" unit="Hz" precision="1">
@@ -193,7 +193,7 @@
       <value label="Humidity">
         <input>humN</input>
         <map max="0.5">NOT FITTED</map>
-        <map max="20">starting up...</map>
+        <map max="20">fitted - reports only when it changes</map>
         <map>working</map>
       </value>
       <value label="   its real sample rate" unit="Hz" precision="1">
@@ -241,7 +241,7 @@
     </view>
 
     <view label="What you can run">
-      <value label="The 15 core tests">
+      <value label="The 14 core tests">
         <input>coreOk</input>
         <map max="0.5">NO - a core sensor is missing</map>
         <map max="20">checking...</map>
@@ -258,7 +258,7 @@
       <value label="Light readings in the walk logger">
         <input>lgtN</input>
         <map max="0.5">NO - normal on iPhone, phyphox cannot read it there</map>
-        <map max="20">checking...</map>
+        <map max="20">YES - but it only updates when the light changes</map>
         <map>YES</map>
       </value>
       <value label="Rotation tests">
