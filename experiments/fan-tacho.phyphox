@@ -101,6 +101,11 @@
     <container>vib1x</container>
     <container>rpmVib</container>
 
+    <!-- kurtosis (impulsiveness) -->
+    <container size="512">vibDet4</container>
+    <container>vibMean4</container>
+    <container>vibKurt</container>
+
     <!-- velocity RMS in mm/s, the ISO 10816/20816 unit -->
     <container>iVel</container>
     <container size="256">velF</container>
@@ -175,13 +180,17 @@
       <value label="Crest factor - how spiky the shaking is compared to its average" unit="x" size="2" precision="2">
         <input>vibCrest</input>
       </value>
-      <value label="Bearing verdict">
-        <input>vibCrest</input>
-        <map max="3">smooth - no sharp cracks</map>
-        <map max="4.5">a few sharp cracks - note it and check again later</map>
-        <map max="6">spiky - compare against a matching healthy fan</map>
-        <map>very spiky - inspect the bearing</map>
+      <value label="Kurtosis - a steadier spikiness score (3 = healthy, higher = sharp knocks)" unit="x" size="2" precision="2">
+        <input>vibKurt</input>
       </value>
+      <value label="Early-warning (spikiness)">
+        <input>vibKurt</input>
+        <map max="3.5">smooth - no sharp knocks</map>
+        <map max="5">a few sharp knocks - note it and check again later</map>
+        <map max="8">knocking - compare against a matching healthy fan</map>
+        <map>strong knocking - inspect the bearing</map>
+      </value>
+      <info label="Read the two spikiness scores with the speed number above. A bearing goes through stages, and this is the trap: EARLY on, the knocks are sharp, so spikiness climbs while the speed number is still low. LATE on, the knocks blur into constant roughness, so spikiness DROPS BACK toward healthy - but the speed number is now high. So a spikiness score that fell after it had risen is itself the warning, not the all-clear. High speed with low spikiness is a late, serious fault, not a healthy one."/>
       <separator height="0.5"/>
       <value label="Wobble peak (once per turn)" unit="Hz" precision="2">
         <input>vib1x</input>
@@ -399,6 +408,24 @@
       <input>vibPeakAmp</input>
       <input clear="false">vibRms</input>
       <output>vibCrest</output>
+    </formula>
+
+    <!-- kurtosis: mean of the 4th powers over stddev^4. A healthy random
+         (Gaussian) buzz reads 3; a pure sine reads exactly 1.5; sharp bearing
+         impacts push it well above 3. It integrates the whole distribution, so
+         it is steadier than crest factor, which hangs on a single peak sample. -->
+    <formula formula="[1_]*[1_]*[1_]*[1_]">
+      <input clear="false">vibDetrend</input>
+      <output>vibDet4</output>
+    </formula>
+    <average>
+      <input as="buffer">vibDet4</input>
+      <output as="average">vibMean4</output>
+    </average>
+    <formula formula="[1]/max([2]*[2]*[2]*[2],0.000000000001)">
+      <input>vibMean4</input>
+      <input clear="false">vibRms</input>
+      <output>vibKurt</output>
     </formula>
 
     <!-- vibration spectrum -->

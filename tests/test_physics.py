@@ -250,6 +250,37 @@ def vibration_velocity_matches_the_analytic_mm_per_s():
     return f"worst {worst * 100:.2f}% of analytic across both files"
 
 
+@test
+def kurtosis_is_three_for_gaussian_and_1p5_for_a_sine():
+    """Kurtosis is the bearing early-warning that survives where crest factor
+    fails. A healthy random buzz reads 3, a pure sine reads exactly 1.5, and
+    sharp impacts read well above 3. Evaluates the shipped vibKurt formula, so a
+    structural edit (rms^4 mistyped as rms^2) is caught by the sine no longer
+    landing on 1.5."""
+    expr = formula_for(path("fan-tacho"), "vibKurt")
+
+    def chain(sig):
+        n = len(sig)
+        mean = sum(sig) / n
+        d = [v - mean for v in sig]
+        mean4 = sum(v ** 4 for v in d) / n
+        rms = math.sqrt(sum(v * v for v in d) / (n - 1))  # phyphox corrected stddev
+        return evaluate(expr, mean4, rms)
+
+    n = 8192
+    sine = [math.sin(2 * math.pi * i / 64) for i in range(n)]
+    close(chain(sine), 1.5, 0.01, "kurtosis of a sine")
+    random.seed(7)
+    g = [random.gauss(0, 1) for _ in range(n)]
+    close(chain(g), 3.0, 0.25, "kurtosis of Gaussian noise")
+    spiky = list(g)
+    for i in range(0, n, 150):
+        spiky[i] += 15.0
+    if chain(spiky) < 6.0:
+        raise AssertionError("kurtosis failed to flag a spiky (early-fault) signal")
+    return "sine 1.50, Gaussian ~3, spiky well above"
+
+
 # ==========================================================================
 # Dimension survey: speed of sound as a thermometer
 # ==========================================================================
