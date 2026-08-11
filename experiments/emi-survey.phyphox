@@ -52,6 +52,15 @@
     <container>bMax</container>
     <container>bMin</container>
     <container>bPtp</container>
+
+    <!-- cable depth from how fast the AC field falls off -->
+    <container init="0">grabSurface</container>
+    <container init="0">grabStandoff</container>
+    <container init="0">acSurface</container>
+    <container init="0">acStandoff</container>
+    <container init="0.1">standoff</container>
+    <container>emiRatio</container>
+    <container>emiDepth</container>
   </data-containers>
 
   <input>
@@ -128,6 +137,46 @@
         <input axis="x">bt</input>
         <input axis="y">bx</input>
       </graph>
+    </view>
+
+    <view label="Cable depth">
+      <info label="Roughly how far a live cable sits behind the surface. A cable's field gets weaker the further you are from it, in a known way, so two readings at two distances give the distance. Find the strongest spot first (on the Survey tab), then work here."/>
+      <separator height="0.5"/>
+      <info label="1. Hold the phone flat against the surface, right over the strongest spot. Let the AC activity settle, then press this."/>
+      <button label="1. Measure at the surface">
+        <input type="value">1</input>
+        <output>grabSurface</output>
+      </button>
+      <value label="Reading at the surface" unit="uT" precision="3">
+        <input>acSurface</input>
+      </value>
+      <separator height="0.5"/>
+      <info label="2. Pull the phone straight back from the surface by the standoff distance below - keep it over the same spot - let it settle, and press this."/>
+      <edit label="Standoff - how far you pulled back" unit="m" default="0.1" decimal="true">
+        <output>standoff</output>
+      </edit>
+      <button label="2. Measure one standoff out">
+        <input type="value">1</input>
+        <output>grabStandoff</output>
+      </button>
+      <value label="Reading one standoff out" unit="uT" precision="3">
+        <input>acStandoff</input>
+      </value>
+      <separator height="0.5"/>
+      <value label="Estimated depth behind the surface" unit="m" size="3" precision="3">
+        <input>emiDepth</input>
+      </value>
+      <value label="How much the field dropped (want clearly above 1)" unit="x" precision="2">
+        <input>emiRatio</input>
+      </value>
+      <value label="Is this trustworthy">
+        <input>emiRatio</input>
+        <map max="1.1">no - the two readings are too close; pull back further or you are not over a cable</map>
+        <map max="4">yes - a clear drop, the depth is a fair estimate</map>
+        <map>very close to the surface (or a very short standoff)</map>
+      </value>
+      <separator height="0.5"/>
+      <info label="HONEST LIMITS. This assumes a single straight cable. A normal live-and-neutral pair cancels most of its own field and falls off faster, so it reads SHALLOWER than it is - the method works best on a single fat conductor like a busbar or a feeder. It is most accurate for shallow cables and gets rough as the depth passes the standoff. Pull back by a decent fraction of the likely depth: too small a standoff and the two readings barely differ."/>
     </view>
 
     <view label="Notes">
@@ -217,6 +266,42 @@
       <input clear="false">bMin</input>
       <output>bPtp</output>
     </subtract>
+
+    <!-- Cable depth. The field of a long cable falls off as 1/distance, so if
+         the AC field is B1 against the surface (distance = the depth d) and B2
+         one standoff s further out (distance d+s), then B1/B2 = (d+s)/d, which
+         solves to d = s/(B1/B2 - 1). We use the AC (fluctuating) part, so the
+         Earth's steady field cancels itself out of the ratio. -->
+    <if equal="true">
+      <input clear="false">grabSurface</input>
+      <input type="value">1</input>
+      <input clear="false">bAc</input>
+      <output>acSurface</output>
+    </if>
+    <append>
+      <input type="value">0</input>
+      <output>grabSurface</output>
+    </append>
+    <if equal="true">
+      <input clear="false">grabStandoff</input>
+      <input type="value">1</input>
+      <input clear="false">bAc</input>
+      <output>acStandoff</output>
+    </if>
+    <append>
+      <input type="value">0</input>
+      <output>grabStandoff</output>
+    </append>
+    <formula formula="[1]/max([2],0.0001)">
+      <input clear="false">acSurface</input>
+      <input clear="false">acStandoff</input>
+      <output>emiRatio</output>
+    </formula>
+    <formula formula="[1]/max([2]-1,0.001)">
+      <input clear="false">standoff</input>
+      <input clear="false">emiRatio</input>
+      <output>emiDepth</output>
+    </formula>
   </analysis>
 
   <export>

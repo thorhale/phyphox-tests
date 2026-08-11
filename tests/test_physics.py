@@ -402,6 +402,27 @@ def microphone_envelope_kurtosis_hears_bearing_knocks():
     return f"healthy {kh:.1f}, whine {kw:.1f}, knocking {kk:.1f}"
 
 
+@test
+def emi_depth_recovers_a_known_cable_distance():
+    """A long cable's field falls as 1/distance, so the AC field at the surface
+    (distance d) over the field one standoff s further out (d+s) is (d+s)/d,
+    giving d = s/(ratio-1). Reads the shipped emiRatio and emiDepth formulas and
+    checks they return the true depth for several cable distances, plus that the
+    guard keeps a no-drop reading (ratio 1) from returning a real depth."""
+    ratio_expr = formula_for(path("emi-survey"), "emiRatio")
+    depth_expr = formula_for(path("emi-survey"), "emiDepth")
+    for d, s in ((0.15, 0.10), (0.05, 0.05), (0.30, 0.15), (0.02, 0.10)):
+        b1, b2 = 1.0 / d, 1.0 / (d + s)          # 1/r field, Earth already removed
+        rho = evaluate(ratio_expr, b1, b2)
+        depth = evaluate(depth_expr, s, rho)
+        close(depth, d, d * 0.01, f"depth for d={d}, s={s}")
+    # equal readings (no cable / too far) must not fake a shallow depth
+    rho1 = evaluate(ratio_expr, 1.0, 1.0)
+    if evaluate(depth_expr, 0.1, rho1) < 10.0:
+        raise AssertionError("no field drop should give a huge (unreliable) depth, not a real one")
+    return "recovers 2-30 cm depths exactly; guarded when the field does not drop"
+
+
 # ==========================================================================
 # Dimension survey: speed of sound as a thermometer
 # ==========================================================================
