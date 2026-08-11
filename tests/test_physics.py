@@ -312,6 +312,28 @@ def spectral_flatness_reads_e_minus_gamma_for_white_noise():
     return "flat 1.00, white noise 0.5615 (e^-gamma), tone ~0"
 
 
+@test
+def statistical_levels_pick_the_right_percentiles():
+    """L90 (the background) must be the level exceeded 90% of the time, i.e. the
+    10th percentile of the sorted levels; L10 the 90th; L50 the median. Reads the
+    shipped index formulas and checks them against a known ramp, so a swapped
+    0.1/0.9 (which would report the peaks as the background) is caught."""
+    i90 = formula_for(path("sound-level-meter"), "i90")
+    i50 = formula_for(path("sound-level-meter"), "i50")
+    i10 = formula_for(path("sound-level-meter"), "i10")
+    n = 1000
+    levels = list(range(1, n + 1))          # uniform 1..1000, already ascending
+    got90 = levels[int(evaluate(i90, float(n)))]
+    got50 = levels[int(evaluate(i50, float(n)))]
+    got10 = levels[int(evaluate(i10, float(n)))]
+    close(got90, 100, 1, "L90 at the 10th percentile")
+    close(got50, 500, 1, "L50 at the median")
+    close(got10, 900, 1, "L10 at the 90th percentile")
+    if not got90 < got50 < got10:
+        raise AssertionError("L90 must be the quiet end, L10 the loud end")
+    return "L90=100, L50=500, L10=900 on a uniform 1..1000"
+
+
 # ==========================================================================
 # Dimension survey: speed of sound as a thermometer
 # ==========================================================================

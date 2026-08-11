@@ -47,6 +47,8 @@ MUTATIONS = [
      "the 2*pi*f velocity divisor halved - mm/s would read double"),
     ("fan-tacho", "5.333333333333333", "2.666666666666666",
      "velocity window/half-spectrum scaling halved"),
+    ("sound-level-meter", "0.1*[1]", "0.9*[1]",
+     "L90 percentile swapped - would report the loud peaks as the background"),
 ]
 
 

@@ -93,6 +93,16 @@
     <container>LAmin</container>
     <container>CminusA</container>
 
+    <!-- statistical levels: sort the whole LA history and pick percentiles -->
+    <container size="0">sortedLA</container>
+    <container>nLevels</container>
+    <container>i90</container>
+    <container>i50</container>
+    <container>i10</container>
+    <container>LA90</container>
+    <container>LA50</container>
+    <container>LA10</container>
+
     <!-- 1 s rolling average (12 blocks) -->
     <container size="12">slowRing</container>
     <container>msASlow</container>
@@ -178,6 +188,17 @@
       <value label="Lpeak max (biggest single spike, nothing ignored)" unit="dB" precision="1">
         <input>LpeakMax</input>
       </value>
+      <separator height="0.5"/>
+      <value label="LA90 (the quiet background between events)" unit="dB(A)" precision="1">
+        <input>LA90</input>
+      </value>
+      <value label="LA50 (the middle level - half the time above, half below)" unit="dB(A)" precision="1">
+        <input>LA50</input>
+      </value>
+      <value label="LA10 (the intrusive peaks - exceeded a tenth of the time)" unit="dB(A)" precision="1">
+        <input>LA10</input>
+      </value>
+      <info label="These three describe the SHAPE of the noise over time, not just the average. LA90 is the level the noise stays above 90% of the time - it is the steady background, and it is what the BS 4142 rules judge a new noise against. LA10 is where the loud events poke through. A big gap between LA10 and LA90 means spiky, event-driven noise; a small gap means a steady drone. Let it run a minute or two before trusting them."/>
       <separator height="0.5"/>
       <value label="LC (loudness with the deep rumble kept in)" unit="dB(C)" precision="1">
         <input>LC</input>
@@ -581,6 +602,50 @@
       <input as="y" clear="false">LA</input>
       <output as="min">LAmin</output>
     </min>
+
+    <!-- statistical levels. Sort the whole level history low-to-high, then read
+         off percentiles. L90 (exceeded 90% of the time) sits at the 10th
+         percentile - it is the quiet background between events, the number
+         BS 4142 assesses noise against. L10 (exceeded 10%) is the intrusive
+         peaks. L50 is the median. -->
+    <sort>
+      <input clear="false">LA</input>
+      <output>sortedLA</output>
+    </sort>
+    <count>
+      <input clear="false">LA</input>
+      <output>nLevels</output>
+    </count>
+    <formula formula="max(round(0.1*[1])-1,0)">
+      <input clear="false">nLevels</input>
+      <output>i90</output>
+    </formula>
+    <formula formula="max(round(0.5*[1])-1,0)">
+      <input clear="false">nLevels</input>
+      <output>i50</output>
+    </formula>
+    <formula formula="max(round(0.9*[1])-1,0)">
+      <input clear="false">nLevels</input>
+      <output>i10</output>
+    </formula>
+    <subrange>
+      <input as="from" clear="false">i90</input>
+      <input as="length" type="value">1</input>
+      <input as="in" clear="false">sortedLA</input>
+      <output>LA90</output>
+    </subrange>
+    <subrange>
+      <input as="from" clear="false">i50</input>
+      <input as="length" type="value">1</input>
+      <input as="in" clear="false">sortedLA</input>
+      <output>LA50</output>
+    </subrange>
+    <subrange>
+      <input as="from" clear="false">i10</input>
+      <input as="length" type="value">1</input>
+      <input as="in" clear="false">sortedLA</input>
+      <output>LA10</output>
+    </subrange>
 
     <!-- 1 s rolling average -->
     <append>
