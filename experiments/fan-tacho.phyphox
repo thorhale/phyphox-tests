@@ -100,6 +100,7 @@
     <container size="256">vibBandMag</container>
     <container>vib1x</container>
     <container>rpmVib</container>
+    <container>micVibRatio</container>
 
     <!-- kurtosis (impulsiveness) -->
     <container size="512">vibDet4</container>
@@ -198,6 +199,15 @@
       <value label="Implied shaft speed" unit="RPM" precision="0">
         <input>rpmVib</input>
       </value>
+      <value label="Sound-vs-shake speed check">
+        <input>micVibRatio</input>
+        <map max="0.35">the two disagree - one sensor is not seeing the fan</map>
+        <map max="0.7">sound reads about half - it may have picked a lower tone</map>
+        <map max="1.4">the two agree - the speed is trustworthy</map>
+        <map max="2.5">sound reads about double - it locked onto a harmonic; narrow the sound search range</map>
+        <map>the two disagree - check the blade count and the search range</map>
+      </value>
+      <info label="This only works with the phone ON the frame (so the shake sensor has a fan to read). It cross-checks the sound speed against the shake speed. If sound reads a clean multiple - double or half - of the shake speed, the sound picked a harmonic (a whole-number multiple of the real tone), and the shake number is the one to believe."/>
       <separator height="0.5"/>
       <value label="Accelerometer sample rate" unit="Hz" precision="1">
         <input>vibRate</input>
@@ -544,6 +554,17 @@
       <input as="factor" type="value">60</input>
       <output>rpmVib</output>
     </multiply>
+
+    <!-- Octave-error guard. Both numbers are the shaft speed: the microphone
+         gets it from the blade tone divided by the blade count, the
+         accelerometer from the once-per-turn wobble. If the sound path locks
+         onto a harmonic it reads a whole-number multiple of the true speed, so
+         the ratio jumps to about 2 or 0.5 instead of 1. -->
+    <formula formula="[1]/max([2],0.001)">
+      <input clear="false">rpmMic</input>
+      <input clear="false">rpmVib</input>
+      <output>micVibRatio</output>
+    </formula>
   </analysis>
 
   <export>

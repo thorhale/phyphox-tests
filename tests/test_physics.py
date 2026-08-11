@@ -334,6 +334,23 @@ def statistical_levels_pick_the_right_percentiles():
     return "L90=100, L50=500, L10=900 on a uniform 1..1000"
 
 
+@test
+def fan_tacho_octave_cross_check_flags_a_harmonic():
+    """The sound and vibration paths both give shaft speed, so their ratio is 1
+    when they agree. A harmonic lock on the sound path reads a whole multiple of
+    the true speed, so the ratio jumps to ~2 (or ~0.5). Reads the shipped ratio
+    formula and checks it lands in the right verdict band."""
+    expr = formula_for(path("fan-tacho"), "micVibRatio")
+    close(evaluate(expr, 3000.0, 3000.0), 1.0, 0.001, "agreement -> 1")
+    close(evaluate(expr, 6000.0, 3000.0), 2.0, 0.001, "mic on 2nd harmonic -> 2")
+    close(evaluate(expr, 1500.0, 3000.0), 0.5, 0.001, "mic half speed -> 0.5")
+    # the divide-by-zero guard: no vibration contact must not crash
+    got = evaluate(expr, 3000.0, 0.0)
+    if not got > 100:
+        raise AssertionError("guard failed - ratio should be large, not an error")
+    return "1.0 agree, 2.0 harmonic, 0.5 half, guarded at zero"
+
+
 # ==========================================================================
 # Dimension survey: speed of sound as a thermometer
 # ==========================================================================
