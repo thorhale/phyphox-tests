@@ -50,6 +50,17 @@
     <container size="8192">micHalfIm</container>
     <container size="8192">micMag</container>
 
+    <!-- bearing listen: kurtosis of the high-frequency sound envelope -->
+    <container size="16384">micSmooth</container>
+    <container size="16384">micHp</container>
+    <container size="16384">micEnv</container>
+    <container>micEnvMean</container>
+    <container>micEnvStd</container>
+    <container size="16384">micEnvDet</container>
+    <container size="16384">micEnvDet4</container>
+    <container>micEnvMean4</container>
+    <container>micEnvKurt</container>
+
     <!-- search band -->
     <container init="50">fMin</container>
     <container init="2000">fMax</container>
@@ -221,6 +232,23 @@
       </graph>
     </view>
 
+    <view label="Bearing listen (sound)">
+      <info label="Point the phone at the machine, within a hand's width. This listens for the sharp high-pitched RING that a chipped bearing makes each time a ball rolls over the damage - a sound too high-pitched for the shake sensor to feel, but the microphone hears it."/>
+      <separator height="0.5"/>
+      <value label="Knock score (about 3 = smooth, higher = sharp knocks)" unit="x" size="2" precision="2">
+        <input>micEnvKurt</input>
+      </value>
+      <value label="Reading">
+        <input>micEnvKurt</input>
+        <map max="3.5">smooth - no knocks in the sound</map>
+        <map max="4.5">a little knocking - note it, compare with a healthy unit</map>
+        <map>clear knocking - check this bearing against an identical good one</map>
+      </value>
+      <separator height="0.5"/>
+      <info label="BE HONEST ABOUT THIS ONE. A phone microphone in a loud hall is fighting every other machine in the room, so this is a screen, not a diagnosis. It works best COMPARING units: run it on a machine you know is healthy, note the score, then check the rest against that. An outlier is the finding. A single number on its own means little."/>
+      <info label="A steady whistle or whine pushes this number LOW, not high, so a noisy fan does not fake a fault. It is sharp, repeated knocks - not steady tones - that lift it."/>
+    </view>
+
     <view label="Notes">
       <info label="IF THE RPM LOOKS WRONG"/>
       <info label="The app takes the loudest tone in the range you set. Usually that is the blades. Sometimes it is not."/>
@@ -276,6 +304,52 @@
       <input clear="false">micBlock</input>
       <output clear="false">micN</output>
     </count>
+
+    <!-- Bearing listen through the microphone. The mic samples fast enough to
+         hear the 4-20 kHz ring that bearing impacts make - a range a phone's
+         motion sensor is far too slow to reach. High-pass the sound to keep
+         only that ring (the signal minus a light smoothing of itself),
+         rectify it to get the envelope of the knocks, then measure the
+         envelope's kurtosis. A smooth hiss reads about 3; sharp, repeated
+         bearing knocks push it higher. Best read against an identical healthy
+         unit, because a noisy hall competes with a phone mic. -->
+    <gausssmooth sigma="2">
+      <input clear="false">micBlock</input>
+      <output>micSmooth</output>
+    </gausssmooth>
+    <formula formula="[1_]-[2_]">
+      <input clear="false">micBlock</input>
+      <input>micSmooth</input>
+      <output>micHp</output>
+    </formula>
+    <formula formula="abs([1_])">
+      <input>micHp</input>
+      <output>micEnv</output>
+    </formula>
+    <average>
+      <input as="buffer" clear="false">micEnv</input>
+      <output as="average">micEnvMean</output>
+      <output as="stddev" clear="false">micEnvStd</output>
+    </average>
+    <formula formula="[1_]-[2]">
+      <input clear="false">micEnv</input>
+      <input>micEnvMean</input>
+      <output>micEnvDet</output>
+    </formula>
+    <formula formula="[1_]*[1_]*[1_]*[1_]">
+      <input>micEnvDet</input>
+      <output>micEnvDet4</output>
+    </formula>
+    <average>
+      <input as="buffer">micEnvDet4</input>
+      <output as="average">micEnvMean4</output>
+    </average>
+    <formula formula="[1]/max([2]*[2]*[2]*[2],0.000000000001)">
+      <input>micEnvMean4</input>
+      <input clear="false">micEnvStd</input>
+      <output>micEnvKurt</output>
+    </formula>
+
     <ramp>
       <input as="start" type="value">0</input>
       <input as="stop" type="value">1</input>

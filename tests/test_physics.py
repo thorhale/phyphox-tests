@@ -351,6 +351,57 @@ def fan_tacho_octave_cross_check_flags_a_harmonic():
     return "1.0 agree, 2.0 harmonic, 0.5 half, guarded at zero"
 
 
+@test
+def microphone_envelope_kurtosis_hears_bearing_knocks():
+    """The mic hears the 4-20 kHz ring of bearing impacts the accelerometer
+    cannot. The chain high-passes the sound, rectifies to the envelope, and
+    takes its kurtosis via the shipped micEnvKurt formula. Sharp repeated knocks
+    read high; smooth hiss reads about 3; a steady whine reads low. Uses the same
+    Gaussian high-pass the file applies (signal minus a smooth of itself)."""
+    expr = formula_for(path("fan-tacho"), "micEnvKurt")
+    fs, n = 48000.0, 8192
+
+    def gsmooth(x, sigma):
+        r = max(1, int(4 * sigma))
+        ker = [math.exp(-0.5 * (k / sigma) ** 2) for k in range(-r, r + 1)]
+        s = sum(ker)
+        ker = [k / s for k in ker]
+        out = []
+        for i in range(len(x)):
+            acc = 0.0
+            for j, kk in enumerate(ker):
+                idx = i + j - r
+                if 0 <= idx < len(x):
+                    acc += x[idx] * kk
+            out.append(acc)
+        return out
+
+    def env_kurt(sig):
+        hp = [sig[i] - g for i, g in enumerate(gsmooth(sig, 2.0))]
+        env = [abs(v) for v in hp]
+        m = sum(env) / n
+        d = [v - m for v in env]
+        mean4 = sum(v ** 4 for v in d) / n
+        std = math.sqrt(sum(v * v for v in d) / (n - 1))
+        return evaluate(expr, mean4, std)
+
+    random.seed(5)
+    t = [i / fs for i in range(n)]
+    healthy = [random.gauss(0, 1) for _ in range(n)]
+    whine = [math.sin(2 * math.pi * 8000 * ti) for ti in t]
+    knocking = []
+    for ti in t:
+        ph = (ti * 137.0) % 1.0
+        knocking.append(1.2 * math.exp(-ph * 40) * math.sin(2 * math.pi * 8000 * ti)
+                        + 0.3 * random.gauss(0, 1))
+    kh, kw, kk = env_kurt(healthy), env_kurt(whine), env_kurt(knocking)
+    if not kk > kh:
+        raise AssertionError(f"knocking ({kk:.2f}) must read above healthy ({kh:.2f})")
+    if not kw < kh:
+        raise AssertionError(f"a steady whine ({kw:.2f}) must not read as a fault")
+    return f"healthy {kh:.1f}, whine {kw:.1f}, knocking {kk:.1f}"
+
+
 # ==========================================================================
 # Dimension survey: speed of sound as a thermometer
 # ==========================================================================
