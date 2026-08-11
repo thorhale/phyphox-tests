@@ -3,11 +3,26 @@
   <category>Data centre</category>
   <icon>WLK</icon>
   <description>
-        The backbone of a walk-round survey: noise, magnetic field, light, pressure, tilt and walking cadence, all sampled against one clock, with a button that stamps a waypoint.
+        WHAT IT IS
+        The recorder. Not a test - the thing you run while you do everything else.
 
-        Everything is exported with an absolute Unix timestamp, so anything else you record on the same walk - a WiFi analyser's RSSI log, thermal camera shots, a note on your phone - can be lined up with it afterwards on time alone. That is what turns a set of unrelated readings into one dataset.
+        It records noise, magnetic field, light, air pressure, tilt and your walking pace all at once, against a single clock, with a button to mark any spot.
 
-        Press Waypoint at every known point: a column, a tile grid reference, the end of a row. Between waypoints the continuous trace carries on recording, so you can interpolate positions along the walk from the waypoints either side.
+        WHY YOU CARE
+        Walk the hall once and you get one file with everything lined up on the same timeline. Then you work out what you wanted to know afterwards - including things you did not think to look for at the time. That is the difference between a survey and a second trip.
+
+        Every row carries a real world timestamp, so anything else recorded on the same walk - a WiFi app's log, thermal camera shots, a note on your phone - can be matched up to it afterwards by time alone.
+
+        HOW TO RUN IT
+        1. Start at a point whose location you actually know.
+        2. Walk at a steady pace.
+        3. Press Waypoint at anything you can identify later: a column, a tile grid reference, the end of a row.
+        4. Export as CSV when you are done.
+
+        The recording keeps running between waypoints, so you can place readings along the walk by working out how far between two known points you were.
+
+        BEFORE YOU START
+        Check the phone's clock is right. If a second device is involved, clap once in front of both at the start - then you can CHECK that they line up afterwards, rather than hoping.
     </description>
 
   <data-containers>
@@ -198,17 +213,30 @@
     </view>
 
     <view label="Notes">
-      <info label="Why there is no position here"/>
-      <info label="Dead reckoning needs heading, and heading indoors comes from the magnetometer, which in a hall full of steel racks, floor tiles and live conductors is simply wrong - often by tens of degrees, changing as you walk. Integrating the gyroscope instead drifts by degrees per minute. Either way the track curls up and the map is worse than useless because it looks plausible."/>
-      <info label="So this logs waypoints instead. Press the button at points whose position you actually know, and place everything between them by interpolation afterwards. The step count and cadence tell you how far along you were, which is enough to space out the readings between two known points."/>
-      <info label="The step count is an estimate, not a tally. Cadence is read from a 1024-sample spectrum, so its resolution depends on how fast your accelerometer runs: about 2.5 percent of the step count at 100 Hz, rising to about 10 percent at 400 Hz. It is good enough to say you are two thirds of the way down a row; it is not good enough to count paces."/>
+      <info label="WHY IT DOES NOT DRAW YOU A MAP"/>
+      <info label="Because the map would be wrong, and worse, it would look right."/>
+      <info label="To track yourself by walking you need to know which way you are facing. Indoors that comes from the magnetometer, which in a hall full of steel is wrong by tens of degrees and changes as you move. The alternative, adding up turns from the gyroscope, drifts by degrees every minute."/>
+      <info label="Either way the path curls up into a shape that looks like a plausible walk and is not one. A wrong map you trust is worse than no map."/>
       <separator height="0.5"/>
-      <info label="Lining up other data"/>
-      <info label="Every row carries a Unix timestamp, so a WiFi survey app's export, camera shots and this file can all be joined on time. Check your phone's clock is right before you start, and if a second device is involved, log one obvious shared event - a hand clap in front of both - so you can verify the alignment rather than assume it."/>
+      <info label="SO PRESS THE WAYPOINT BUTTON INSTEAD"/>
+      <info label="Press it at things you can identify afterwards - a column, a tile reference, the end of a row. Those are certain. Everything recorded between two waypoints can be spaced out along the gap later."/>
+      <info label="The step count helps you do that spacing. It is an estimate, not a tally - good enough to say you were about two thirds of the way down a row, nowhere near good enough to count individual paces."/>
+      <info label="How rough is it? About 2.5 percent out on a phone reading its accelerometer 100 times a second, and about 10 percent on one reading it 400 times a second."/>
+      <info label="Yes, the FASTER phone is worse here, which looks backwards. The pace is worked out from a fixed length chunk of readings, so a faster phone covers less time in that chunk and sees the rhythm less finely. Faster is better for vibration and worse for this."/>
       <separator height="0.5"/>
-      <info label="What each number is worth"/>
-      <info label="Sound level is uncalibrated dBFS, so it is comparative only - use the Sound Level Meter experiment if you need dB(A). Illuminance from a phone is roughly right and reads low when the sensor is shaded or angled, so keep the phone flat and face up. Pressure is good relatively but its absolute value may be several hPa out. Magnetic field is accurate. Slope is the most accurate reading here, but only when the phone is still."/>
-      <info label="Sensors your phone does not have are skipped rather than stopping the experiment, so a missing light sensor or barometer leaves those columns empty instead of failing."/>
+      <info label="LINING UP WITH OTHER RECORDINGS"/>
+      <info label="Every row carries a real world timestamp, so a WiFi app's export, camera shots and this file can all be joined by time afterwards."/>
+      <info label="Two things to do first. Check the phone's clock is right. And if a second device is involved, clap once in front of both at the start - that gives you a shared event so you can CHECK the alignment instead of assuming it. Assumed alignment fails silently, which is the worst way for anything to fail."/>
+      <separator height="0.5"/>
+      <info label="HOW MUCH TO TRUST EACH COLUMN"/>
+      <info label="Slope - the best thing here, but only while the phone is still."/>
+      <info label="Magnetic field - accurate."/>
+      <info label="Pressure - good for comparing, but the absolute value can be several units out."/>
+      <info label="Sound level - comparative only, and NOT dB(A). Use the Sound Level Meter if you need a proper noise figure."/>
+      <info label="Light - roughly right, and reads low whenever the sensor is shaded or tilted. Keep the phone flat and face up."/>
+      <separator height="0.5"/>
+      <info label="MISSING SENSORS DO NOT BREAK IT"/>
+      <info label="Anything your phone does not have is skipped rather than stopping the recording. No barometer or no light sensor just leaves those columns empty."/>
     </view>
   </views>
 

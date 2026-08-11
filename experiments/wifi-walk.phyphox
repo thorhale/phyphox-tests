@@ -3,9 +3,18 @@
   <category>Data centre</category>
   <icon>WiFi</icon>
   <description>
-        A waypoint logger built to be joined with a WiFi survey.
+        START WITH THE BAD NEWS
+        phyphox cannot read WiFi. Not signal strength, not network names, nothing at all. It only gets the phone's sensors, and the WiFi radio is not one of them. No version of this experiment can change that.
 
-        phyphox cannot read WiFi signal strength - it has no access to the radio at all - so this does the half it can do: it stamps each waypoint with an absolute Unix timestamp and records the physical context at that spot, while a separate app records the radio.
+        SO WHAT THIS ACTUALLY DOES
+        The half that is possible. It marks WHERE you were and WHEN, precisely, so that WiFi readings taken by a separate app can be matched to those places afterwards by time.
+
+        You walk with two things running: this, and a WiFi app such as WiFiAnalyzer. Press Log waypoint at each spot. Afterwards, tools/wifi_merge.py joins the two files together on time.
+
+        DO THIS FIRST OR THE WHOLE EXERCISE FAILS
+        Android limits apps to about four WiFi scans every two minutes. That is one reading every 30 seconds, which is useless if you are walking.
+
+        Turn it off: Settings, Developer options, Wi-Fi scan throttling, off. WiFiAnalyzer shows at the top of its screen whether throttling is on. Check there before you start, not afterwards.
 
         There are two ways to get the signal strength in. By hand: read the dBm off WiFiAnalyzer and type it into the RSSI field before pressing Log waypoint. Automatically: turn on Allow remote access in the phyphox menu, and have a script push values in with
         /control?cmd=set&amp;buffer=rssi&amp;value=-67

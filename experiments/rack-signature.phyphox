@@ -3,13 +3,24 @@
   <category>Data centre</category>
   <icon>SIG</icon>
   <description>
+        WHAT IT DOES
         Finds the odd one out in a row of identical machines.
 
-        Units of the same model doing the same job sound the same. When one starts to differ - a fan slowing, a bearing roughening, a filter blocking, a disk shelf spinning up - its sound changes shape before anything trips an alarm. Comparing a unit against its neighbours catches that far earlier than comparing it against any absolute threshold, because everything that makes an absolute threshold useless (the room, the phone, the distance you stood) cancels out.
+        HOW
+        Identical units doing identical work sound identical. When one starts to change - a fan slowing, a bearing roughening, a filter clogging - its sound changes shape before anything trips an alarm. Record a healthy one, then compare each of the others against it.
 
-        Record a healthy unit, press Set as reference, then hold the phone the same way in front of each of the others. The mismatch number says how differently each one sounds, in decibels.
+        Comparing against its neighbours beats comparing against any published threshold, because everything that ruins a threshold - the room, the phone, how far away you stood - is present in both readings and cancels out.
 
-        Also reports the strongest low tone, which identifies spinning disks: 5400 rpm is 90 Hz, 7200 rpm is 120 Hz, 10000 rpm is 167 Hz and 15000 rpm is 250 Hz.
+        HOW TO RUN IT
+        1. Pick a unit you believe is healthy. Press Set this unit as the reference.
+        2. Move along the row. At each unit press Log this unit.
+        3. Hold the phone the SAME way each time - same distance, same angle, microphone end pointing at the machine.
+        4. The mismatch number says how differently each one sounds.
+
+        It also reports the strongest low tone, which identifies spinning disks. 5400 rpm shows at 90 Hz, 7200 rpm at 120 Hz, 10000 rpm at 167 Hz, 15000 rpm at 250 Hz. Handy for telling a disk shelf from a flash shelf without opening it.
+
+        BE REALISTIC ABOUT THIS ONE
+        It works well in a quiet room. In a loud hall it often does not, because the noise from everything else can be bigger than the difference between two units. Try it, and if every unit scores about the same, that is what happened - the Vibration Census is the more reliable way to find the same faults, because vibration through the frame does not have to compete with room noise.
     </description>
 
   <data-containers>
@@ -173,16 +184,21 @@
     </view>
 
     <view label="Notes">
-      <info label="How the number is worked out"/>
-      <info label="Both spectra are converted to decibels and each has its own average level subtracted, so overall loudness is removed and only the SHAPE is compared. The mismatch is then the typical difference between the two shapes, in dB. Because loudness is divided out, standing slightly closer to one unit does not fake a result - but standing at a completely different angle does, because the shape genuinely changes with direction."/>
+      <info label="IT COMPARES SHAPE, NOT LOUDNESS"/>
+      <info label="Overall volume is deliberately thrown away before comparing, so only the SHAPE of the sound is measured - which pitches are present relative to each other."/>
+      <info label="That is useful, because standing slightly closer to one unit no longer fakes a result. Distance changes loudness, and loudness has been removed."/>
+      <info label="But ANGLE still matters a great deal, because the shape genuinely changes depending on which side of a machine you are standing. Same distance, same angle, every unit."/>
       <separator height="0.5"/>
-      <info label="What it is good at"/>
-      <info label="Spotting the one unit in twenty that has changed. It needs no calibration, no history and no baseline data from the manufacturer - just its neighbours, which you already have."/>
-      <info label="Repeat the row weekly and the numbers become a trend. A unit whose mismatch climbs steadily is degrading, even while it is still well inside anything the BMS would flag."/>
+      <info label="WHAT IT IS GENUINELY GOOD AT"/>
+      <info label="Spotting the one unit in twenty that has changed. It needs no calibration, no manufacturer data and no history - just the neighbours, which you already have standing right there."/>
+      <info label="Walk the row weekly and the numbers become a trend. A unit whose mismatch climbs steadily every week is degrading, long before anything would flag it."/>
       <separator height="0.5"/>
-      <info label="What it cannot do"/>
-      <info label="It cannot say what changed, only that something did. It also cannot separate two units standing close together - in a tight row you are always hearing the neighbours too, which compresses the differences and makes a real fault look milder than it is."/>
-      <info label="If the room is much louder than the unit you are pointing at, you are mostly measuring the room, and every unit will score the same. Get close, and get the microphone end of the phone facing the machine."/>
+      <info label="WHEN IT WILL NOT WORK, AND HOW TO TELL"/>
+      <info label="If the room is louder than the unit you are pointing at, you are measuring the room. The giveaway is that EVERY unit scores about the same. That is not twenty healthy machines - that is no measurement at all."/>
+      <info label="Get close. Point the microphone end at the machine. If they still all match, believe the room and use the Vibration Census instead, which reads through the frame and does not compete with noise."/>
+      <separator height="0.5"/>
+      <info label="IT CANNOT TELL YOU WHAT CHANGED"/>
+      <info label="Only that something did. And in a tight row you always hear the neighbours too, which squashes the differences and makes a real fault look milder than it is."/>
     </view>
   </views>
 

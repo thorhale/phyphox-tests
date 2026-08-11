@@ -3,13 +3,29 @@
   <category>Data centre</category>
   <icon>STB</icon>
   <description>
-        Measures fan speed with your eyes instead of maths.
+        WHAT IT DOES
+        Measures fan speed with your eyes instead of with maths.
 
-        The torch flashes at a rate you control. Point it at the fan and slide the frequency until the blades appear to stop dead. At that moment the fan is turning exactly once between flashes, and the speed is the flash rate times 60.
+        HOW
+        The torch flashes at a rate you choose. Point it at the fan and slide the rate until the blades appear to stop dead. When they look frozen, the fan is turning exactly once between flashes - so the speed is simply the flash rate times 60.
 
-        No signal processing, nothing to misinterpret - you can see it working. That makes it the honest check on the Fan Tacho experiment, which infers speed from sound and can be fooled by a harmonic or by the wrong fan. If the two disagree, believe this one.
+        WHY IT IS WORTH HAVING
+        Nothing is being computed or interpreted. You can SEE it working. That makes it the honest check on the Fan Tacho, which works out speed from sound and can be fooled by a harmonic or by the fan next door. If the two disagree, believe this one.
 
-        Two warnings before you use it. Phones cannot flash faster than about 40 times a second, which caps direct reading at 2400 RPM - above that you read a submultiple and multiply up. And a strobe makes moving machinery appear stationary, which is exactly as dangerous as it sounds. Never use it as your reason to believe something has stopped.
+        Two methods that work by completely different physics agreeing is real confidence. One method agreeing with itself is not.
+
+        THE TRAP
+        Blades also look frozen at half the speed, a third, a quarter, and so on. So always find the HIGHEST flash rate that freezes them - that is the real one.
+
+        THE CEILING
+        Phones cannot flash faster than about 40 times a second, which caps direct reading at 2400 RPM. A faster fan will still freeze, but at a fraction of its speed - use the flashes per revolution box to correct for that.
+
+        It also will not work in bright light. A phone torch cannot compete with hall lighting. Use it in a dim aisle or shade the fan.
+
+        SAFETY - READ IT
+        A strobe makes moving machinery look stopped. People have put their hands into machines that appeared stationary. Treat anything you have strobed as running, always. Never use this as your reason to believe something has stopped - isolate it properly.
+
+        Flashing light can also trigger seizures in people with photosensitive epilepsy, most strongly in exactly this range. Warn anyone nearby, and do not use it where people cannot look away.
     
         NEEDS PHYPHOX 1.2.1 OR NEWER. The flashlight output arrives in that version, which is still in public beta - on 1.2.0 and earlier phyphox refuses the file with 'Unknown tag flashlight'. That is a version gap, not a fault.
     </description>

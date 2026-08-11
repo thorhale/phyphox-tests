@@ -3,11 +3,23 @@
   <category>Data centre</category>
   <icon>DIM</icon>
   <description>
-        Geometry for a digital twin, taken with the phone: distances by sonar, and floor level and rack plumb by inclinometer, logged together at each waypoint.
+        WHAT IT DOES
+        Three things, and they are honestly not equally good. Read this before deciding which tab to use.
 
-        The sonar core is phyphox's own: a chirp is played through the speaker, the recording is cross-correlated with it, and the delay to each echo gives its distance. Two things are added here. The speed of sound is computed from the air temperature you enter rather than assumed to be 340 m/s, which matters because a 40 C hot aisle and a 22 C cold aisle differ by about 3 percent - 9 cm over a 3 m span. And the whole thing runs backwards too: give it a distance you have measured with a tape and it solves for the speed of sound, and from that the air temperature. That turns the phone into a non-contact thermometer for air it is not touching.
+        1. LEVEL AND PLUMB - excellent, use this
+        Is this rack straight. Is this floor flat. Is this rail true. Accurate to about a hundredth of a degree, which makes it the most accurate measurement anywhere in this whole set of tests.
 
-        The level page uses the accelerometer as an inclinometer and reports slope in mm per metre, which is how floor flatness is specified. Lay the phone on a tile for floor level, or against a rack upright for plumb.
+        It works because a phone at rest is measuring gravity, and gravity is extremely reliable. Lay the phone on a tile for floor level, or flat against a rack upright for plumb. It reports slope in millimetres per metre, which is how floor flatness is normally specified.
+
+        The catch: it is only true when the phone is COMPLETELY STILL. Any movement looks exactly like tilt to an accelerometer and it cannot tell the difference.
+
+        2. DISTANCE BY SONAR - decent but fiddly
+        The phone chirps through the speaker and listens for the echo, then times it. Works best on a big flat hard surface a few metres away. Aisle widths and ceiling heights are fine. The length of a hall is not - a phone speaker is not loud enough.
+
+        3. AIR TEMPERATURE FROM SOUND - a curiosity, not a tool
+        Sound travels faster in warm air, so timing it over a distance you already know gives you the temperature of air the phone is not touching. Genuinely clever, genuinely real physics.
+
+        But you have to type in the distance, and getting it wrong by 1 percent throws the temperature out by about 6 degrees C. Over 10 metres, being 10 cm out ruins it. You would need a laser measure and real care to beat a cheap thermometer. Enjoy it, but do not plan around it.
     </description>
 
   <data-containers>
@@ -196,18 +208,24 @@
     </view>
 
     <view label="Notes">
-      <info label="Sonar in a hall is hard"/>
-      <info label="This needs a quiet moment and a hard target. A data hall is neither quiet nor short of reflective surfaces, so expect to take several readings and to sanity check them against a tape. Perforated tiles, cable baskets and mesh doors scatter rather than reflect, and soft targets may not come back at all."/>
-      <info label="Range is limited to a few metres by the transmitted power of a phone speaker. For an aisle width or a ceiling height this is fine; for the length of a hall it is not."/>
+      <info label="THE LEVEL READING - THE GOOD ONE"/>
+      <info label="A phone sitting still is measuring gravity, and gravity does not drift, wander or need calibrating. That is why this is the most accurate thing in the whole set - good to a few hundredths of a degree."/>
+      <info label="It is only true when the phone is COMPLETELY still. Movement and tilt look identical to an accelerometer, so a phone being held is a phone reporting nonsense. Put it down."/>
       <separator height="0.5"/>
-      <info label="The thermometer trick"/>
-      <info label="Speed of sound in dry air is about 331.3 times the square root of (1 + T/273.15) metres per second, so it changes by roughly 0.6 m/s per degree - about 0.17 percent. That is small, which is why the distance must be known well: an error of 1 percent in the distance you type becomes about 6 degrees of error in the temperature. Measure the span properly, and treat the result as a difference between two places rather than an absolute."/>
-      <info label="Humidity has a real but much smaller effect, a few tenths of a m/s across the full range, and is ignored here."/>
-      <info label="Timing resolution sets the rest. One sample at 48 kHz is 3.6 mm of distance, which over a 2 m target is about 1 degree of temperature - so a single shot is worth roughly a degree, and it is worth taking several and taking the middle. Longer spans are better: the same timing error matters proportionally less the further away the target is."/>
+      <info label="THE ONE TRICK WORTH LEARNING HERE"/>
+      <info label="Phones have a small built in error, so a phone can confidently report a slope on a perfectly flat floor."/>
+      <info label="To cancel it: take a reading, turn the phone 180 degrees on the spot without moving it sideways, and take another. The true slope is HALF THE DIFFERENCE between the two. The phone's own error cancels out because it flipped with the phone and the floor did not."/>
+      <info label="Do this once on any floor you care about. It takes ten seconds and it is the difference between a measurement and a guess."/>
       <separator height="0.5"/>
-      <info label="The inclinometer"/>
-      <info label="An accelerometer at rest measures gravity, so tilt is trustworthy to a few hundredths of a degree once it settles - this is the most accurate thing on the phone. It is only valid when the phone is completely still; any movement is indistinguishable from tilt. Slope in mm/m is 1000 times the tangent of the angle."/>
-      <info label="Phone accelerometers carry a small zero offset, so a phone can read a slope that is not there. Check by taking a reading, rotating the phone 180 degrees on the spot, and taking another - the true slope is half the difference between them."/>
+      <info label="SONAR IN A DATA HALL IS HARD"/>
+      <info label="It wants a quiet moment and a big hard flat target. A hall is loud and full of things that scatter sound rather than bouncing it back - perforated tiles, mesh doors, cable baskets. Soft targets may not come back at all."/>
+      <info label="Take several readings and check one against a tape measure before trusting the rest. Range is a few metres, limited by how loud a phone speaker is. Fine for an aisle width or a ceiling. Not for the length of a hall."/>
+      <separator height="0.5"/>
+      <info label="WHY THE THERMOMETER IS SO FUSSY"/>
+      <info label="Sound speeds up by only about 0.17 percent per degree C. It is a tiny effect, which means the distance you type has to be very accurate for the temperature to mean anything."/>
+      <info label="Concretely: 1 percent wrong on the distance is about 6 degrees C wrong on the temperature. Over a 10 metre span, 10 centimetres of error ruins it."/>
+      <info label="If you do want to try it: use the longest span you can, measure it with a tape properly, take several readings and use the middle one. Longer is better because a fixed timing error matters proportionally less over a longer distance."/>
+      <info label="Humidity also changes the answer slightly. It is ignored here, and it is much smaller than the error above."/>
     </view>
   </views>
 

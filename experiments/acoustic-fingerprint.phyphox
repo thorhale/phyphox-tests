@@ -3,15 +3,27 @@
   <category>Data centre</category>
   <icon>ECHO</icon>
   <description>
+        WHAT IT DOES
         Recognises a place by its echoes.
 
-        The phone chirps and listens to what comes back. Every surface within a few metres - the rack in front of you, the floor, the ceiling, the aisle behind - returns the chirp at its own delay, so the pattern of echoes is a fingerprint of where you are standing. Move a metre and it changes.
+        HOW
+        The phone chirps and listens to what bounces back. Every surface within a few metres - the rack ahead, the floor, the ceiling, the aisle behind - returns that chirp after its own particular delay. The pattern of delays describes where you are standing. Move a metre and it changes.
 
-        Stand somewhere, press Capture, then walk off. The mismatch number falls back towards zero when you return to the same spot.
+        Stand somewhere, press Capture this spot, walk off. The mismatch number falls back towards zero when you come back.
 
-        Use it alongside Magnetic Landmark. That one reads steel, this one reads geometry, and they are fooled by completely different things - a trolley parked nearby ruins the echoes but barely moves the magnetic field, while a change in busbar current does the opposite. Two fixes that fail independently are worth far more than either alone.
+        HONEST ASSESSMENT - READ THIS FIRST
+        Of everything in this set, this is the one I would trust least in a data hall, and you should know that before spending time on it.
 
-        It also reports how live the space is, which is the number you want when someone complains about noise.
+        A hall is full of constant broadband noise, which is exactly what drowns out a faint echo from a small phone speaker. In front of a running CRAC it will not work at all.
+
+        The Magnetic Landmark does the same job of finding a spot again, and does it better here, because steel does not care how loud the room is.
+
+        The reverberation figure has the same problem. Measuring how live a room is properly needs a loud controlled source and a calibrated microphone. A phone speaker in a noisy hall is neither. Take it as an impression, not a number to quote.
+
+        WHERE IT IS GENUINELY WORTH USING
+        In a quiet room. And alongside the Magnetic Landmark rather than instead of it - that one reads steel, this one reads shape, and they are fooled by completely different things. A trolley parked beside you wrecks the echoes and barely touches the magnetic field. A change in busbar current does the reverse.
+
+        When two methods that fail differently agree, that is real confidence. One method agreeing with itself is not.
     </description>
 
   <data-containers>
@@ -142,15 +154,26 @@
     </view>
 
     <view label="Notes">
-      <info label="Why two fingerprint methods"/>
-      <info label="This one reads the shape of the space. Magnetic Landmark reads the steel in it. They fail differently, which is the point: a trolley parked beside you wrecks the echoes and barely touches the magnetic field, while a big change in current in a nearby busbar does the reverse. Agreement between the two is strong evidence; disagreement tells you which kind of thing changed."/>
+      <info label="THE HONEST VERDICT FIRST"/>
+      <info label="This is the weakest test in the set for a data hall, and you should know that rather than discover it."/>
+      <info label="It listens for a faint echo of a small phone speaker. A hall is full of constant broad noise, which is exactly the thing that drowns that out. In front of a running CRAC it will not work at all."/>
+      <info label="For finding a spot again, the Magnetic Landmark does the same job and does it better here, because steel does not care how loud the room is."/>
+      <info label="The maths inside is sound - it is the same proven chirp and match method as the sonar. The doubt is about whether the measurement means anything in YOUR environment, which is a different and more important question."/>
       <separator height="0.5"/>
-      <info label="What breaks it"/>
-      <info label="Noise. This needs a reasonably quiet moment - it is listening for a faint echo of a small speaker. In a loud hall it may not work at all, and it will never work in front of a running CRAC."/>
-      <info label="Direction. The fingerprint is of the room AS SEEN from where the phone points. Face the other way and it is a different fingerprint. That is a limitation for matching and useful information if you want to tell which way you were facing."/>
-      <info label="Soft surfaces return almost nothing, so a spot surrounded by mesh doors and cable baskets gives a weak, unstable pattern. Hard flat surfaces nearby give the strongest and most repeatable fingerprints."/>
+      <info label="WHY KEEP IT AT ALL"/>
+      <info label="Because when it does work, it fails differently from the magnetic method, and that is worth a lot."/>
+      <info label="This one reads the SHAPE of the space. The magnetic one reads the STEEL in it. A trolley parked beside you wrecks the echoes and barely moves the magnetic field. A big change in busbar current does the opposite."/>
+      <info label="Two methods that fail in different ways agreeing is real confidence. If they disagree, the way they disagree tells you what kind of thing changed."/>
       <separator height="0.5"/>
-      <info label="The chirp is audible - a short tick, several times a second. In an occupied office that will annoy people. It is nothing next to a running data hall."/>
+      <info label="WHAT ELSE BREAKS IT"/>
+      <info label="Direction. The fingerprint is of the room as seen from where the phone is POINTING. Turn around and it is a different fingerprint entirely. Annoying for matching, useful if you want to know which way you were facing."/>
+      <info label="Soft and open surfaces. Mesh doors and cable baskets scatter rather than reflect, so a spot surrounded by them gives a weak, wandering pattern. Hard flat surfaces nearby give the strongest and most repeatable results."/>
+      <separator height="0.5"/>
+      <info label="ABOUT THE REVERBERATION NUMBER"/>
+      <info label="Treat it as an impression, not a measurement. Measuring how live a room is properly needs a loud controlled source and a calibrated microphone, and this is a phone speaker in a noisy room. Do not put it in a report."/>
+      <separator height="0.5"/>
+      <info label="IT MAKES A NOISE"/>
+      <info label="The chirp is audible - a short tick, several times a second. Nothing next to a running hall. Genuinely irritating in an occupied office."/>
     </view>
   </views>
 

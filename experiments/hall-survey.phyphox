@@ -3,11 +3,27 @@
   <category>Environment</category>
   <icon>HAL</icon>
   <description>
-        A walk-round logger for a data hall. The phone contributes real barometric pressure and an absolute timestamp; you type the dry-bulb temperature and relative humidity from whatever instrument you are holding, and press Log point at each location.
+        WHAT IT DOES
+        A structured notebook for a walk round, with the air pressure filled in for you.
 
-        The exported "Survey log" set is shaped so that a psychrometric planner can read it directly: one row per logged point, with a Unix timestamp, dry bulb in degrees Celsius, relative humidity in percent and barometric pressure in hPa.
+        The phone measures air pressure and stamps the time. YOU type in the temperature and the humidity, read off whatever instrument you are carrying, and press Log point at each location.
 
-        The "Pressure trace" set is a continuous barometer recording. Because a phone barometer resolves roughly 1 to 10 Pa, it can show the pressure step between a contained cold aisle and the room, but only as an indication - it is not a manometer.
+        WHY YOU TYPE TWO OF THEM IN
+        Because your phone almost certainly has neither sensor. Hardly any phone made since about 2014 has a humidity sensor or a real thermometer - the temperature sensors inside a phone measure the phone warming itself up, not the room. Run Device Check and it will confirm this for your specific handset.
+
+        HOW TO RUN IT
+        1. Press play at your first location.
+        2. Type in the dry bulb temperature and the relative humidity.
+        3. Press Log point.
+        4. Move on and repeat.
+        5. Export as CSV at the end.
+
+        The exported log has one row per point - time, temperature, humidity, pressure - shaped so a psychrometric tool can read it straight in.
+
+        BE REALISTIC ABOUT THE PRESSURE
+        A phone barometer is built to work out roughly what floor of a building you are on. The pressure differences that matter in containment are much smaller than that. It can INDICATE a step between a contained cold aisle and the room. It is not a manometer, it drifts with the weather, and a door opening moves it.
+
+        So: useful as an indication and as a structured way to record a walk. Not a measurement you should design around.
     </description>
 
   <data-containers>
@@ -114,11 +130,17 @@
     </view>
 
     <view label="Notes">
-      <info label="What the phone measures and what it does not"/>
-      <info label="Barometric pressure is a real measurement from the phone's barometer and is good to roughly 0.1 hPa relative, though its absolute calibration may be off by a few hPa."/>
-      <info label="Temperature and humidity are NOT measured - virtually no phone has a hygrometer, and the phone's internal temperature sensors read its own electronics, not the room. That is why you type those two values in."/>
+      <info label="WHAT IS MEASURED AND WHAT IS TYPED"/>
+      <info label="MEASURED: air pressure, by the phone's own barometer. Good to about 0.1 units when comparing one reading against another, though the absolute value can be several units off."/>
+      <info label="TYPED IN BY YOU: temperature and humidity. Not laziness - virtually no phone has either sensor. Run Device Check and it will confirm it for your handset."/>
+      <info label="The temperature sensors that ARE inside a phone measure the phone's own electronics warming up. Pointing one at a room tells you about the phone, not the room."/>
       <separator height="0.5"/>
-      <info label="Export: choose CSV. The Survey log set has one row per logged point with a Unix timestamp, dry bulb in Celsius, RH in percent and pressure in hPa. The Pressure trace set is the continuous barometer recording."/>
+      <info label="WHAT THE PRESSURE IS ACTUALLY GOOD FOR"/>
+      <info label="Indicating a difference between two places - a contained cold aisle against the room, say. It is genuinely at the edge of what the hardware can resolve."/>
+      <info label="It is not a manometer. It drifts with the weather, a door opening moves it, and it is not a number to design containment around. If a pressure difference matters, measure it with something built for the job."/>
+      <separator height="0.5"/>
+      <info label="GETTING THE DATA OUT"/>
+      <info label="Export as CSV. The Survey log has one row per logged point - time, temperature, humidity, pressure - ready for a psychrometric tool. The Pressure trace is the continuous barometer recording alongside it."/>
     </view>
   </views>
 

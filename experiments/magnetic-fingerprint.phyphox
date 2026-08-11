@@ -3,15 +3,27 @@
   <category>Data centre</category>
   <icon>MAG</icon>
   <description>
-        Finds an exact spot again, using the building's own steel as the map.
+        WHAT IT DOES
+        Lets you find the exact same spot again, using the building's own steel as the map.
 
-        All the metal in a hall - racks, floor pedestals, structure, cable tray - bends the Earth's magnetic field into a pattern that is different at every point and does not move. That distortion is what makes a compass useless indoors. Here it is the whole point: it is a fingerprint for a location.
+        HOW
+        Every piece of metal around you - racks, floor pedestals, beams, cable tray - bends the Earth's magnetic field slightly. The result is a pattern that is a little different at every single point in the room, and does not move, because the racks do not move.
 
-        Stand somewhere worth remembering and press Capture. Later, walk around and watch the mismatch number. It falls to near zero when you are standing where you were before.
+        That bending is exactly why a compass is useless indoors. Here it is the entire point. It is an accidental fingerprint for a location, already installed, free.
 
-        The clever bit is that it does not care which way you hold the phone. It uses two things that stay the same however you turn it: how strong the field is, and the angle between the field and straight down. Rotate the phone all you like - both numbers hold still.
+        WHY YOU CARE
+        Repeat readings only mean something if they are taken in the same place. Third tile from the end, roughly, is not the same place. This pins it down, needs nothing installed anywhere, and costs nothing.
 
-        Works on every phone, including iPhone, and needs nothing installed anywhere in the building.
+        HOW TO RUN IT
+        1. Stand where you want to remember. Press Capture this spot.
+        2. Later, walk around with it running and watch the mismatch number. It drops to near zero when you are standing where you stood before.
+        3. Record a route logs a series of numbered points along a path.
+
+        THE CLEVER BIT
+        It does not care which way you hold the phone. It uses two things that do not change when you turn it: how strong the field is, and the angle between the field and straight down. Spin the phone in your hand and both numbers sit still. That is what makes it usable while walking rather than needing a tripod.
+
+        WHAT BREAKS IT
+        Anything magnetic that MOVES. A rack rolled in or out, a trolley parked nearby, a big change in current in a busbar. It is a landmark, not a survey monument.
     </description>
 
   <data-containers>
@@ -165,17 +177,24 @@
     </view>
 
     <view label="Notes">
-      <info label="Why this works when a compass does not"/>
-      <info label="A compass needs the Earth's field to be undisturbed, and indoors it never is. Every steel rack and floor pedestal bends it. That is a fatal problem if you want a heading and a gift if you want a location, because the bending is fixed in place - the racks are not going anywhere."/>
+      <info label="WHY THIS WORKS WHEN A COMPASS DOES NOT"/>
+      <info label="A compass needs the Earth's field left alone, and indoors it never is - every rack and pedestal bends it. That is fatal if you want to know which way is north. It is a gift if you want to know where you are standing, because the bending stays put. The racks are not going anywhere."/>
+      <info label="One person's noise is another person's signal. That is the whole idea here."/>
       <separator height="0.5"/>
-      <info label="What can fool it"/>
-      <info label="Anything magnetic that MOVES. A rack rolled into a new position, a trolley left nearby, a door propped open, or a large change in current in a nearby busbar will all shift the reading. If a spot that used to match stops matching, something near it changed - which is sometimes the more interesting finding."/>
-      <info label="Two different places can also share a signature by coincidence, since this is only two numbers. It is reliable for 'am I back at the same rack', not for 'where am I in the building' on its own. Combine it with knowing roughly which aisle you are in."/>
+      <info label="READING THE MISMATCH NUMBER"/>
+      <info label="Zero means the reading is identical to the one you saved. Under about 0.5 means you are closer than you could reliably stand twice anyway, so treat that as arrived."/>
+      <info label="It combines the two measurements by treating 1 microtesla of field strength as roughly equal in importance to 2 degrees of angle."/>
       <separator height="0.5"/>
-      <info label="How the mismatch number is built"/>
-      <info label="It is the distance between the current reading and the captured one, counting 1 uT of field strength as equivalent to 2 degrees of angle. Zero means identical. Under about 0.5 is closer than you can reliably stand twice."/>
+      <info label="WHAT FOOLS IT"/>
+      <info label="Anything magnetic that MOVES. A rack rolled to a new position, a trolley parked nearby, a door propped open, a big change in current in a nearby busbar."/>
+      <info label="If a spot that used to match suddenly stops matching, something near it changed. Occasionally that is the more interesting finding."/>
       <separator height="0.5"/>
-      <info label="Check the noise floor in the Device Check first. If your phone's magnetometer noise is above about 0.5 uT, the mismatch number will not settle below that and the sharpest resolution you can get is correspondingly worse."/>
+      <info label="ITS HONEST LIMIT"/>
+      <info label="This is only two numbers, so two different places can share a signature by coincidence. It reliably answers am I back at the same rack. It does not answer where am I in the building."/>
+      <info label="Use it knowing roughly which aisle you are in already, and it is excellent. Use it as a positioning system on its own and it will eventually mislead you."/>
+      <separator height="0.5"/>
+      <info label="CHECK THIS FIRST"/>
+      <info label="Look at your magnetometer noise figure in Device Check. If it is above about 0.5 microtesla, the mismatch number can never settle below that, and this will be correspondingly blunter on your phone."/>
     </view>
   </views>
 

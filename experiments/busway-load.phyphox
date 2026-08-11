@@ -3,11 +3,27 @@
   <category>Data centre</category>
   <icon>BUS</icon>
   <description>
-        A non-contact, relative current indicator. The magnetic field around a conductor is proportional to the current in it, so holding the phone at a FIXED standoff from a busway, a feed whip or a cable tray and reading the field tells you how heavily that run is loaded relative to another one.
+        WHAT IT DOES
+        Tells you which power feed is working harder, without touching anything or opening anything.
 
-        Workflow: press Set baseline in a quiet spot away from the run to capture the ambient field, then hold the phone against a fixed reference point on the run and press Log section. Repeat down the busway, or capture feed A and feed B to compare them.
+        HOW
+        The more current flows through a conductor, the stronger the magnetic field around it. Your phone can measure that field. So holding the phone against a busway gives you a rough sense of how loaded it is, through the housing, with nothing clamped on.
 
-        This is a comparison instrument, not an ammeter. The reading depends on how far the phone is from the conductor and on the geometry of the bars inside the housing, so numbers are only meaningful against other numbers taken the same way, at the same standoff, on the same run.
+        WHY YOU CARE
+        In an A and B power setup the two feeds should be roughly even. If one is clearly busier, someone has probably single-corded something that was supposed to be dual-fed - and you would rather find that now than during a failover.
+
+        HOW TO RUN IT
+        1. Stand somewhere away from the run and press Set baseline here. That records the background field of the room.
+        2. Hold the phone against a fixed reference point on the busway and press Log section.
+        3. Work down the run, or use Capture as feed A and Capture as feed B to compare two feeds directly.
+
+        THE ONE THING THAT WILL RUIN IT
+        Distance. The field drops off fast, so a couple of centimetres of difference in how you hold the phone can completely swamp a real difference in load.
+
+        Rest it against something physical you can find again every time - the same edge, the same bolt, the same label. Holding it near the busway is not a measurement. Holding it against the same spot twice is.
+
+        IT IS NOT AN AMMETER
+        It cannot tell you amps, and it never will. It tells you this is busier than that, and only when you held the phone identically both times. Use it to decide where to send someone with a proper clamp meter.
     </description>
 
   <data-containers>
@@ -151,12 +167,18 @@
     </view>
 
     <view label="Notes">
-      <info label="What the number means"/>
-      <info label="Field falls off roughly as 1/distance from a single conductor, and faster than that from the closely spaced bars in a busway housing where the phases partly cancel. Standoff therefore dominates everything: a centimetre of difference can outweigh a real change in load. Rest the phone against a physical feature you can find again."/>
+      <info label="DISTANCE MATTERS MORE THAN LOAD DOES"/>
+      <info label="The field weakens quickly as you move away, and inside a busway housing the bars sit close together and partly cancel each other out, which makes it fall away faster still."/>
+      <info label="The practical result: a centimetre of difference in how you hold the phone can outweigh a genuine difference in load. So rest the phone against a physical feature you can find again every time. Same edge, same bolt, same label."/>
       <separator height="0.5"/>
-      <info label="Because the phases cancel, a balanced three-phase busway reads LOW even at high current. A high reading can mean heavy load, or it can mean imbalance or a poorly arranged tap-off. Treat this as a pointer to something worth metering properly, not as the measurement."/>
+      <info label="A LOW READING DOES NOT MEAN A LIGHT LOAD"/>
+      <info label="This is the trap worth knowing. In a properly balanced three phase busway the phases cancel each other out, so it can read LOW while carrying a lot of current."/>
+      <info label="Which means a HIGH reading might be heavy load - or it might be imbalance, or an awkwardly arranged tap off. Both are worth knowing about, but they are not the same finding."/>
+      <info label="Treat any surprise here as a reason to go and meter it properly, never as the measurement itself."/>
       <separator height="0.5"/>
-      <info label="The AC activity figure comes from the fluctuation of the field. The magnetometer samples at 50 to 100 Hz, so mains aliases and there is deliberately no frequency shown - but a fluctuating field still reliably means alternating current nearby, which is what tells an energised run from a steel obstruction."/>
+      <info label="WHAT THE AC ACTIVITY NUMBER IS"/>
+      <info label="It is how much the field FLICKERS. Steel bends the field but holds still. Alternating current makes it flicker. So flicker is what separates a live run from a lump of metal."/>
+      <info label="There is deliberately no frequency shown. The phone reads its magnetometer about 100 times a second and mains alternates 50 or 60 times a second, which is not fast enough to measure honestly - any frequency shown would be invented. The size of the flicker is real; the pitch of it is not available."/>
     </view>
   </views>
 
