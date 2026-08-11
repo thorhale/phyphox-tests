@@ -131,6 +131,52 @@ which of these that phone can actually run.</p>
 '''
     with open(args.out, "w") as fh:
         fh.write(html)
+
+    # A page of tappable phyphox:// links, for installing from the phone alone.
+    # Typing a phyphox:// address into Chrome makes it SEARCH for the text
+    # instead of opening it - the scheme only works when a link is tapped.
+    rows = []
+    for folder, name, title, _url, _svg in cards:
+        raw = f"{base}/{folder}/{name}.phyphox"
+        deep = raw.replace("https://", "phyphox://").replace("http://", "phyphox://")
+        rows.append(f'''<a class="btn" href="{deep}">{title}
+  <span class="sub">{name}.phyphox</span></a>''')
+
+    links_html = f'''<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install phyphox experiments</title>
+<style>
+ body {{ font-family: system-ui, sans-serif; margin: 0; padding: 1rem;
+        background: #111; color: #eee; }}
+ h1 {{ font-size: 1.3rem; }}
+ h2 {{ font-size: 1rem; color: #e8871a; margin-top: 1.8rem;
+       border-bottom: 1px solid #333; padding-bottom: .4rem; }}
+ p {{ line-height: 1.5; color: #bbb; font-size: .9rem; }}
+ .btn {{ display: block; background: #1e1e1e; border: 1px solid #444;
+         border-radius: 10px; padding: 1rem; margin: .6rem 0; color: #fff;
+         text-decoration: none; font-size: 1rem; }}
+ .btn:active {{ background: #2a2a2a; }}
+ .sub {{ display: block; font-size: .72rem; color: #888; margin-top: .25rem;
+         font-family: ui-monospace, monospace; }}
+</style>
+<h1>Tap to install</h1>
+<p>Each button hands the experiment straight to phyphox. If nothing happens when
+you tap, phyphox is not registered for these links on your phone — use the QR
+sheet instead.</p>
+
+<h2>Probes — start here, in order</h2>
+<p>The first one that fails to install, or shows nothing, names the problem.</p>
+{"".join(rows[:len(probes)])}
+
+<h2>The experiments</h2>
+{"".join(rows[len(probes):])}
+'''
+    links_path = os.path.join(os.path.dirname(args.out), "open.html")
+    with open(links_path, "w") as fh:
+        fh.write(links_html)
+    print(f"tappable links -> {links_path}")
+
     print(f"{len(cards)} codes -> {args.out}")
     print(f"base URL: {base}")
     print("Open that file and scan from the screen. If phyphox reports an error,")
