@@ -1,10 +1,12 @@
-<phyphox version="1.14" locale="en">
+<phyphox version="1.20" locale="en">
   <title>Probe 5: the torch can strobe</title>
   <category>Probes</category>
   <description>
         Diagnostic. Takes ten seconds and tells you one thing: whether the flashlight output exists, which only the Strobe Tacho needs
 
         Run the probes in order. The FIRST one that fails to import, or shows nothing, names the feature your phyphox version will not do - which turns "none of it works and I have no idea why" into a single specific problem.
+    
+        NEEDS PHYPHOX 1.2.1 OR NEWER. The flashlight output arrives in that version, which is still in public beta - on 1.2.0 and earlier phyphox refuses the file with 'Unknown tag flashlight'. That is a version gap, not a fault.
     </description>
 
   <data-containers>

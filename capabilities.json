@@ -8,7 +8,8 @@
     "",
     "'required' must be present or the experiment is useless.",
     "'optional' is declared with ignoreUnavailable=true, so the experiment still",
-    "runs without it and simply leaves those readings empty."
+    "runs without it and simply leaves those readings empty.",
+    "The flashlight output is real but new: phyphox 1.2.1, file format 1.20, still unreleased. Anything using it must declare version=1.20 and requires_phyphox, and cannot be Tier 0 - Tier 0 means it works on a phone you have today."
   ],
   "tiers": {
     "0": "Runs on any phone, including a cheap A-series and an iPhone. Accelerometer, magnetometer, microphone, speaker, torch only.",
@@ -20,8 +21,7 @@
     "accelerometer",
     "magnetic_field",
     "audio_in",
-    "audio_out",
-    "flashlight"
+    "audio_out"
   ],
   "not_on_ios": {
     "light": "phyphox cannot read the ambient light sensor on Apple devices",
@@ -111,13 +111,15 @@
     },
     "strobe-tacho": {
       "title": "Strobe Tachometer",
-      "tier": 0,
+      "tier": 3,
       "ios": true,
       "required": [
         "flashlight"
       ],
       "optional": [],
-      "purpose": "Fan speed read by eye, as an independent check on the audio method."
+      "purpose": "Fan speed read by eye. Needs the flashlight output, which ships in phyphox 1.2.1 (still in beta).",
+      "requires_phyphox": "1.2.1",
+      "file_format": "1.20"
     },
     "dimension-survey": {
       "title": "Dimension and Level Survey",

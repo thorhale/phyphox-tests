@@ -83,6 +83,26 @@ def check(path):
             for el in dev.findall(".//output") + dev.findall(".//input"):
                 buffer_ref(el, f"<{section}><{dev.tag}>")
 
+    # ---- hardware outputs, version aware. <flashlight> is real but arrives in
+    # phyphox 1.2.1 / file format 1.20; older apps reject the whole file with
+    # "Unknown tag flashlight", which a phone confirmed.
+    fmt = root.get("version", "1.0")
+    try:
+        fmt_num = float(fmt)
+    except ValueError:
+        fmt_num = 0.0
+    for dev in root.findall("./output/*"):
+        if dev.tag is ET.Comment:
+            continue
+        if dev.tag not in ("audio", "bluetooth", "flashlight"):
+            problems.append(
+                f"<output><{dev.tag}> is not a phyphox output - the app refuses the "
+                f"whole file with 'Unknown tag {dev.tag}'")
+        elif dev.tag == "flashlight" and fmt_num < 1.20:
+            problems.append(
+                f"<output><flashlight> needs file format 1.20 (phyphox 1.2.1) but this "
+                f"file declares version=\"{fmt}\" - it will be refused outright")
+
     # ---- analysis
     analysis = root.find("./analysis")
     if analysis is None:

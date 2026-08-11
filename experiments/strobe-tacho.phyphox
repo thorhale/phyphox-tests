@@ -1,4 +1,4 @@
-<phyphox version="1.14" locale="en">
+<phyphox version="1.20" locale="en">
   <title>Strobe Tachometer</title>
   <category>Data centre</category>
   <icon>STB</icon>
@@ -10,6 +10,8 @@
         No signal processing, nothing to misinterpret - you can see it working. That makes it the honest check on the Fan Tacho experiment, which infers speed from sound and can be fooled by a harmonic or by the wrong fan. If the two disagree, believe this one.
 
         Two warnings before you use it. Phones cannot flash faster than about 40 times a second, which caps direct reading at 2400 RPM - above that you read a submultiple and multiply up. And a strobe makes moving machinery appear stationary, which is exactly as dangerous as it sounds. Never use it as your reason to believe something has stopped.
+    
+        NEEDS PHYPHOX 1.2.1 OR NEWER. The flashlight output arrives in that version, which is still in public beta - on 1.2.0 and earlier phyphox refuses the file with 'Unknown tag flashlight'. That is a version gap, not a fault.
     </description>
 
   <data-containers>

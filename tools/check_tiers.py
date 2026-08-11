@@ -98,6 +98,17 @@ def main():
                     f"which a basic phone may not have"
                 )
 
+        # Version gate: a construct newer than the file's declared format will be
+        # rejected outright by older apps, so the claim has to be explicit.
+        if "flashlight" in actual_req:
+            src = open(os.path.join(exp_dir, name + ".phyphox")).read()
+            if 'version="1.20"' not in src:
+                problems.append(f"{name}: uses <flashlight> but does not declare "
+                                f"version=\"1.20\" - older phyphox refuses the whole file")
+            if not c.get("requires_phyphox"):
+                problems.append(f"{name}: uses <flashlight> so it must declare "
+                                f"requires_phyphox in capabilities.json")
+
         # iOS promise
         if c.get("ios"):
             blocked = actual_req & ios_missing
@@ -107,7 +118,7 @@ def main():
 
     print(f"{len(on_disk)} experiments, {tier0_count} of them Tier 0")
 
-    guarantee = 15
+    guarantee = 14
     if tier0_count < guarantee:
         problems.append(
             f"only {tier0_count} Tier 0 experiments; the promise to basic phones is {guarantee}"

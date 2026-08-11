@@ -28,7 +28,7 @@ any extra hardware.
 | `magnetic-fingerprint` | Find an exact spot again, using the building's steel as the map | 0 |
 | `fan-tacho` | Fan speed, and whether a bearing is starting to fail | 0 |
 | `vibration-census` | Which machines are actually running, from one floor recording | 0 |
-| `strobe-tacho` | Fan speed read by eye with the torch — the honest check on `fan-tacho` | 0 |
+| `strobe-tacho` | Fan speed read by eye with the torch — the honest check on `fan-tacho`  (needs phyphox 1.2.1 beta) | 0 |
 | `tile-tap` | Finds loose or unsupported floor tiles by the note they ring at | 0 |
 | `acoustic-fingerprint` | Recognise a place by its echoes; how live the room is | 0 |
 | `rack-signature` | Find the odd one out in a row of identical machines | 0 |
