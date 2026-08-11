@@ -43,6 +43,10 @@ MUTATIONS = [
      "decibel constant swapped the other way"),
     ("ultrasonic-leak", "4.342944819032518", "10.0",
      "decibel conversion replaced with a plain 10"),
+    ("vibration-census", "6.283185307179586", "3.141592653589793",
+     "the 2*pi*f velocity divisor halved - mm/s would read double"),
+    ("fan-tacho", "5.333333333333333", "2.666666666666666",
+     "velocity window/half-spectrum scaling halved"),
 ]
 
 

@@ -207,6 +207,50 @@ def noise_dose_matches_the_three_db_exchange_rate():
 
 
 # ==========================================================================
+# Vibration census / fan tacho: acceleration spectrum -> velocity in mm/s
+# ==========================================================================
+def velocity_chain(name, signal, n, rate):
+    """Mirror of the shipped acceleration->velocity chain, using the actual
+    velPow / velMS / velRms formula strings read out of the file. Returns the
+    band-limited (10 Hz..Nyquist) velocity RMS in mm/s."""
+    vel_pow = formula_for(path(name), "velPow")
+    vel_ms = formula_for(path(name), "velMS")
+    vel_rms = formula_for(path(name), "velRms")
+    w = [0.5 - 0.5 * math.cos(2 * math.pi * i / (n - 1)) for i in range(n)]
+    mean = sum(signal) / n
+    blk = [(signal[i] - mean) * w[i] for i in range(n)]
+    spec = fft(blk)
+    total = 0.0
+    for k in range(1, n // 2):
+        f = k * rate / n
+        if f < 10.0:
+            continue
+        mag = math.sqrt(spec[k].real ** 2 + spec[k].imag ** 2)
+        total += evaluate(vel_pow, mag, f)          # power / (2*pi*f)^2
+    ms = evaluate(vel_ms, total, float(n))           # * 5.3333/N^2
+    return evaluate(vel_rms, ms)                      # 1000 * sqrt
+
+
+@test
+def vibration_velocity_matches_the_analytic_mm_per_s():
+    """A pure acceleration sine of amplitude A at f0 is velocity A/(2*pi*f0)
+    peak, i.e. A/(2*pi*f0*sqrt2) RMS. The shipped chain has to reproduce that
+    physical number in mm/s, which is what makes it comparable to ISO 10816.
+    This pins the 2*pi*f divisor, the 5.3333/N^2 window+half-spectrum scaling
+    and the x1000 all at once."""
+    rate, n = 470.6, 2048
+    worst = 0.0
+    for A, f0 in ((2.0, 50.0), (1.0, 30.0), (0.5, 80.0), (3.0, 24.0)):
+        sig = [A * math.sin(2 * math.pi * f0 * i / rate) for i in range(n)]
+        want = 1000.0 * A / (2 * math.pi * f0 * math.sqrt(2))
+        for name in ("vibration-census", "fan-tacho"):
+            got = velocity_chain(name, sig, n, rate)
+            worst = max(worst, abs(got - want) / want)
+            close(got, want, want * 0.02, f"{name} velocity, A={A} f0={f0}")
+    return f"worst {worst * 100:.2f}% of analytic across both files"
+
+
+# ==========================================================================
 # Dimension survey: speed of sound as a thermometer
 # ==========================================================================
 @test

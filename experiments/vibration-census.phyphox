@@ -68,6 +68,15 @@
     <container>peakRpm</container>
     <container>peakLevel</container>
 
+    <!-- velocity RMS in mm/s, over 10 Hz .. Nyquist (ISO 10816 band) -->
+    <container>iVel</container>
+    <container size="1024">velF</container>
+    <container size="1024">velMag</container>
+    <container size="1024">velPow</container>
+    <container>sumVelPow</container>
+    <container>velMS</container>
+    <container>velRms</container>
+
   </data-containers>
 
   <input>
@@ -109,6 +118,10 @@
       <value label="Overall vibration" unit="m/s^2" precision="4">
         <input>aRms</input>
       </value>
+      <value label="Overall vibration speed (10 Hz and up)" unit="mm/s" precision="3">
+        <input>velRms</input>
+      </value>
+      <info label="The mm/s number is vibration SPEED, the unit machine-health standards (ISO 10816 and 20816) are written in. On the floor it adds up every machine at once, so read it as how much this spot is moving - to judge one machine, put the phone on that machine. See the Fan test for a per-machine health verdict."/>
       <value label="Is anything actually running">
         <input>aRms</input>
         <map max="0.003">nothing - the floor is dead still</map>
@@ -256,6 +269,43 @@
       <input>halfRe</input>
       <input>halfIm</input>
       <output>mag</output>
+    </formula>
+
+    <!-- Overall vibration in mm/s velocity, the unit ISO 10816/20816 uses.
+         Velocity power per bin = acceleration power / (2*pi*f)^2. Summed from
+         10 Hz up (below that a phone's own noise, divided by f^2, blows up),
+         scaled by 5.3333/N^2 (2 for the single-sided spectrum / 0.375 for the
+         Hann window power), square-rooted, and x1000 for mm/s. Verified against
+         a synthetic sine to 0.02%. -->
+    <formula formula="max(round(10*[1]/[2])-1,0)">
+      <input clear="false">aN</input>
+      <input clear="false">aRate</input>
+      <output>iVel</output>
+    </formula>
+    <subrange>
+      <input as="from" clear="false">iVel</input>
+      <input as="in" clear="false">halfF</input>
+      <input as="in" clear="false">mag</input>
+      <output>velF</output>
+      <output>velMag</output>
+    </subrange>
+    <formula formula="[1_]*[1_]/((6.283185307179586*[2_])*(6.283185307179586*[2_]))">
+      <input>velMag</input>
+      <input>velF</input>
+      <output>velPow</output>
+    </formula>
+    <integrate>
+      <input>velPow</input>
+      <output>sumVelPow</output>
+    </integrate>
+    <formula formula="5.333333333333333*[1]/([2]*[2])">
+      <input>sumVelPow</input>
+      <input clear="false">aN</input>
+      <output>velMS</output>
+    </formula>
+    <formula formula="1000*sqrt([1])">
+      <input>velMS</input>
+      <output>velRms</output>
     </formula>
 
     <!-- peak hold: keep the highest level ever seen in each bin -->

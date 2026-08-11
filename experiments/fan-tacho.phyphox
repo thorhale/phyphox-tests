@@ -100,6 +100,15 @@
     <container size="256">vibBandMag</container>
     <container>vib1x</container>
     <container>rpmVib</container>
+
+    <!-- velocity RMS in mm/s, the ISO 10816/20816 unit -->
+    <container>iVel</container>
+    <container size="256">velF</container>
+    <container size="256">velMag</container>
+    <container size="256">velPow</container>
+    <container>sumVelPow</container>
+    <container>velMS</container>
+    <container>velRms</container>
   </data-containers>
 
   <input>
@@ -152,6 +161,17 @@
       <value label="Overall vibration - RMS, a kind of average size of the shaking" unit="m/s^2" size="2" precision="3">
         <input>vibRms</input>
       </value>
+      <value label="Vibration speed - the number machine-health limits use" unit="mm/s" size="2" precision="3">
+        <input>velRms</input>
+      </value>
+      <value label="Health band (ISO 10816, medium machine on a firm mount)">
+        <input>velRms</input>
+        <map max="1.4">A - like new</map>
+        <map max="2.8">B - fine for long-term running</map>
+        <map max="4.5">C - rough; plan a repair</map>
+        <map>D - risk of damage; act soon</map>
+      </value>
+      <info label="Speed in mm/s is what the machine-health standards (ISO 10816 and 20816) actually judge. The bands above assume a medium-sized machine on a firm mount - a rough guide, not a verdict. Two catches on a phone: it only sees shaking up to about half its sensor rate, so it can miss fast faults and read low; and the phone is not a bolted-down sensor, so trust the TREND over months far more than one reading."/>
       <value label="Crest factor - how spiky the shaking is compared to its average" unit="x" size="2" precision="2">
         <input>vibCrest</input>
       </value>
@@ -193,8 +213,10 @@
       <info label="Bearing damage rattles at thousands of times per second. Your phone reads its accelerometer (its shake sensor) a few hundred times a second at best, so it can never hear that pitch. This is not a limit of this app. It is a limit of the hardware, and no software fixes it."/>
       <info label="But it can still feel that the shaking has become spiky rather than smooth, and that is enough. That is what crest factor measures, and it is why this works on a phone at all."/>
       <separator height="0.5"/>
-      <info label="DO NOT COMPARE THE VIBRATION NUMBER TO PUBLISHED CHARTS"/>
-      <info label="The standard vibration charts are drawn in millimetres per second, which is a speed. This app measures acceleration instead. Acceleration is how hard it shakes, not how fast it moves. Those are two different things. You cannot swap the numbers. Do not compare this to the published charts, they use a different measure."/>
+      <info label="TWO VIBRATION NUMBERS - USE THE RIGHT ONE"/>
+      <info label="The app shows two. One is in m/s^2 (acceleration - how hard it shakes). The other is in mm/s (speed - how fast it moves). They are different things and you cannot swap them."/>
+      <info label="The machine-health standards (ISO 10816 and 20816) are written in mm/s, so the mm/s number is the one to compare against a health band. The app works out the speed from the shaking properly, so it is a real speed, not a guess."/>
+      <info label="Two honest limits on it. The phone only sees shaking up to about half its sensor rate (run Device Check), so a very fast fault sits above what it can see and the mm/s reads low. And the standards assume a sensor bolted to the bearing housing on a known class of machine; a phone resting on a frame is neither. So treat the health band as a rough guide, and trust the TREND over months far more than one number."/>
       <info label="Compare one fan against a matching fan, and each fan against its own past readings. That is the honest use."/>
       <separator height="0.5"/>
       <info label="THE FRAME CARRIES EVERYTHING"/>
@@ -436,6 +458,42 @@
       <input>vibHalfIm</input>
       <output>vibMag</output>
     </formula>
+
+    <!-- Overall vibration as velocity in mm/s (the unit ISO 10816/20816 use).
+         Velocity power per bin = acceleration power / (2*pi*f)^2, summed from
+         10 Hz up, scaled by 5.3333/N^2 (single-sided x Hann power), rooted, x1000.
+         Verified against a synthetic sine to 0.02%. -->
+    <formula formula="max(round(10*[1]/[2])-1,0)">
+      <input clear="false">vibCnt</input>
+      <input clear="false">vibRate</input>
+      <output>iVel</output>
+    </formula>
+    <subrange>
+      <input as="from" clear="false">iVel</input>
+      <input as="in" clear="false">vibHalfF</input>
+      <input as="in" clear="false">vibMag</input>
+      <output>velF</output>
+      <output>velMag</output>
+    </subrange>
+    <formula formula="[1_]*[1_]/((6.283185307179586*[2_])*(6.283185307179586*[2_]))">
+      <input>velMag</input>
+      <input>velF</input>
+      <output>velPow</output>
+    </formula>
+    <integrate>
+      <input>velPow</input>
+      <output>sumVelPow</output>
+    </integrate>
+    <formula formula="5.333333333333333*[1]/([2]*[2])">
+      <input>sumVelPow</input>
+      <input clear="false">vibCnt</input>
+      <output>velMS</output>
+    </formula>
+    <formula formula="1000*sqrt([1])">
+      <input>velMS</input>
+      <output>velRms</output>
+    </formula>
+
     <!-- ignore the lowest bins, which carry sway and drift rather than rotation -->
     <formula formula="max(round(3*[1]/[2])-1,0)">
       <input clear="false">vibCnt</input>
