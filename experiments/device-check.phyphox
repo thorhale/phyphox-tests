@@ -98,23 +98,23 @@
       <output component="t">magT</output>
     </sensor>
     <sensor type="pressure" rate="0" ignoreUnavailable="true">
-      <output component="value">preV</output>
+      <output component="x">preV</output>
       <output component="t">preT</output>
     </sensor>
     <sensor type="light" rate="0" ignoreUnavailable="true">
-      <output component="value">lgtV</output>
+      <output component="x">lgtV</output>
       <output component="t">lgtT</output>
     </sensor>
     <sensor type="proximity" rate="0" ignoreUnavailable="true">
-      <output component="value">prxV</output>
+      <output component="x">prxV</output>
       <output component="t">prxT</output>
     </sensor>
     <sensor type="temperature" rate="0" ignoreUnavailable="true">
-      <output component="value">tmpV</output>
+      <output component="x">tmpV</output>
       <output component="t">tmpT</output>
     </sensor>
     <sensor type="humidity" rate="0" ignoreUnavailable="true">
-      <output component="value">humV</output>
+      <output component="x">humV</output>
       <output component="t">humT</output>
     </sensor>
     <audio append="true">

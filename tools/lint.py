@@ -83,6 +83,23 @@ def check(path):
             for el in dev.findall(".//output") + dev.findall(".//input"):
                 buffer_ref(el, f"<{section}><{dev.tag}>")
 
+    # ---- sensor output components. The parser allows exactly six names; a
+    # single-value sensor like pressure or light uses "x", not "value". Getting
+    # this wrong makes phyphox refuse the file with
+    # 'Could not find mapping for output "value"'.
+    SENSOR_COMPONENTS = {"x", "y", "z", "t", "abs", "accuracy"}
+    for s in root.findall("./input/sensor"):
+        for o in s.findall("./output"):
+            comp = o.get("component")
+            if comp is None:
+                continue
+            if comp not in SENSOR_COMPONENTS:
+                hint = ' - single-value sensors use "x"' if comp == "value" else ""
+                problems.append(
+                    f'<sensor type="{s.get("type")}"> uses component="{comp}", which is '
+                    f'not one of {sorted(SENSOR_COMPONENTS)}{hint}. phyphox refuses the '
+                    f'whole file with \'Could not find mapping for output "{comp}"\'')
+
     # ---- hardware outputs, version aware. <flashlight> is real but arrives in
     # phyphox 1.2.1 / file format 1.20; older apps reject the whole file with
     # "Unknown tag flashlight", which a phone confirmed.

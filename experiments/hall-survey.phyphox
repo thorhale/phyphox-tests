@@ -44,7 +44,7 @@
 
   <input>
     <sensor type="pressure" rate="1">
-      <output component="value">pRaw</output>
+      <output component="x">pRaw</output>
       <output component="t">pT</output>
     </sensor>
   </input>

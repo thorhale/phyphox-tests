@@ -71,10 +71,10 @@
       <output component="abs">bAbs</output>
     </sensor>
     <sensor type="pressure" rate="0" ignoreUnavailable="true">
-      <output component="value">pres</output>
+      <output component="x">pres</output>
     </sensor>
     <sensor type="light" rate="0" ignoreUnavailable="true">
-      <output component="value">lux</output>
+      <output component="x">lux</output>
     </sensor>
   </input>
 
