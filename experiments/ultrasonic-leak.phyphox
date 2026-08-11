@@ -58,6 +58,14 @@
     <container size="4096">bandPower</container>
     <container>sumBand</container>
     <container>sumTotal</container>
+
+    <!-- spectral flatness of the band: 1 = broadband hiss (leak), 0 = a tone -->
+    <container>countBand</container>
+    <container>arithMean</container>
+    <container size="4096">nP</container>
+    <container size="4096">lnNP</container>
+    <container>meanLnNP</container>
+    <container>flatness</container>
     <container>ratio</container>
     <container>lnRatio</container>
     <container>ratioDb</container>
@@ -119,6 +127,16 @@
       <value label="High-frequency share of all sound" unit="dB" precision="2">
         <input>ratioDb</input>
       </value>
+      <value label="Sound texture (1 = hiss, 0 = a pure tone)" size="2" precision="3">
+        <input>flatness</input>
+      </value>
+      <value label="Is the high sound leak-like">
+        <input>flatness</input>
+        <map max="0.15">tonal - a whine or hum, most likely NOT a leak</map>
+        <map max="0.35">mixed - part hiss, part tone</map>
+        <map>broadband hiss - this is what a leak sounds like</map>
+      </value>
+      <info label="A leak is turbulent, so it hisses across a wide range of pitches at once. A power supply, an LED driver or a fan whine sits at ONE pitch. This texture score tells them apart, so a loud whine does not read as a leak. Read it together with the share above: a real find is BOTH raised share AND hiss-like texture. Give it a few seconds to settle - the score climbs as the reading averages out."/>
       <value label="Baseline" unit="dB" precision="2">
         <input>baseline</input>
       </value>
@@ -278,7 +296,7 @@
       <output>bandPower</output>
     </subrange>
     <integrate>
-      <input>bandPower</input>
+      <input clear="false">bandPower</input>
       <output>sumBand</output>
     </integrate>
     <integrate>
@@ -286,7 +304,7 @@
       <output>sumTotal</output>
     </integrate>
     <formula formula="([1]+0.000000000001)/([2]+0.000000000001)">
-      <input>sumBand</input>
+      <input clear="false">sumBand</input>
       <input>sumTotal</input>
       <output>ratio</output>
     </formula>
@@ -297,6 +315,41 @@
     <formula formula="4.342944819032518*[1]">
       <input>lnRatio</input>
       <output clear="false">ratioDb</output>
+    </formula>
+
+    <!-- Spectral flatness: geometric mean / arithmetic mean of the band power.
+         A turbulent leak is broadband hiss (flat, near 1); a coil whine, LED
+         driver or hum is tonal (peaky, near 0). Computed scale-free by first
+         normalising each bin by the band's mean, then exp(mean(log)). One
+         honest subtlety: a single spectrum of true broadband noise reads about
+         0.56 (e^-gamma), not 1.0, because each bin is a noisy estimate - it
+         climbs toward 1 the longer the reading settles. Still a 10x separation
+         from a tone, which is all the discrimination needed. -->
+    <count>
+      <input clear="false">bandPower</input>
+      <output>countBand</output>
+    </count>
+    <formula formula="[1]/max([2],1)">
+      <input clear="false">sumBand</input>
+      <input>countBand</input>
+      <output>arithMean</output>
+    </formula>
+    <formula formula="[1_]/max([2],0.000000000000000001)">
+      <input clear="false">bandPower</input>
+      <input>arithMean</input>
+      <output>nP</output>
+    </formula>
+    <formula formula="log([1_]+0.000000000001)">
+      <input>nP</input>
+      <output>lnNP</output>
+    </formula>
+    <average>
+      <input as="buffer">lnNP</input>
+      <output as="average">meanLnNP</output>
+    </average>
+    <formula formula="exp([1])">
+      <input>meanLnNP</input>
+      <output>flatness</output>
     </formula>
 
     <if equal="true">

@@ -281,6 +281,37 @@ def kurtosis_is_three_for_gaussian_and_1p5_for_a_sine():
     return "sine 1.50, Gaussian ~3, spiky well above"
 
 
+@test
+def spectral_flatness_reads_e_minus_gamma_for_white_noise():
+    """The leak texture score is geometric mean / arithmetic mean of the band
+    power. The trap most implementations miss: a single spectrum of true
+    broadband noise reads e^-gamma = 0.5615, NOT 1.0, because each bin is an
+    exponentially-distributed estimate. Evaluates the shipped nP / lnNP /
+    flatness formulas, so both the estimator and that value are pinned."""
+    name = "ultrasonic-leak"
+    f_np = formula_for(path(name), "nP")            # [1_]/max([2],tiny)
+    f_ln = formula_for(path(name), "lnNP")          # log([1_]+tiny)
+    f_flat = formula_for(path(name), "flatness")    # exp([1])
+
+    def flat(power):
+        n = len(power)
+        arith = sum(power) / n
+        nP = [evaluate(f_np, p, arith) for p in power]
+        lns = [evaluate(f_ln, v) for v in nP]
+        return evaluate(f_flat, sum(lns) / n)
+
+    close(flat([1.0] * 2048), 1.0, 0.001, "a perfectly flat band reads 1.0")
+    random.seed(11)
+    exp_bins = [-math.log(random.random()) for _ in range(20000)]  # Exp(1)
+    close(flat(exp_bins), math.exp(-0.5772156649015329), 0.02,
+          "white-noise flatness = e^-gamma = 0.5615")
+    tonal = [0.0001] * 2048
+    tonal[500] = 1000.0
+    if flat(tonal) > 0.1:
+        raise AssertionError("a tone should read flatness near 0, not high")
+    return "flat 1.00, white noise 0.5615 (e^-gamma), tone ~0"
+
+
 # ==========================================================================
 # Dimension survey: speed of sound as a thermometer
 # ==========================================================================
