@@ -208,10 +208,15 @@ To actually *see* where WiFi is weak or jammed, paint the survey onto the floor:
 python3 tools/wifi_map.py survey.csv positions.csv -o map.html
 ```
 
-It draws three heatmaps — **coverage** (where a network is weak), **interference**
+It draws three maps — **coverage** (where a network is weak), **interference**
 (where overlapping channels crowd the air), and **quality** (coverage minus
 interference: the map that actually shows where WiFi will struggle, which is not
-always where the signal is weakest).
+always where the signal is weakest). Then it **names the single loudest competing
+network at each spot** — the one to go move to another channel.
+
+**Nothing on the map is guessed.** Every coloured cell is a real reading taken at
+that spot; the floor between cells was not measured and is left blank, not shaded
+in. To see a corner in more detail, walk it and mark more waypoints there.
 
 It needs one extra thing the survey doesn't have: **where each waypoint was on the
 floor**. That's a tiny CSV, `waypoint,x,y`, in metres on a grid you choose. In a

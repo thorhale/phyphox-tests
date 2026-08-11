@@ -2,31 +2,35 @@
 """Paint a WiFi survey onto the floor: coverage, interference, and net quality.
 
 This is the troubleshooting map. Feed it the survey (tools/wifi_merge.py output)
-and a positions file that says where on the floor each waypoint was, and it draws:
+and a positions file that says where on the floor each waypoint was, and it draws
+a cell for every spot you measured:
 
-  * COVERAGE  - how strong one access point is across the floor (find dead zones)
+  * COVERAGE  - how strong one access point is (find dead zones)
   * INTERFERENCE - how much competing signal sits on overlapping channels
-                   (find where the air is crowded)
-  * QUALITY   - coverage minus interference: the map that actually says where WiFi
-                will struggle, which is not always where the signal is weakest
+  * QUALITY   - coverage minus interference: where WiFi will actually struggle,
+                which is not always where the signal is weakest
+
+and, for each measured spot, it NAMES the single loudest competing network - so
+you know exactly which access point to go move to another channel.
 
     python3 tools/wifi_map.py survey.csv positions.csv -o map.html
 
-The positions file is a tiny CSV you fill in - one row per waypoint:
+NOTHING ON THIS MAP IS GUESSED. Every coloured cell is a real reading taken at
+that spot. The blank floor between cells was not measured and is left blank - it
+is not interpolated, shaded, or filled in. Want more detail in a corner? Walk it
+and mark more waypoints there. The only way to know the signal somewhere is to
+measure it there.
+
+The positions file is a tiny CSV, one row per waypoint:
 
     waypoint,x,y
     1,0,0
     2,5,0
     3,10,0
 
-x and y are in metres (or any unit) on a floor grid you choose. In a data hall the
-aisles ARE a grid, so "aisle 2, third rack" is already a coordinate. Run with no
-positions file and it prints a blank template listing your waypoints to fill in.
-
-HONEST LIMIT baked into the page: between your waypoints the map is INTERPOLATED -
-an educated guess. A wall the survey walked past but not through will not show as
-the sharp signal drop it really is. Denser waypoints = a truer map. Treat a dead
-zone on the map as a place to go stand and confirm, not as gospel.
+x and y are in metres on a floor grid you choose. In a data hall the aisles ARE a
+grid, so "aisle 2, third rack" is already a coordinate. Run with no positions file
+and it prints a blank template listing your waypoints to fill in.
 
 No dependencies; self-contained SVG in one HTML file; runs in Pydroid too.
 """
@@ -76,7 +80,7 @@ def overlaps(band, ch_a, ch_b):
     """Do two channels in the same band interfere? 2.4 GHz 20 MHz channels are
     ~5 apart and 20 MHz wide, so anything within 4 channels overlaps. 5 GHz
     channels are laid out non-overlapping, so only the same channel collides
-    (ignoring 40/80 MHz bonding, which this does not try to model)."""
+    (40/80 MHz bonding is not modelled)."""
     if ch_a is None or ch_b is None:
         return False
     if band == "2.4":
@@ -89,24 +93,11 @@ def dbm_to_mw(d):
 
 
 def mw_to_dbm(m):
-    return 10.0 * math.log10(m) if m > 1e-12 else -120.0
-
-
-def idw(points, x, y, power=2.0):
-    """Inverse-distance-weighted value at (x,y) from [(px,py,val), ...]."""
-    num = den = 0.0
-    for px, py, v in points:
-        d2 = (px - x) ** 2 + (py - y) ** 2
-        if d2 < 1e-9:
-            return v
-        w = 1.0 / d2 ** (power / 2.0)
-        num += w * v
-        den += w
-    return num / den if den else None
+    return 10.0 * math.log10(m) if m > 1e-12 else None
 
 
 def colour(t):
-    """t in 0..1 -> red(0) .. yellow(0.5) .. green(1). Returns #rrggbb."""
+    """t in 0..1 -> red(0) .. yellow(.5) .. green(1)."""
     t = max(0.0, min(1.0, t))
     if t < 0.5:
         r, g = 255, int(510 * t)
@@ -115,66 +106,24 @@ def colour(t):
     return f"#{r:02x}{g:02x}40"
 
 
-def heatmap_svg(points, positions, lo, hi, title, note, wp_labels=True):
-    """One SVG heat panel. points = [(x,y,value)], value mapped lo..hi -> red..green."""
-    xs = [p[0] for p in points]
-    ys = [p[1] for p in points]
-    if not xs:
-        return f"<p>{esc(title)}: no positioned data</p>"
-    minx, maxx, miny, maxy = min(xs), max(xs), min(ys), max(ys)
-    pad = max((maxx - minx), (maxy - miny), 1.0) * 0.15
-    minx -= pad; maxx += pad; miny -= pad; maxy += pad
-    W, H = 460, 340
-    def sx(x): return (x - minx) / (maxx - minx) * W
-    def sy(y): return H - (y - miny) / (maxy - miny) * H
-    cell = 14
-    cells = []
-    for gy in range(0, H, cell):
-        for gx in range(0, W, cell):
-            wx = minx + (gx + cell / 2) / W * (maxx - minx)
-            wy = miny + (H - (gy + cell / 2)) / H * (maxy - miny)
-            v = idw(points, wx, wy)
-            if v is None:
-                continue
-            t = (v - lo) / (hi - lo) if hi > lo else 0.5
-            cells.append(f'<rect x="{gx}" y="{gy}" width="{cell}" height="{cell}" '
-                         f'fill="{colour(t)}" opacity="0.85"/>')
-    dots = []
-    for w, (x, y) in positions.items():
-        cx, cy = sx(x), sy(y)
-        dots.append(f'<circle cx="{cx:.0f}" cy="{cy:.0f}" r="4" fill="#0d1117" '
-                    f'stroke="#fff" stroke-width="1.5"/>')
-        if wp_labels:
-            dots.append(f'<text x="{cx:.0f}" y="{cy - 7:.0f}" fill="#fff" '
-                        f'font-size="11" text-anchor="middle">{esc(w)}</text>')
-    return (f'<div class="panel"><h3>{esc(title)}</h3>'
-            f'<p class="note">{esc(note)}</p>'
-            f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:{W}px">'
-            f'<rect width="{W}" height="{H}" fill="#161b22"/>'
-            + "".join(cells) + "".join(dots) + "</svg></div>")
-
-
 def esc(v):
     return html.escape("" if v is None else str(v))
 
 
-def best_rows_by_wp(rows, bssid=None):
-    """waypoint -> best rssi (for one bssid, or the strongest AP overall)."""
+def coverage_by_wp(rows, bssid):
     out = {}
     for r in rows:
-        if bssid and (r.get("bssid") or "").lower() != bssid:
+        if (r.get("bssid") or "").lower() != bssid:
             continue
         w = (r.get("waypoint") or "").strip()
         s = fnum(r.get("rssi_dbm"))
-        if not w or s is None:
-            continue
-        if w not in out or s > out[w]:
+        if w and s is not None and (w not in out or s > out[w]):
             out[w] = s
     return out
 
 
 def target_ap(rows):
-    """Pick the access point seen at the most waypoints (usually your own)."""
+    """The access point seen at the most waypoints - usually the one you own."""
     seen = {}
     for r in rows:
         b = (r.get("bssid") or "").lower()
@@ -184,18 +133,15 @@ def target_ap(rows):
     if not seen:
         sys.exit("no access points with a bssid in the survey")
     b = max(seen, key=lambda k: len(seen[k]))
-    ssid = next((r.get("ssid") for r in rows if (r.get("bssid") or "").lower() == b), b)
-    chan = next((fnum(r.get("channel")) for r in rows
-                 if (r.get("bssid") or "").lower() == b), None)
-    freq = next((r.get("freq_mhz") for r in rows
-                 if (r.get("bssid") or "").lower() == b), None)
-    return b, ssid, chan, band_of(freq, chan)
+    row = next(r for r in rows if (r.get("bssid") or "").lower() == b)
+    chan = fnum(row.get("channel"))
+    return b, row.get("ssid") or b, chan, band_of(row.get("freq_mhz"), chan)
 
 
-def interference_by_wp(rows, target_b, band, chan):
-    """waypoint -> total interfering power (dBm) from OTHER APs on overlapping
-    channels."""
-    out = {}
+def interferers_by_wp(rows, target_b, band, chan):
+    """waypoint -> (total interference dBm, [(ssid, channel, rssi), ...] worst first)
+    from OTHER access points on overlapping channels. Pure measurement."""
+    per = {}
     for r in rows:
         b = (r.get("bssid") or "").lower()
         if b == target_b:
@@ -206,11 +152,56 @@ def interference_by_wp(rows, target_b, band, chan):
             continue
         if band_of(r.get("freq_mhz"), r.get("channel")) != band:
             continue
-        if not overlaps(band, chan, fnum(r.get("channel"))):
+        rc = fnum(r.get("channel"))
+        if not overlaps(band, chan, rc):
             continue
-        out.setdefault(w, 0.0)
-        out[w] += dbm_to_mw(s)
-    return {w: mw_to_dbm(p) for w, p in out.items()}
+        # keep the strongest reading per interfering BSSID at this waypoint
+        d = per.setdefault(w, {})
+        if b not in d or s > d[b][2]:
+            d[b] = (r.get("ssid") or "(hidden)", rc, s)
+    out = {}
+    for w, d in per.items():
+        contributors = sorted(d.values(), key=lambda t: -t[2])
+        total = mw_to_dbm(sum(dbm_to_mw(s) for _, _, s in contributors))
+        out[w] = (total, contributors)
+    return out
+
+
+def measured_map(values, positions, lo, hi, title, note, unit=""):
+    """A cell for each MEASURED waypoint, coloured by its real value. No fill
+    between cells - unmeasured floor stays blank."""
+    pts = [(positions[w][0], positions[w][1], w, values[w])
+           for w in values if w in positions and values[w] is not None]
+    if not pts:
+        return f'<div class="panel"><h3>{esc(title)}</h3><p class="note">no positioned readings</p></div>'
+    xs = [p[0] for p in pts]
+    ys = [p[1] for p in pts]
+    # cell side = median nearest-neighbour spacing, so a grid tiles and gaps show
+    nn = []
+    for i, (x, y, _, _) in enumerate(pts):
+        others = [math.hypot(x - px, y - py) for j, (px, py, _, _) in enumerate(pts) if j != i]
+        nn.append(min(others) if others else 1.0)
+    side = sorted(nn)[len(nn) // 2] if nn else 1.0
+    minx, maxx = min(xs) - side, max(xs) + side
+    miny, maxy = min(ys) - side, max(ys) + side
+    W, H = 460, 330
+    def sx(x): return (x - minx) / (maxx - minx) * W
+    def sy(y): return H - (y - miny) / (maxy - miny) * H
+    cw = side / (maxx - minx) * W
+    ch = side / (maxy - miny) * H
+    parts = [f'<rect width="{W}" height="{H}" fill="#161b22"/>']
+    for x, y, w, v in pts:
+        t = (v - lo) / (hi - lo) if hi > lo else 0.5
+        cx, cy = sx(x), sy(y)
+        parts.append(f'<rect x="{cx - cw / 2:.0f}" y="{cy - ch / 2:.0f}" width="{cw:.0f}" '
+                     f'height="{ch:.0f}" fill="{colour(t)}" stroke="#0d1117" stroke-width="1"/>')
+        parts.append(f'<text x="{cx:.0f}" y="{cy + 4:.0f}" text-anchor="middle" '
+                     f'font-size="12" font-weight="700" fill="#0d1117">{v:.0f}</text>')
+        parts.append(f'<text x="{cx:.0f}" y="{cy - ch / 2 + 11:.0f}" text-anchor="middle" '
+                     f'font-size="8" fill="#0d1117">wp {esc(w)}</text>')
+    return (f'<div class="panel"><h3>{esc(title)}</h3><p class="note">{esc(note)}</p>'
+            f'<svg viewBox="0 0 {W} {H}" width="100%" style="max-width:{W}px">'
+            + "".join(parts) + f'</svg><p class="unit">{esc(unit)}</p></div>')
 
 
 PAGE = """<!doctype html><meta charset="utf-8">
@@ -218,16 +209,20 @@ PAGE = """<!doctype html><meta charset="utf-8">
 <title>{title}</title>
 <style>
  body{{font-family:system-ui,sans-serif;margin:0;padding:1.2rem;background:#0d1117;
-      color:#e6edf3;max-width:64rem;margin:auto}}
+      color:#e6edf3;max-width:66rem;margin:auto}}
  h1{{font-size:1.5rem}} h2{{margin-top:1.5rem;font-size:1.15rem}}
  h3{{color:#58a6ff;font-size:1rem;margin:.2rem 0}}
- .lead,.note{{color:#8b949e;line-height:1.5;font-size:.88rem}} .note{{font-size:.8rem;margin:.2rem 0 .5rem}}
+ .lead,.note{{color:#8b949e;line-height:1.5;font-size:.88rem}}
+ .note{{font-size:.8rem;margin:.2rem 0 .4rem}} .unit{{color:#8b949e;font-size:.72rem;margin:.2rem 0 0}}
  .grid{{display:flex;flex-wrap:wrap;gap:1.2rem}} .panel{{flex:1;min-width:300px}}
  .legend{{display:flex;gap:.4rem;align-items:center;font-size:.8rem;color:#8b949e;margin:.5rem 0}}
  .swatch{{height:.8rem;width:9rem;border-radius:3px;
           background:linear-gradient(90deg,#ff4040,#ffff40,#40c840)}}
- .warn{{background:#231a10;border-left:3px solid #d29922;padding:.6rem .9rem;
-        border-radius:4px;font-size:.85rem;line-height:1.5;color:#e6edf3;margin:1rem 0}}
+ table{{border-collapse:collapse;width:100%;font-size:.85rem;margin:.5rem 0}}
+ th{{text-align:left;color:#8b949e;padding:.35rem .5rem;border-bottom:1px solid #30363d}}
+ td{{padding:.35rem .5rem;border-bottom:1px solid #21262d}} .r{{text-align:right;white-space:nowrap}}
+ .honest{{background:#132019;border-left:3px solid #3fb950;padding:.6rem .9rem;
+          border-radius:4px;font-size:.85rem;line-height:1.5;margin:1rem 0}}
 </style>
 {body}
 """
@@ -249,8 +244,7 @@ def main():
         wps = sorted({(r.get("waypoint") or "").strip() for r in rows if r.get("waypoint")},
                      key=lambda w: (fnum(w) is None, fnum(w) or 0, w))
         print("No positions file given. Fill in this template (x,y in metres) and\n"
-              "pass it as the second argument:\n")
-        print("waypoint,x,y")
+              "pass it as the second argument:\n\nwaypoint,x,y")
         for w in wps:
             print(f"{w},,")
         return
@@ -259,58 +253,79 @@ def main():
     if not positions:
         sys.exit(f"{args.positions}: no usable waypoint,x,y rows")
 
-    tb = args.bssid.lower() if args.bssid else None
-    if tb:
-        ssid = next((r.get("ssid") for r in rows if (r.get("bssid") or "").lower() == tb), tb)
-        chan = next((fnum(r.get("channel")) for r in rows
-                     if (r.get("bssid") or "").lower() == tb), None)
-        band = band_of(next((r.get("freq_mhz") for r in rows
-                             if (r.get("bssid") or "").lower() == tb), None), chan)
+    if args.bssid:
+        tb = args.bssid.lower()
+        row = next((r for r in rows if (r.get("bssid") or "").lower() == tb), None)
+        if not row:
+            sys.exit(f"{args.bssid}: not in the survey")
+        chan = fnum(row.get("channel"))
+        ssid, band = row.get("ssid") or tb, band_of(row.get("freq_mhz"), chan)
     else:
         tb, ssid, chan, band = target_ap(rows)
 
-    cov = best_rows_by_wp(rows, tb)
-    itf = interference_by_wp(rows, tb, band, chan)
-
-    def pts(d):
-        return [(positions[w][0], positions[w][1], v)
-                for w, v in d.items() if w in positions]
-
-    cov_pts = pts(cov)
-    itf_pts = pts({w: itf.get(w, -120.0) for w in cov})     # 0 interference -> very low dBm
-    qual_pts = [(x, y, cov[w] - itf.get(w, -120.0))
-                for w in cov if w in positions
-                for (x, y) in [positions[w]]]
+    cov = coverage_by_wp(rows, tb)
+    itf = interferers_by_wp(rows, tb, band, chan)
+    itf_total = {w: itf.get(w, (None, []))[0] for w in cov}
+    quality = {w: (cov[w] - itf_total[w]) if itf_total.get(w) is not None else None
+               for w in cov}
 
     body = []
     body.append(f"<h1>{esc(args.title)}</h1>")
     body.append(f'<p class="lead">Mapping <b>{esc(ssid)}</b> '
                 f'(channel {esc(int(chan)) if chan else "?"}, {esc(band)} GHz) across '
-                f"{len(positions)} waypoints. Green is good, red is trouble.</p>")
+                f"{len(cov)} measured spots. Green is good, red is trouble. Every "
+                "number is a real reading taken at that spot.</p>")
     body.append('<div class="legend"><span>worse</span><span class="swatch"></span>'
                 "<span>better</span></div>")
     body.append('<div class="grid">')
-    body.append(heatmap_svg(cov_pts, positions, -85, -50,
-                "Coverage - signal strength",
-                "How strong this access point is. Red = weak spots and dead zones."))
-    body.append(heatmap_svg(
-        [(x, y, -v) for (x, y, v) in itf_pts], positions, -(-55), -(-95),
-        "Interference - crowding on overlapping channels",
-        "Competing signal on channels that clash with this one. Red = crowded air."))
-    body.append(heatmap_svg(qual_pts, positions, 0, 35,
-                "Quality - signal minus interference",
-                "The real story: high signal is no good if interference is just as high. "
-                "Red = where WiFi will actually struggle."))
+    body.append(measured_map(cov, positions, -85, -50,
+                "Coverage", "How strong this network is. Red = weak, dead zones.",
+                "signal in dBm (higher / greener = stronger)"))
+    body.append(measured_map({w: v for w, v in itf_total.items() if v is not None},
+                positions, -55, -90,
+                "Interference", "Competing signal on clashing channels. Red = crowded.",
+                "combined interference in dBm (lower / greener = quieter)"))
+    body.append(measured_map({w: v for w, v in quality.items() if v is not None},
+                positions, 0, 35,
+                "Quality (signal minus interference)",
+                "The real story. Red = where WiFi will actually struggle.",
+                "signal-to-interference in dB (higher / greener = better)"))
     body.append("</div>")
-    body.append('<div class="warn"><b>Read the map honestly.</b> Between your '
-                "waypoints the colours are interpolated - a guess drawn from the "
-                "nearest points. A wall the survey walked past but not through will "
-                "not show as the sharp drop it really is. The more waypoints you "
-                "mark, the truer it gets. Treat a red zone as a place to go stand "
-                "and confirm, not as proof.</div>")
+
+    # ---- the named culprits ----
+    body.append("<h2>Who to go re-channel</h2>")
+    body.append('<p class="lead">At each spot, the single loudest network fighting '
+                "yours on an overlapping channel. This is the one to move.</p>")
+    body.append("<table><tr><th>Waypoint</th><th>Your signal</th>"
+                "<th>Worst interferer</th><th>Its channel</th><th>Its signal</th>"
+                "<th>Quality</th></tr>")
+    for w in sorted(cov, key=lambda w: (quality.get(w) is None, quality.get(w) or 0)):
+        contributors = itf.get(w, (None, []))[1]
+        worst = contributors[0] if contributors else None
+        q = quality.get(w)
+        if worst:
+            name = esc(worst[0])
+            wch = esc(int(worst[1])) if worst[1] else "-"
+            wsig = f"{worst[2]:.0f} dBm"
+        else:
+            name, wch, wsig = "none on an overlapping channel", "-", "-"
+        qcell = f"{q:.0f} dB" if q is not None else "-"
+        body.append(
+            f"<tr><td>wp {esc(w)}</td><td class='r'>{cov[w]:.0f} dBm</td>"
+            f"<td>{name}</td><td class='r'>{wch}</td><td class='r'>{wsig}</td>"
+            f"<td class='r'>{qcell}</td></tr>")
+    body.append("</table>")
+
+    body.append('<div class="honest"><b>Nothing here is guessed.</b> Every coloured '
+                "cell is a real reading taken at that spot, and the blank floor "
+                "between cells was not measured - it is left blank rather than "
+                "filled in. To see a corner in more detail, walk it and mark more "
+                "waypoints. The only way to know the signal somewhere is to measure "
+                "it there.</div>")
+
     with open(args.out, "w", encoding="utf-8") as fh:
         fh.write(PAGE.format(title=esc(args.title), body="\n".join(body)))
-    print(f"mapped {ssid} across {len(positions)} waypoints -> {args.out}")
+    print(f"mapped {ssid} across {len(cov)} measured spots -> {args.out}")
 
 
 if __name__ == "__main__":
