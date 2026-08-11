@@ -29,6 +29,7 @@ AP_CHANNEL = ("primary channel", "channel")
 AP_FREQ = ("primary frequency", "frequency")
 AP_DIST = ("distance",)
 AP_SEC = ("security",)
+AP_VENDOR = ("vendor", "manufacturer")
 
 TIME_FORMATS = (
     "%Y-%m-%d %H:%M:%S",
@@ -142,6 +143,7 @@ def read_scan(path):
         "freq": find_col(headers, AP_FREQ),
         "distance": find_col(headers, AP_DIST),
         "security": find_col(headers, AP_SEC),
+        "vendor": find_col(headers, AP_VENDOR),
     }
     if cols["t"] < 0 or cols["bssid"] < 0 or cols["rssi"] < 0:
         sys.exit(
@@ -166,6 +168,7 @@ def read_scan(path):
                 "freq": num(get("freq")),
                 "distance": num(get("distance")),
                 "security": get("security"),
+                "vendor": get("vendor"),
                 "source": path.split("/")[-1],
             }
         )
@@ -245,6 +248,7 @@ def main():
             "freq_mhz": a["freq"],
             "distance_m": a["distance"],
             "security": a["security"],
+            "vendor": a["vendor"],
             "scan_file": a["source"],
         }
         for k, v in wp.items():

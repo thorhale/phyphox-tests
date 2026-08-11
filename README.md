@@ -185,7 +185,20 @@ python3 tools/wifi_merge.py waypoints.csv scan*.txt -o survey.csv
 ```
 
 That matches every WiFi access point (the box that broadcasts the WiFi) to the
-waypoint you were standing on.
+waypoint you were standing on, keeping every detail WiFiAnalyzer had: name,
+address, signal, channel, frequency, distance estimate, security and vendor.
+
+Then turn that into a readable report — the WiFiAnalyzer level of detail, but
+saved and tied to the places you walked:
+
+```sh
+python3 tools/wifi_report.py survey.csv -o survey.html
+```
+
+That page lists every access point strongest-first, shows how crowded each channel
+is (and which are clearest), and — the thing WiFiAnalyzer can't do, because it is
+live-only — tells you what you could actually reach at each spot you marked. Open
+it in any browser; it needs no internet.
 
 There's a nasty trap it handles for you. phyphox records time in UTC (a single
 world clock), and WiFiAnalyzer records local time without saying so. Join them the
