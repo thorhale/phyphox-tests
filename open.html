@@ -15,23 +15,24 @@
  .btn:active { background: #2a2a2a; }
  .sub { display: block; font-size: .72rem; color: #888; margin-top: .25rem;
          font-family: ui-monospace, monospace; }
+ .big { background: #e8871a; border-color: #e8871a; color: #111; font-weight: 700;
+         font-size: 1.15rem; }
+ .big .sub { color: #4a2c00; font-family: inherit; font-weight: 400; }
 </style>
 <h1>Tap to install</h1>
 <p>Each button hands the experiment straight to phyphox. If nothing happens when
 you tap, phyphox is not registered for these links on your phone — use the QR
 sheet instead.</p>
 
-<h2>Probes — start here, in order</h2>
-<p>The first one that fails to install, or shows nothing, names the problem.</p>
-<a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/probes/00-loads.phyphox">Probe 0: does anything load at all
-  <span class="sub">00-loads.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/probes/01-analysis.phyphox">Probe 1: analysis modules run
-  <span class="sub">01-analysis.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/probes/02-formula.phyphox">Probe 2: formulas and their functions work
-  <span class="sub">02-formula.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/probes/03-fft.phyphox">Probe 3: the FFT and buffer slicing work
-  <span class="sub">03-fft.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/probes/04-speaker.phyphox">Probe 4: the speaker works
-  <span class="sub">04-speaker.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/probes/05-flashlight.phyphox">Probe 5: the torch can strobe
-  <span class="sub">05-flashlight.phyphox</span></a>
+<a class="btn big" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/all-tests.zip">Install all 16 experiments
+  <span class="sub">one tap — phyphox lists them and you add the lot</span></a>
+<p style="font-size:.8rem">That points at a zip of everything. If your phone
+refuses to open a zip through the <code>phyphox://</code> link, use the plain
+download below and open it with phyphox, or scan the bundle QR code instead.</p>
+<a class="btn" href="https://raw.githubusercontent.com/thorhale/phyphox-tests/main/all-tests.zip">Download the bundle as a normal file
+  <span class="sub">all-tests.zip</span></a>
 
-<h2>The experiments</h2>
+<h2>Or one at a time</h2>
 <a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/experiments/acoustic-fingerprint.phyphox">Room Echo Signature
   <span class="sub">acoustic-fingerprint.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/experiments/busway-load.phyphox">Busway Load Indicator
   <span class="sub">busway-load.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/experiments/device-check.phyphox">0. Device Check
@@ -49,3 +50,14 @@ sheet instead.</p>
   <span class="sub">vibration-census.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/experiments/walk-logger.phyphox">Synchronised Walk Logger
   <span class="sub">walk-logger.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/experiments/wifi-walk.phyphox">WiFi Walk Survey
   <span class="sub">wifi-walk.phyphox</span></a>
+
+<h2>Probes — diagnostics, only if something breaks</h2>
+<p>You do not need these to use the tests. Install them in order only when
+something is not working; the first that fails names the problem.</p>
+<a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/probes/00-loads.phyphox">Probe 0: does anything load at all
+  <span class="sub">00-loads.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/probes/01-analysis.phyphox">Probe 1: analysis modules run
+  <span class="sub">01-analysis.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/probes/02-formula.phyphox">Probe 2: formulas and their functions work
+  <span class="sub">02-formula.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/probes/03-fft.phyphox">Probe 3: the FFT and buffer slicing work
+  <span class="sub">03-fft.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/probes/04-speaker.phyphox">Probe 4: the speaker works
+  <span class="sub">04-speaker.phyphox</span></a><a class="btn" href="phyphox://raw.githubusercontent.com/thorhale/phyphox-tests/main/probes/05-flashlight.phyphox">Probe 5: the torch can strobe
+  <span class="sub">05-flashlight.phyphox</span></a>

@@ -23,6 +23,7 @@ import argparse
 import glob
 import os
 import sys
+import zipfile
 
 try:
     import segno
@@ -30,6 +31,37 @@ except ImportError:
     sys.exit("needs segno:  pip install segno")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Every experiment in one archive, so a single QR installs the lot. phyphox
+# lists every .phyphox file it finds inside a zip and asks which to add - so
+# this is one scan instead of sixteen. The files must sit flat in the zip; put
+# them in folders and phyphox will not find them.
+#
+# The other reason to do it this way: the QR points at the zip, not at any
+# individual experiment. Update the zip and everyone who already has the code
+# gets the new versions. The printed code never goes stale.
+BUNDLES = {"all-tests.zip": "experiments", "probes.zip": "probes"}
+
+# Fixed timestamp so rebuilding an unchanged bundle produces an identical file.
+# Otherwise every run rewrites the zip and git sees a change that isn't one.
+ZIP_EPOCH = (2026, 1, 1, 0, 0, 0)
+
+
+def build_bundles(out_dir):
+    made = []
+    for zipname, folder in BUNDLES.items():
+        src = sorted(glob.glob(os.path.join(ROOT, folder, "*.phyphox")))
+        if not src:
+            continue
+        path = os.path.join(out_dir, zipname)
+        with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as z:
+            for p in src:
+                info = zipfile.ZipInfo(os.path.basename(p), date_time=ZIP_EPOCH)
+                info.compress_type = zipfile.ZIP_DEFLATED
+                with open(p, "rb") as fh:
+                    z.writestr(info, fh.read())
+        made.append((zipname, folder, len(src), os.path.getsize(path)))
+    return made
 
 
 def experiments():
@@ -61,6 +93,16 @@ def main():
     args = ap.parse_args()
 
     base = args.base.rstrip("/")
+    out_dir = os.path.dirname(args.out) or ROOT
+    bundles = build_bundles(out_dir)
+
+    def qr_for(url, scale=6):
+        return segno.make(url, error="m").svg_inline(scale=scale, dark="#111")
+
+    bundle_url = f"{base}/all-tests.zip"
+    bundle_svg = qr_for(bundle_url, scale=7)
+    bundle_n = next((n for z, _, n, _ in bundles if z == "all-tests.zip"), 0)
+
     cards = []
     for folder, name in experiments():
         url = f"{base}/{folder}/{name}.phyphox"
@@ -101,12 +143,34 @@ def main():
  .file {{ font-family: ui-monospace, monospace; font-size: .75rem; color: #666;
           margin: 0; }}
  .url {{ font-size: .6rem; color: #999; word-break: break-all; margin: .4rem 0 0; }}
+ .all {{ display: flex; gap: 1.5rem; align-items: flex-start; border: 2px solid #e8871a;
+         border-radius: 10px; padding: 1.2rem; margin: 1.5rem 0; max-width: 46rem;
+         background: #fffaf4; }}
+ .all .qr {{ flex: 0 0 auto; }}
+ .alltext p {{ line-height: 1.5; margin: .5rem 0; }}
  @media print {{ .card {{ break-inside: avoid; }} }}
 </style>
 
 <h1>Install these phyphox experiments</h1>
 <p class="lead">In phyphox, press <b>+</b> then <b>Add experiment from QR code</b>,
 and point the phone at one of these. Scanning from a screen works fine.</p>
+
+<div class="all">
+  <div class="qr">{bundle_svg}</div>
+  <div class="alltext">
+    <h2 style="margin-top:0;border:0">Scan this one to get all {bundle_n} at once</h2>
+    <p>This code points at a zip holding every experiment. phyphox opens it,
+    lists what's inside, and lets you add them in one go &mdash; one scan
+    instead of {bundle_n}.</p>
+    <p><b>It also never goes out of date.</b> The code points at the zip rather
+    than at any single experiment, so when the zip is updated this same code
+    hands out the new versions. Print it once and it keeps working.</p>
+    <p class="url">{bundle_url}</p>
+  </div>
+</div>
+
+<p class="lead">The individual codes below are only needed if you want one
+specific test, or if the bundle fails to download.</p>
 
 <div class="warn">
 <b>These only work if the files are publicly reachable.</b> phyphox downloads the
@@ -159,26 +223,41 @@ which of these that phone can actually run.</p>
  .btn:active {{ background: #2a2a2a; }}
  .sub {{ display: block; font-size: .72rem; color: #888; margin-top: .25rem;
          font-family: ui-monospace, monospace; }}
+ .big {{ background: #e8871a; border-color: #e8871a; color: #111; font-weight: 700;
+         font-size: 1.15rem; }}
+ .big .sub {{ color: #4a2c00; font-family: inherit; font-weight: 400; }}
 </style>
 <h1>Tap to install</h1>
 <p>Each button hands the experiment straight to phyphox. If nothing happens when
 you tap, phyphox is not registered for these links on your phone — use the QR
 sheet instead.</p>
 
-<h2>Probes — start here, in order</h2>
-<p>The first one that fails to install, or shows nothing, names the problem.</p>
-{"".join(rows[:len(probes)])}
+<a class="btn big" href="{bundle_url.replace('https://', 'phyphox://')}">Install all {bundle_n} experiments
+  <span class="sub">one tap — phyphox lists them and you add the lot</span></a>
+<p style="font-size:.8rem">That points at a zip of everything. If your phone
+refuses to open a zip through the <code>phyphox://</code> link, use the plain
+download below and open it with phyphox, or scan the bundle QR code instead.</p>
+<a class="btn" href="{bundle_url}">Download the bundle as a normal file
+  <span class="sub">all-tests.zip</span></a>
 
-<h2>The experiments</h2>
+<h2>Or one at a time</h2>
 {"".join(rows[len(probes):])}
+
+<h2>Probes — diagnostics, only if something breaks</h2>
+<p>You do not need these to use the tests. Install them in order only when
+something is not working; the first that fails names the problem.</p>
+{"".join(rows[:len(probes)])}
 '''
     links_path = os.path.join(os.path.dirname(args.out), "open.html")
     with open(links_path, "w") as fh:
         fh.write(links_html)
     print(f"tappable links -> {links_path}")
 
+    for zipname, folder, n, size in bundles:
+        print(f"bundle -> {zipname}  ({n} from {folder}/, {size / 1024:.0f} kB)")
     print(f"{len(cards)} codes -> {args.out}")
     print(f"base URL: {base}")
+    print("COMMIT all-tests.zip - the bundle QR is useless until it is online.")
     print("Open that file and scan from the screen. If phyphox reports an error,")
     print("check the URL loads in a browser with no login - that is the usual cause.")
 
