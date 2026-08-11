@@ -3,8 +3,10 @@
 Custom experiments for the [phyphox](https://phyphox.org) phone app, for
 measuring things in a data hall with the phone you already have.
 
-**None of these have been tried on a real phone yet.** They're checked by a
-script and the maths is verified, but that's not the same as working.
+**Status on a real phone (Galaxy, Aug 2026):** the six diagnostic probes ran
+0-4 pass, 5 blocked on an unreleased phyphox version. `device-check` runs and
+reports correctly. The other 14 experiments are checked by script and the maths
+is verified, but have not each been run in a hall yet.
 
 ## Start here
 
@@ -12,6 +14,28 @@ script and the maths is verified, but that's not the same as working.
 actually answers, measures the real sample rates, and tells you plainly which of
 these tests that phone can run. Phones differ a lot and it is better to find out
 in the office than halfway down an aisle.
+
+### What one real phone reported
+
+From the first successful `device-check` run, as an example of what the verdicts
+look like and why they matter:
+
+| Sensor | Result | What it means for these tests |
+|---|---|---|
+| Accelerometer | 470.6 Hz | Vibration tests can see up to 235 Hz. Good — covers fan blade-pass and 2x mains |
+| Gyroscope | 470.6 Hz | Fine |
+| Magnetometer | 100.0 Hz | Only sees up to 50 Hz. Mains hum sits *at* that edge — see the EMI caveat below |
+| Barometer | 12.5 Hz | Fine for `hall-survey` |
+| Light, proximity | fitted, event-driven | They report only when the reading changes, so a low rate is normal, not a fault |
+| Ambient temperature | **not fitted** | Expected. `hall-survey` keeps its typed-in temperature box |
+| Humidity | **not fitted** | Same |
+| Microphone | 48000 Hz | Everything audio works |
+
+The magnetometer figure is the one worth reading twice. At 100 Hz it cannot
+honestly resolve 50 or 60 Hz mains, so `emi-survey` and `busway-load` are
+comparative — *this cable is busier than that one* — and not a frequency
+measurement. That was the caveat written into those files before the phone
+confirmed it.
 
 ## The experiments
 
@@ -28,7 +52,7 @@ any extra hardware.
 | `magnetic-fingerprint` | Find an exact spot again, using the building's steel as the map | 0 |
 | `fan-tacho` | Fan speed, and whether a bearing is starting to fail | 0 |
 | `vibration-census` | Which machines are actually running, from one floor recording | 0 |
-| `strobe-tacho` | Fan speed read by eye with the torch — the honest check on `fan-tacho`  (needs phyphox 1.2.1 beta) | 0 |
+| `strobe-tacho` | Fan speed read by eye with the torch — the honest check on `fan-tacho` | 3 |
 | `tile-tap` | Finds loose or unsupported floor tiles by the note they ring at | 0 |
 | `acoustic-fingerprint` | Recognise a place by its echoes; how live the room is | 0 |
 | `rack-signature` | Find the odd one out in a row of identical machines | 0 |
@@ -38,8 +62,12 @@ any extra hardware.
 | `wifi-walk` | Marks your spots so WiFi readings can be matched to them later | 0 |
 | `hall-survey` | Logs air pressure; you type in temperature and humidity | 1 |
 
-**Fifteen of the sixteen run on any phone** — a cheap A-series Android or an
-iPhone. `capabilities.json` says what each one needs. `tools/check_tiers.py` opens every
+**Fourteen of the sixteen run on any phone** — a cheap A-series Android or an
+iPhone. `hall-survey` needs a barometer. `strobe-tacho` needs the torch output,
+which only exists in phyphox 1.2.1 — still a public beta, so it is Tier 3 until
+that ships. Nothing is blocked by it: `fan-tacho` already reads fan speed two
+independent ways, from the blade tone and from the accelerometer.
+`capabilities.json` says what each one needs. `tools/check_tiers.py` opens every
 file and fails if that claim is not true — so the table above cannot quietly stop
 matching the files, which is the usual way a compatibility list becomes a lie.
 
@@ -49,11 +77,30 @@ python3 tools/check_tiers.py
 
 ## How to install one
 
-1. Email the `.phyphox` file to yourself
-2. Open it on your phone
-3. phyphox asks if you want to add it — say yes
+Open **`open.html`** on the phone and tap the experiment you want. Each button
+hands the file straight to phyphox, which asks whether to add it. It then sits in
+your experiment list like any built-in one.
 
-It then sits in your experiment list like any built-in one.
+```sh
+python3 tools/make_qr.py --base https://raw.githubusercontent.com/thorhale/phyphox-tests/main
+```
+
+That regenerates `open.html` (tappable links, for installing from the phone
+alone) and `install.html` (QR codes, for scanning off a computer screen with
+phyphox's own scanner).
+
+Two things that waste an afternoon if nobody says them:
+
+- **The repository has to be public.** phyphox downloads the file from the
+  address with no login. Private repo means the phone just gets a 404 and the
+  link looks broken.
+- **Don't type a `phyphox://` address into the browser** — Chrome searches the
+  web for the text instead of opening it. The scheme only works when a link is
+  tapped, which is what `open.html` is for.
+
+Emailing yourself the `.phyphox` file and tapping it works sometimes and not
+others. Android identifies the file by MIME type rather than extension, and
+`.phyphox` reports as unknown. Use the links.
 
 ## What to know before trusting a number
 
