@@ -11,6 +11,7 @@
     <container size="256">raw</container>
     <container>n</container>
     <container>nHalf</container>
+    <container>nHalf1</container>
     <container size="256">re</container>
     <container size="256">im</container>
     <container size="129">freq</container>
@@ -54,10 +55,15 @@
       <input type="value">2</input>
       <output clear="false">nHalf</output>
     </divide>
+    <add>
+      <input clear="false">nHalf</input>
+      <input type="value">1</input>
+      <output>nHalf1</output>
+    </add>
     <ramp>
       <input as="start" type="value">0</input>
-      <input as="stop" type="value">100</input>
-      <input as="length" clear="false">n</input>
+      <input as="stop" type="value">50</input>
+      <input as="length" clear="false">nHalf1</input>
       <output>freq</output>
     </ramp>
     <subrange>

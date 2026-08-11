@@ -149,7 +149,7 @@ def check(path):
     # ---- ring-buffer and ordering checks (the silent killers) ----
     ana2 = root.find("./analysis")
     if ana2 is not None:
-        consumed_at, state = {}, {}
+        consumed_at, state, counts = {}, {}, {}
         for idx, mod in enumerate(ana2):
             if mod.tag is ET.Comment:
                 continue
@@ -164,6 +164,28 @@ def check(path):
                     problems.append(
                         f"analysis module #{idx+1} <{mod.tag}>: reads '{n}' after module "
                         f"#{consumed_at[n]+1} already emptied it - it will be empty")
+
+            if mod.tag == "count":
+                src = [(i.text or "").strip() for i in mod.findall("./input")
+                       if not literal(i)]
+                for o in mod.findall("./output"):
+                    if src:
+                        counts[(o.text or "").strip()] = src[0]
+
+            if mod.tag == "ramp":
+                length = [(i.text or "").strip() for i in mod.findall("./input")
+                          if i.get("as") == "length" and not literal(i)]
+                outs = [(o.text or "").strip() for o in mod.findall("./output")]
+                if length and outs and length[0] in counts:
+                    counted = counts[length[0]]
+                    need = _sz(sizes.get(counted, "1"))
+                    have = _sz(sizes.get(outs[0], "1"))
+                    if have < need:
+                        problems.append(
+                            f"analysis module #{idx+1} <ramp>: makes '{length[0]}' values "
+                            f"(the length of '{counted}', size {need}) but writes them into "
+                            f"'{outs[0]}' which is only size {have} - the ring keeps the tail "
+                            f"and the axis silently starts partway along")
 
             for o in mod.findall("./output"):
                 n = (o.text or "").strip()
