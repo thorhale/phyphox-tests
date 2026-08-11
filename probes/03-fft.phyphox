@@ -20,6 +20,7 @@
     <container size="128">halfIm</container>
     <container size="128">mag</container>
     <container>probe</container>
+    <container>level</container>
   </data-containers>
 
   <input>
@@ -30,10 +31,15 @@
 
   <views>
     <view label="Result">
-      <value label="Strongest wobble" size="2" precision="2">
+      <value label="Wobble strength" size="3" precision="1">
+        <input>level</input>
+      </value>
+      <info label="Shake the phone and THIS number should shoot up - from a few units at rest to hundreds or thousands. That is the test. If it climbs when you shake and falls when you stop, the FFT works and so does everything built on it."/>
+      <separator height="0.5"/>
+      <value label="Frequency of the strongest wobble" precision="2">
         <input>probe</input>
       </value>
-      <info label="Shake the phone gently and this should move. A graph below should show a curve. If probe 2 worked but this is blank, the FFT or the subrange is the problem - which would take out the sound meter, the fan tacho and most of the rest."/>
+      <info label="Do not read too much into this one. Shaking by hand is one to three times a second, which is below the lowest frequency this can resolve, so it pins to the bottom of the scale while you shake and drifts upwards when you stop and it is left picking out noise. That is correct behaviour, not a fault - the real experiments all ignore the lowest bins for exactly this reason."/>
       <graph label="Spectrum" labelX="Bin" labelY="Level">
         <input axis="x">halfF</input>
         <input axis="y">mag</input>
@@ -85,6 +91,7 @@
       <input as="x" clear="false">halfF</input>
       <input as="y" clear="false">mag</input>
       <output as="position">probe</output>
+      <output as="max">level</output>
     </max>
   </analysis>
 
