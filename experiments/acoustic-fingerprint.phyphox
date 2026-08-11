@@ -7,21 +7,21 @@
         Recognises a place by its echoes.
 
         HOW
-        The phone chirps and listens to what bounces back. Every surface within a few metres - the rack ahead, the floor, the ceiling, the aisle behind - returns that chirp after its own particular delay. The pattern of delays describes where you are standing. Move a metre and it changes.
+        The phone chirps and listens to what bounces back. A chirp is a short beep that slides up in pitch, like a quick tick. Every surface within a few metres - the rack ahead, the floor, the ceiling, the aisle behind - returns that chirp after its own particular delay. The pattern of delays describes where you are standing. Move a metre and it changes.
 
         Stand somewhere, press Capture this spot, walk off. The mismatch number falls back towards zero when you come back.
 
         HONEST ASSESSMENT - READ THIS FIRST
         Of everything in this set, this is the one I would trust least in a data hall, and you should know that before spending time on it.
 
-        A hall is full of constant broadband noise, which is exactly what drowns out a faint echo from a small phone speaker. In front of a running CRAC it will not work at all.
+        A hall is full of constant broadband noise - a wall of hiss spread across all pitches. That is exactly what drowns out a faint echo from a small phone speaker. In front of a running CRAC, a data-hall cooling unit, it will not work at all.
 
         The Magnetic Landmark does the same job of finding a spot again, and does it better here, because steel does not care how loud the room is.
 
-        The reverberation figure has the same problem. Measuring how live a room is properly needs a loud controlled source and a calibrated microphone. A phone speaker in a noisy hall is neither. Take it as an impression, not a number to quote.
+        The reverberation figure has the same problem. Reverberation is how much a room echoes. Measuring how live a room is properly needs a loud controlled source and a calibrated microphone. A phone speaker in a noisy hall is neither. Take it as an impression, not a number to quote.
 
         WHERE IT IS GENUINELY WORTH USING
-        In a quiet room. And alongside the Magnetic Landmark rather than instead of it - that one reads steel, this one reads shape, and they are fooled by completely different things. A trolley parked beside you wrecks the echoes and barely touches the magnetic field. A change in busbar current does the reverse.
+        In a quiet room. And alongside the Magnetic Landmark rather than instead of it - that one reads steel, this one reads shape, and they are fooled by completely different things. A trolley parked beside you wrecks the echoes and barely touches the magnetic field. A change in busbar current does the reverse. A busbar is the thick metal bar that carries power through the room.
 
         When two methods that fail differently agree, that is real confidence. One method agreeing with itself is not.
     </description>
@@ -133,7 +133,7 @@
         <input axis="x">relative_t</input>
         <input axis="y">refProfile</input>
       </graph>
-      <info label="Each spike is a surface. Multiply the delay by 170 to get its distance in metres - sound travels there and back, so half of 340 m/s."/>
+      <info label="Each spike is a surface. Multiply the delay by 170 to get how far away it is in metres. Sound has to travel there and back, so you use half its speed - half of 340 metres a second is 170."/>
     </view>
 
     <view label="How live is this room">
@@ -149,7 +149,7 @@
       </value>
       <separator height="0.5"/>
       <info label="This compares the energy still arriving 21 to 27 milliseconds after the chirp with the energy that arrived in the first 8. A dead space swallows the late part; a live one keeps it."/>
-      <info label="It is not a proper reverberation time - that needs far more sound energy than a phone speaker has, and a quiet room. Use it to compare spaces, or to check whether adding absorption changed anything."/>
+      <info label="It is not a proper reverberation time - the standard measure of how long echoes take to fade. That needs far more sound energy than a phone speaker has, and a quiet room. Use it to compare spaces, or to check whether adding absorption changed anything."/>
       <info label="Where this matters: a live aisle carries fan noise further and makes speech harder, and it is why two identical halls can measure the same in dB(A) and feel completely different to work in."/>
     </view>
 
@@ -158,11 +158,11 @@
       <info label="This is the weakest test in the set for a data hall, and you should know that rather than discover it."/>
       <info label="It listens for a faint echo of a small phone speaker. A hall is full of constant broad noise, which is exactly the thing that drowns that out. In front of a running CRAC it will not work at all."/>
       <info label="For finding a spot again, the Magnetic Landmark does the same job and does it better here, because steel does not care how loud the room is."/>
-      <info label="The maths inside is sound - it is the same proven chirp and match method as the sonar. The doubt is about whether the measurement means anything in YOUR environment, which is a different and more important question."/>
+      <info label="The maths inside is sound - it is the same proven chirp-and-listen method as sonar, where the phone chirps and listens for the echo like a bat. The doubt is about whether the measurement means anything in YOUR environment, which is a different and more important question."/>
       <separator height="0.5"/>
       <info label="WHY KEEP IT AT ALL"/>
       <info label="Because when it does work, it fails differently from the magnetic method, and that is worth a lot."/>
-      <info label="This one reads the SHAPE of the space. The magnetic one reads the STEEL in it. A trolley parked beside you wrecks the echoes and barely moves the magnetic field. A big change in busbar current does the opposite."/>
+      <info label="This one reads the SHAPE of the space. The magnetic one reads the STEEL in it. A trolley parked beside you wrecks the echoes and barely moves the magnetic field. A big change in busbar current - the current in the thick power bar - does the opposite."/>
       <info label="Two methods that fail in different ways agreeing is real confidence. If they disagree, the way they disagree tells you what kind of thing changed."/>
       <separator height="0.5"/>
       <info label="WHAT ELSE BREAKS IT"/>

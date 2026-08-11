@@ -282,7 +282,7 @@
       <value label="Highest vibration frequency this phone can see" unit="Hz" size="2" precision="0">
         <input>vibMax</input>
       </value>
-      <info label="Above this frequency the accelerometer is blind, and worse, real vibration above it gets folded down and shows up as a fake peak at some lower frequency. It is half the accelerometer's real sample rate."/>
+      <info label="Above this frequency the accelerometer is blind. Worse, real vibration above it gets folded down and shows up as a fake peak at some lower frequency. It is the same trick that makes wagon wheels seem to spin slowly backwards on film. This frequency is half the accelerometer's real sample rate."/>
     </view>
 
     <view label="Notes">
@@ -294,7 +294,7 @@
       <separator height="0.5"/>
       <info label="WHAT THE NOISE FLOOR IS"/>
       <info label="Leave a sensor completely still and it still twitches slightly. That twitch is the noise floor. It is the smallest change the sensor can honestly tell apart from its own fidgeting."/>
-      <info label="If a test claims to spot something smaller than that, it is reading its own noise and reporting it as a finding. Watch the magnetometer figure in particular: it sets the smallest magnetic change the EMI and busway tests can truthfully see on this phone."/>
+      <info label="If a test claims to spot something smaller than that, it is reading its own noise and reporting it as a finding. Watch the magnetometer figure in particular: it sets the smallest magnetic change the EMI (electrical interference) and busway (the metal bars that carry power along a data hall) tests can truthfully see on this phone."/>
       <info label="If the numbers here look high, you were holding the phone. Put it down and run it again."/>
       <separator height="0.5"/>
       <info label="IF SOMETHING SAYS NOT FITTED"/>

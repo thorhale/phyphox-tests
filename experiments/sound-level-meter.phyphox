@@ -159,33 +159,33 @@
         <map>OK</map>
       </value>
       <separator height="0.5"/>
-      <value label="LA (85 ms)" unit="dB(A)" size="3" precision="1">
+      <value label="LA (loudness the way ears hear it, last 85 ms)" unit="dB(A)" size="3" precision="1">
         <input>LA</input>
       </value>
-      <value label="LA slow (1 s)" unit="dB(A)" size="2" precision="1">
+      <value label="LA slow (same thing, averaged over 1 second)" unit="dB(A)" size="2" precision="1">
         <input>LAslow</input>
       </value>
       <separator height="0.5"/>
-      <value label="LAeq (whole run)" unit="dB(A)" precision="1">
+      <value label="LAeq (average loudness since you pressed play)" unit="dB(A)" precision="1">
         <input>LAeq</input>
       </value>
-      <value label="LAmax" unit="dB(A)" precision="1">
+      <value label="LAmax (the loudest single moment)" unit="dB(A)" precision="1">
         <input>LAmax</input>
       </value>
-      <value label="LAmin" unit="dB(A)" precision="1">
+      <value label="LAmin (the quietest single moment)" unit="dB(A)" precision="1">
         <input>LAmin</input>
       </value>
-      <value label="Lpeak max (unweighted)" unit="dB" precision="1">
+      <value label="Lpeak max (biggest single spike, nothing ignored)" unit="dB" precision="1">
         <input>LpeakMax</input>
       </value>
       <separator height="0.5"/>
-      <value label="LC" unit="dB(C)" precision="1">
+      <value label="LC (loudness with the deep rumble kept in)" unit="dB(C)" precision="1">
         <input>LC</input>
       </value>
-      <value label="LZ (unweighted)" unit="dB" precision="1">
+      <value label="LZ (loudness raw, nothing ignored)" unit="dB" precision="1">
         <input>LZ</input>
       </value>
-      <value label="LC - LA" unit="dB" precision="1">
+      <value label="LC minus LA (the deep-rumble gap)" unit="dB" precision="1">
         <input>CminusA</input>
       </value>
       <value label="Character">
@@ -219,13 +219,13 @@
     </view>
 
     <view label="Spectrum">
-      <info label="Unweighted level of each FFT bin (bin width = sample rate / 4096, about 11.7 Hz at 48 kHz). Use this to find which tones dominate - fan blade passing, transformer hum, coil whine."/>
+      <info label="This is the spectrum - a list of which pitches the sound is made of. Each point is one narrow pitch slice, called an FFT bin, about 11.7 Hz (times per second) wide here. A peak, a pitch louder than its neighbours, points to one source: a fan blade passing, transformer hum, or coil whine."/>
       <graph label="Spectrum" logX="true" labelX="Frequency" unitX="Hz" labelY="Bin level" unitY="dB" partialUpdate="false">
         <input axis="x">halfF</input>
         <input axis="y">specDb</input>
       </graph>
       <separator height="0.5"/>
-      <value label="LZ (unweighted, whole band)" unit="dB" precision="1">
+      <value label="LZ (loudness raw, nothing ignored, whole range)" unit="dB" precision="1">
         <input>LZ</input>
       </value>
       <value label="Sample rate" unit="Hz" precision="0">
@@ -234,7 +234,8 @@
     </view>
 
     <view label="Exposure">
-      <info label="Noise dose using a 3 dB exchange rate (ISO 9612 / NIOSH) over a nominal 8 hour working day. Set the criterion level below - 85 dB(A) is the usual action level."/>
+      <info label="This adds up your noise dose over a full 8 hour work day. It uses a 3 dB exchange rate: every extra 3 dB halves the safe time. Set the criterion level below - the loudness limit you are checking against. 85 dB(A) is the usual action level, the point where you are meant to act."/>
+      <info label="For the curious: this follows the ISO 9612 and NIOSH methods."/>
       <separator height="0.5"/>
       <value label="Measurement time" unit="s" precision="0">
         <input>tNow</input>
@@ -242,7 +243,7 @@
       <value label="LAeq so far" unit="dB(A)" precision="1">
         <input>LAeq</input>
       </value>
-      <value label="LEX,8h (projected to 8 h at this level)" unit="dB(A)" precision="1">
+      <value label="LEX,8h (this loudness stretched over a full 8 hour day, as one number)" unit="dB(A)" precision="1">
         <input>lex8</input>
       </value>
       <separator height="0.5"/>
@@ -256,7 +257,7 @@
         <input>tRemain</input>
       </value>
       <separator height="0.5"/>
-      <edit label="Criterion level" unit="dB(A)" default="85" decimal="true">
+      <edit label="Criterion level (the loudness limit you check against)" unit="dB(A)" default="85" decimal="true">
         <output>criterion</output>
       </edit>
     </view>
@@ -267,7 +268,7 @@
       <info label="Everything comparative already works without doing this. Two places, or one place across two months, both cancel the offset out. You only need to calibrate if you want to quote a single number with dB after it."/>
       <separator height="0.5"/>
       <info label="WHERE TO GET A REFERENCE WITHOUT BUYING ONE"/>
-      <info label="Ask whoever does hearing checks on site - safety, industrial hygiene, facilities. They own a proper meter and it is calibrated yearly because it has to be. Ten minutes standing next to them is the whole job."/>
+      <info label="Ask whoever does hearing checks on site - safety, industrial hygiene, facilities. They own a proper meter, and that is your reference - the known-good thing you score the phone against. It is calibrated every year because it has to be. Ten minutes standing next to them is the whole job."/>
       <info label="Failing that: an existing noise survey for the building gives you numbers at known spots. Stand there and match. Or borrow from an acoustic or HVAC contractor. A basic meter is also only about thirty pounds or dollars new, which surprises people."/>
       <separator height="0.5"/>
       <info label="HOW TO DO IT, STEP BY STEP"/>
@@ -286,10 +287,10 @@
         <output>calibrated</output>
       </button>
       <separator height="0.5"/>
-      <value label="Current offset" unit="dB" precision="2">
+      <value label="Current offset (the fixed number added to make real decibels)" unit="dB" precision="2">
         <input>calibration</input>
       </value>
-      <value label="Uncalibrated 1 s level" unit="dBFS" precision="2">
+      <value label="Uncalibrated 1 s level (dBFS: loudness against the loudest the phone can record, so always a minus number)" unit="dBFS" precision="2">
         <input>dbASlowRaw</input>
       </value>
       <separator height="0.5"/>
@@ -330,6 +331,24 @@
       <separator height="0.5"/>
       <info label="WHAT IT IS NOT FOR"/>
       <info label="Hearing protection, legal limits, or anything where being wrong has consequences. This is a phone."/>
+      <separator height="0.5"/>
+      <info label="WORDS THIS USES"/>
+      <info label="Hz - times per second. kHz means thousands of times per second."/>
+      <info label="decibel (dB) - a loudness scale. Every 10 dB is ten times the sound energy, and about twice as loud to your ears."/>
+      <info label="A, C and Z - three ways of adding the noise up. A ignores deep rumble the way ears do. C keeps the rumble in. Z is raw, nothing ignored."/>
+      <info label="LA, LC, LZ - the loudness measured the A, C or Z way."/>
+      <info label="Leq and LAeq - the average loudness since you pressed play. LAeq is that average done the A way."/>
+      <info label="Lpeak - the single biggest spike of sound, not an average."/>
+      <info label="LAmax and LAmin - the loudest and quietest single moments."/>
+      <info label="spectrum - a list of which pitches a sound is made of. A peak is a pitch louder than its neighbours."/>
+      <info label="FFT bin - one narrow pitch slice of that list."/>
+      <info label="dBFS - loudness compared with the loudest the phone can record, so always a minus number."/>
+      <info label="offset (calibrate) - a fixed number added to turn the phone's raw signal into real decibels."/>
+      <info label="reference - the known-good meter you score the phone against."/>
+      <info label="exchange rate - how much extra loudness halves your safe time. Here every 3 dB halves it."/>
+      <info label="criterion or action level - the loudness limit you are checking against."/>
+      <info label="LEX,8h - this loudness stretched over a full 8 hour day, written as one number."/>
+      <info label="dose - how much of your safe daily noise you have used, as a percent."/>
     </view>
   </views>
 

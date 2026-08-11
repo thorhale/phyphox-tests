@@ -7,20 +7,20 @@
         Finds the odd one out in a row of identical machines.
 
         HOW
-        Identical units doing identical work sound identical. When one starts to change - a fan slowing, a bearing roughening, a filter clogging - its sound changes shape before anything trips an alarm. Record a healthy one, then compare each of the others against it.
+        The acoustic signature of a machine is the shape of the sound it makes. Identical units doing identical work sound identical. When one starts to change - a fan slowing, a bearing roughening, a filter clogging - its sound changes shape before anything sets off an alarm. Record a healthy one, then compare each of the others against it.
 
-        Comparing against its neighbours beats comparing against any published threshold, because everything that ruins a threshold - the room, the phone, how far away you stood - is present in both readings and cancels out.
+        A threshold is a fixed pass-or-fail line, like a published noise limit. Comparing each unit against its neighbours beats comparing against any threshold. Everything that ruins a threshold is the same for both readings: the room, the phone, and how far away you stood. So it cancels out.
 
         HOW TO RUN IT
-        1. Pick a unit you believe is healthy. Press Set this unit as the reference.
+        1. Pick a unit you believe is healthy. Press Set this unit as the reference. The reference is the known-good thing you score the rest against.
         2. Move along the row. At each unit press Log this unit.
         3. Hold the phone the SAME way each time - same distance, same angle, microphone end pointing at the machine.
         4. The mismatch number says how differently each one sounds.
 
-        It also reports the strongest low tone, which identifies spinning disks. 5400 rpm shows at 90 Hz, 7200 rpm at 120 Hz, 10000 rpm at 167 Hz, 15000 rpm at 250 Hz. Handy for telling a disk shelf from a flash shelf without opening it.
+        It also reports the strongest low tone, which points to spinning disks. A disk at 5400 turns per minute shows at 90 Hz, 7200 at 120 Hz, 10000 at 167 Hz, and 15000 at 250 Hz. (Hz means times per second.) That helps you tell a shelf of spinning disks from a shelf of flash chips, which is memory with no moving parts, without opening it.
 
         BE REALISTIC ABOUT THIS ONE
-        It works well in a quiet room. In a loud hall it often does not, because the noise from everything else can be bigger than the difference between two units. Try it, and if every unit scores about the same, that is what happened - the Vibration Census is the more reliable way to find the same faults, because vibration through the frame does not have to compete with room noise.
+        It works well in a quiet room. In a loud hall it often does not, because the noise from everything else can be bigger than the difference between two units. Try it. If every unit scores about the same, that is what happened. The Vibration Census is the more reliable way to find the same faults, because the shaking through the frame does not have to compete with room noise.
     </description>
 
   <data-containers>
@@ -114,7 +114,7 @@
         <input type="value">0</input>
         <output>seeded</output>
       </button>
-      <info label="Press Start a fresh recording, hold still for about ten seconds in front of a unit, then read the number. Same distance and same phone orientation every time, or the comparison means nothing."/>
+      <info label="Press Start a fresh recording, hold still for about ten seconds in front of a unit, then read the number. Same distance and the same way of holding the phone every time, or the comparison means nothing."/>
       <separator height="0.5"/>
       <value label="Strongest low tone" unit="Hz" precision="1">
         <input>toneF</input>
@@ -125,11 +125,11 @@
       <value label="Likely source">
         <input>toneF</input>
         <map max="70">slow fan or structure</map>
-        <map max="100">5400 rpm disks</map>
-        <map max="135">7200 rpm disks</map>
-        <map max="200">10000 rpm disks or a fast fan</map>
-        <map max="280">15000 rpm disks or a fast fan</map>
-        <map>fan blade passing</map>
+        <map max="100">5400 turns-per-minute disks</map>
+        <map max="135">7200 turns-per-minute disks</map>
+        <map max="200">10000 turns-per-minute disks or a fast fan</map>
+        <map max="280">15000 turns-per-minute disks or a fast fan</map>
+        <map>fan blades passing</map>
       </value>
     </view>
 
@@ -165,6 +165,7 @@
     </view>
 
     <view label="Spectrum">
+      <info label="A spectrum is a list of which pitches a sound is made of. The two graphs show that list for this unit and for the reference unit, so you can compare their shapes."/>
       <graph label="This unit, averaged" logX="true" labelX="Frequency" unitX="Hz" labelY="Level" unitY="dB">
         <input axis="x">halfF</input>
         <input axis="y">dbNorm</input>
@@ -173,7 +174,7 @@
         <input axis="x">halfF</input>
         <input axis="y">refSpec</input>
       </graph>
-      <info label="Compare the shapes. A new peak means something new is turning; a peak that has moved sideways means something changed speed; a raised floor across the whole width usually means turbulence, a blocked filter or a loose panel."/>
+      <info label="Compare the shapes. A peak is a pitch stronger than the ones next to it. A new peak means something new is turning. A peak that has slid sideways means something changed speed. A raised floor across the whole width usually means turbulence, a blocked filter, or a loose panel."/>
       <separator height="0.5"/>
       <edit label="Tone search from" unit="Hz" default="60" decimal="false">
         <output>fLow</output>
@@ -185,13 +186,13 @@
 
     <view label="Notes">
       <info label="IT COMPARES SHAPE, NOT LOUDNESS"/>
-      <info label="Overall volume is deliberately thrown away before comparing, so only the SHAPE of the sound is measured - which pitches are present relative to each other."/>
+      <info label="The overall volume is thrown away on purpose before comparing. So only the SHAPE of the sound is measured, which means which pitches are present next to each other."/>
       <info label="That is useful, because standing slightly closer to one unit no longer fakes a result. Distance changes loudness, and loudness has been removed."/>
       <info label="But ANGLE still matters a great deal, because the shape genuinely changes depending on which side of a machine you are standing. Same distance, same angle, every unit."/>
       <separator height="0.5"/>
       <info label="WHAT IT IS GENUINELY GOOD AT"/>
-      <info label="Spotting the one unit in twenty that has changed. It needs no calibration, no manufacturer data and no history - just the neighbours, which you already have standing right there."/>
-      <info label="Walk the row weekly and the numbers become a trend. A unit whose mismatch climbs steadily every week is degrading, long before anything would flag it."/>
+      <info label="Spotting the one unit in twenty that has changed. It needs no setup, no manufacturer data and no history - just the neighbours, which you already have standing right there."/>
+      <info label="Walk the row weekly and the numbers become a trend. A unit whose mismatch climbs steadily every week is getting worse, long before anything would flag it."/>
       <separator height="0.5"/>
       <info label="WHEN IT WILL NOT WORK, AND HOW TO TELL"/>
       <info label="If the room is louder than the unit you are pointing at, you are measuring the room. The giveaway is that EVERY unit scores about the same. That is not twenty healthy machines - that is no measurement at all."/>

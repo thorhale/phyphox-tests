@@ -7,17 +7,17 @@
         Hunts leaking compressed air and gas by the hiss you cannot hear.
 
         HOW
-        Gas squeezing through a small hole goes turbulent, and turbulence makes noise across a huge range of pitches - including well above what people can hear. Almost everything ELSE in a plant room is low pitched. So near a leak, the proportion of high pitched noise jumps, even though the room does not get noticeably louder. That proportion is what this measures.
+        Gas squeezing through a small hole goes turbulent - the air tumbles and churns instead of flowing smoothly. That churning makes noise across a huge range of pitches, including well above what people can hear. Almost everything ELSE in a plant room is low pitched. So near a leak, the share of high pitched noise jumps, even though the room does not get noticeably louder. That share is what this measures.
 
         HOW TO RUN IT
-        1. Stand in clean air and press Set baseline here.
+        1. Stand in clean air and press Set baseline here. The baseline is a first reading you compare everything else against.
         2. Walk the pipe run slowly, watching the number.
         3. Point the microphone end of the phone at joints, unions and valve stems - that is where leaks are.
 
         READ THIS BEFORE YOU RELY ON IT
-        Real leak detectors listen at 25 to 40 kHz, and NO phone can do that. A phone microphone physically cannot represent anything above about 24 kHz, and it is already fading out below 22 kHz.
+        Real leak detectors listen at 25 to 40 kHz. kHz means thousands of times per second. NO phone can do that. A phone microphone physically cannot pick up anything above about 24 kHz, and it is already fading out below 22 kHz.
 
-        So this listens at 15 to 22 kHz - the very bottom skirt of the leak signature, where other noise still competes. It will find a decent leak in a quiet plant room. It will not find a small one, and it does not compete with a proper ultrasonic gun.
+        So this listens at 15 to 22 kHz - only the very bottom edge of the sound a leak makes, where other noise still competes. It will find a decent leak in a quiet plant room. It will not find a small one, and it does not compete with a proper ultrasonic gun.
 
         Treat a positive reading as a reason to go and listen with your ear. Treat a negative reading as no information at all.
 
@@ -25,7 +25,7 @@
         This tool exists for compressed air systems. If your site has no pneumatics, no compressor and no gas suppression pipework, there may be nothing here for it to find. Worth checking before you spend an afternoon with it.
 
         SAFETY
-        Never put your hand near a suspected compressed air leak. A high pressure jet can force air or debris through skin. Find it, mark it, report it.
+        Never put your hand near a suspected compressed air leak. A high pressure jet can push air or bits of dirt straight through your skin. Find it, mark it, report it.
     </description>
 
   <data-containers>
@@ -150,19 +150,27 @@
       <separator height="0.5"/>
       <info label="WHAT WILL FOOL IT"/>
       <info label="Anything else that hisses or whines up high. Air rushing through a grille. Coil whine from a power supply. Some LED drivers. Running water. And in a very quiet room, the phone's own microphone hiss."/>
-      <info label="WIND is the worst. Air blowing across the microphone swamps everything. In a hot aisle or standing in front of a fan, this reads nonsense - not a small error, complete nonsense."/>
+      <info label="WIND is the worst. Air blowing across the microphone drowns out everything. In a hot aisle or standing in front of a fan, this reads nonsense - not a small error, complete nonsense."/>
       <info label="Confirm with your ear where you can. Most air leaks are audible close up once you know where to listen."/>
       <separator height="0.5"/>
       <info label="THE LIMIT THAT MATTERS"/>
       <info label="Proper leak detectors listen at 25 to 40 thousand cycles per second, precisely because almost nothing else is up there to confuse them."/>
-      <info label="A phone physically cannot go there. It samples at 44 or 48 thousand times a second, and the rule is you can only represent things up to half your sampling rate - so about 22 to 24 thousand, with the phone's own filter already cutting in below that."/>
-      <info label="So this works at 15 to 22 thousand: the bottom skirt of the leak signature, where other noise still lives. That is why a positive means go and listen, and a negative means nothing at all."/>
+      <info label="A phone physically cannot go there. It hears sound in snapshots, 44 or 48 thousand a second. The rule is you can only catch a pitch up to half your snapshot rate - so about 22 to 24 thousand. Try to catch something faster and it looks slower than it really is, the way a fast wheel looks like it turns slowly backwards on film. The phone's own filter is already cutting in below that."/>
+      <info label="So this works at 15 to 22 thousand: only the very bottom edge of the sound a leak makes, where other noise still lives. That is why a positive means go and listen, and a negative means nothing at all."/>
       <separator height="0.5"/>
       <info label="ASK WHETHER YOU NEED THIS AT ALL"/>
       <info label="It exists for compressed air. If the site has no pneumatics, no compressor and no gas suppression pipework, there may be nothing for it to find. Cheaper to ask that question than to walk the site."/>
       <separator height="0.5"/>
       <info label="SAFETY"/>
-      <info label="Never put your hand near a suspected compressed air leak. A high pressure jet can force air or debris through skin and cause a serious injury from a hole you can barely see. Locate it, mark it, report it."/>
+      <info label="Never put your hand near a suspected compressed air leak. A high pressure jet can push air or bits of dirt straight through your skin and cause a serious injury from a hole you can barely see. Locate it, mark it, report it."/>
+      <separator height="0.5"/>
+      <info label="WORDS THIS USES"/>
+      <info label="baseline - a first reading you compare everything else against."/>
+      <info label="kHz - thousands of times per second."/>
+      <info label="turbulent - air tumbling and churning instead of flowing smoothly. It is what makes the hiss."/>
+      <info label="ultrasonic - pitches too high for people to hear."/>
+      <info label="a.u. - arbitrary units. The number only means something next to another number from the same test."/>
+      <info label="the snapshot rule - a phone hears sound in snapshots and can only catch pitches up to half its snapshot rate. Faster ones look slower than they are, like a wheel on film."/>
     </view>
   </views>
 

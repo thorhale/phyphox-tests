@@ -13,15 +13,15 @@
 
         HOW TO RUN IT
         1. Press play at your first location.
-        2. Type in the dry bulb temperature and the relative humidity.
+        2. Type in the dry bulb temperature (the ordinary air temperature) and the relative humidity (how full of water the air is, as a percentage, often shortened to RH).
         3. Press Log point.
         4. Move on and repeat.
         5. Export as CSV at the end.
 
-        The exported log has one row per point - time, temperature, humidity, pressure - shaped so a psychrometric tool can read it straight in.
+        The exported log has one row per point - time, temperature, humidity, pressure - shaped so a psychrometric tool (software that links temperature, humidity and pressure) can read it straight in.
 
         BE REALISTIC ABOUT THE PRESSURE
-        A phone barometer is built to work out roughly what floor of a building you are on. The pressure differences that matter in containment are much smaller than that. It can INDICATE a step between a contained cold aisle and the room. It is not a manometer, it drifts with the weather, and a door opening moves it.
+        A phone barometer (its built-in air-pressure sensor) is made to work out roughly what floor of a building you are on. The pressure differences that matter in containment - the barriers that box in a row of racks - are much smaller than that. It can INDICATE a step between a contained cold aisle (the boxed-in lane of cold air feeding the racks) and the room. It is not a manometer - a tool that measures a pressure difference directly. It drifts with the weather, and a door opening moves it.
 
         So: useful as an indication and as a structured way to record a walk. Not a measurement you should design around.
     </description>
@@ -81,7 +81,7 @@
         <map value="1">Celsius</map>
         <map value="2">Fahrenheit</map>
       </dropdown>
-      <edit label="Dry bulb temperature" default="22" decimal="true" signed="true">
+      <edit label="Dry bulb temperature (ordinary air temperature)" default="22" decimal="true" signed="true">
         <output>tdbIn</output>
       </edit>
       <edit label="Relative humidity" unit="%" default="45" decimal="true">
@@ -126,18 +126,18 @@
         <input axis="x">pT</input>
         <input axis="y">pRaw</input>
       </graph>
-      <info label="For a containment check: hold still on one side of the barrier until the trace flattens, then move to the other side and hold still again. The step between the two flat sections is the differential. Keep the phone at a constant height - 1 m of elevation is about 12 Pa, which is the same size as the effect you are looking for."/>
+      <info label="For a containment check: hold still on one side of the barrier until the trace flattens, then move to the other side and hold still again. The step between the two flat sections is the differential - the difference between the two pressure readings. Keep the phone at a constant height: 1 m of height change is about 12 Pa (air pressure; 100 Pa = 1 hPa), which is the same size as the effect you are looking for."/>
     </view>
 
     <view label="Notes">
       <info label="WHAT IS MEASURED AND WHAT IS TYPED"/>
-      <info label="MEASURED: air pressure, by the phone's own barometer. Good to about 0.1 units when comparing one reading against another, though the absolute value can be several units off."/>
+      <info label="MEASURED: air pressure, by the phone's own barometer - its built-in air-pressure sensor. Good to about 0.1 units when comparing one reading against another, though the absolute value can be several units off."/>
       <info label="TYPED IN BY YOU: temperature and humidity. Not laziness - virtually no phone has either sensor. Run Device Check and it will confirm it for your handset."/>
       <info label="The temperature sensors that ARE inside a phone measure the phone's own electronics warming up. Pointing one at a room tells you about the phone, not the room."/>
       <separator height="0.5"/>
       <info label="WHAT THE PRESSURE IS ACTUALLY GOOD FOR"/>
       <info label="Indicating a difference between two places - a contained cold aisle against the room, say. It is genuinely at the edge of what the hardware can resolve."/>
-      <info label="It is not a manometer. It drifts with the weather, a door opening moves it, and it is not a number to design containment around. If a pressure difference matters, measure it with something built for the job."/>
+      <info label="It is not a manometer - a tool that measures a pressure difference directly. It drifts with the weather, a door opening moves it, and it is not a number to design containment around. If a pressure difference matters, measure it with something built for the job."/>
       <separator height="0.5"/>
       <info label="GETTING THE DATA OUT"/>
       <info label="Export as CSV. The Survey log has one row per logged point - time, temperature, humidity, pressure - ready for a psychrometric tool. The Pressure trace is the continuous barometer recording alongside it."/>

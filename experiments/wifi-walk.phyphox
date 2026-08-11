@@ -12,15 +12,17 @@
         You walk with two things running: this, and a WiFi app such as WiFiAnalyzer. Press Log waypoint at each spot. Afterwards, tools/wifi_merge.py joins the two files together on time.
 
         DO THIS FIRST OR THE WHOLE EXERCISE FAILS
-        Android limits apps to about four WiFi scans every two minutes. That is one reading every 30 seconds, which is useless if you are walking.
+        Android throttles WiFi scans - it limits how often an app is allowed to scan. The limit is about four scans every two minutes. That is one reading every 30 seconds, which is useless if you are walking.
 
         Turn it off: Settings, Developer options, Wi-Fi scan throttling, off. WiFiAnalyzer shows at the top of its screen whether throttling is on. Check there before you start, not afterwards.
 
-        There are two ways to get the signal strength in. By hand: read the dBm off WiFiAnalyzer and type it into the RSSI field before pressing Log waypoint. Automatically: turn on Allow remote access in the phyphox menu, and have a script push values in with
+        There are two ways to get the signal strength in.
+        By hand: read the dBm off WiFiAnalyzer and type it into the RSSI field before pressing Log waypoint. RSSI is WiFi signal strength, measured in dBm; a less negative number is stronger, so -67 beats -85.
+        Automatically (advanced): turn on Allow remote access in the phyphox menu, and have a script push values in with this exact command, typed character for character:
         /control?cmd=set&amp;buffer=rssi&amp;value=-67
-        which is why RSSI, AP count and channel are editable fields - a buffer has to be editable for the remote interface to write to it.
+        That is why RSSI, AP count (how many access points - the WiFi transmitters - are in range) and channel are editable fields: the remote interface can only write into a field you are allowed to edit.
 
-        Either way you end up with one file whose rows carry a timestamp, a waypoint number and everything else measured at that point.
+        Either way you end up with one file whose rows carry a timestamp - the exact clock time - a waypoint number and everything else measured at that point.
     </description>
 
   <data-containers>
@@ -102,10 +104,10 @@
       <value label="Coverage">
         <input>rssi</input>
         <map max="-85">unusable</map>
-        <map max="-75">weak - edge of cell</map>
+        <map max="-75">weak - near the edge of coverage</map>
         <map max="-67">workable</map>
         <map max="-55">good</map>
-        <map>strong - you are under an AP</map>
+        <map>strong - you are right under an access point</map>
       </value>
       <separator height="0.5"/>
       <button label="Log waypoint">
@@ -159,16 +161,16 @@
 
     <view label="Notes">
       <info label="Turn off WiFi scan throttling first"/>
-      <info label="Android limits apps to about four scans every two minutes, which is far too slow to survey while walking - you would get a reading every 30 seconds. Settings, Developer options, Wi-Fi scan throttling, off. If the toggle is missing, Shizuku can do it: settings put global wifi_scan_throttle_enabled 0. WiFiAnalyzer tells you at the top of its screen whether throttling is on, so check there before you start."/>
+      <info label="Throttling means Android limits how often an app may scan - about four scans every two minutes, far too slow to survey while walking, one reading every 30 seconds. Turn it off in the phone settings: Settings, then Developer options, then Wi-Fi scan throttling, off. If that toggle is missing, a phone tool called Shizuku can do it with this exact command: settings put global wifi_scan_throttle_enabled 0. WiFiAnalyzer tells you at the top of its screen whether throttling is on, so check there before you start."/>
       <separator height="0.5"/>
       <info label="The manual workflow"/>
       <info label="At each point: read the dBm in WiFiAnalyzer, type it into the Entry tab, come back and press Log waypoint. Slow, but it needs nothing else and the numbers land in one file. Use WiFiAnalyzer's own export at the same points if you want the full list of access points - the merge script joins the two on time."/>
       <separator height="0.5"/>
       <info label="The automatic workflow"/>
-      <info label="Enable Allow remote access from the phyphox menu, note the address it shows, and have a script write values in as you walk: /control?cmd=set&amp;buffer=rssi&amp;value=-67 and the same for apCount and channel. Then just press Log waypoint. RSSI, AP count and channel are edit fields specifically so this works - the remote interface writes to editable buffers."/>
+      <info label="This is the advanced route. Enable Allow remote access from the phyphox menu, note the address it shows, and have a script write values in as you walk with this exact command: /control?cmd=set&amp;buffer=rssi&amp;value=-67 and the same for apCount and channel. Then just press Log waypoint. RSSI, AP count and channel are edit fields on purpose so this works - the remote interface can only write into fields you can edit."/>
       <separator height="0.5"/>
       <info label="What this is not"/>
-      <info label="This records signal strength where you stood, not where the access points are. Turning a set of RSSI readings into AP positions or a coverage map is a fitting problem for afterwards, and RSSI-to-distance estimates are badly affected by racks, walls and people - treat any distance an app derives from RSSI as an order of magnitude, not a measurement."/>
+      <info label="This records signal strength where you stood, not where the access points are. Turning a set of RSSI readings into access point positions or a coverage map is a fitting problem - a calculation you do afterwards to work backwards to the likely positions. RSSI-to-distance estimates are thrown off badly by racks, walls and people. So treat any distance an app works out from RSSI as an order of magnitude - a rough ballpark, not a real distance."/>
     </view>
   </views>
 

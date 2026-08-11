@@ -7,24 +7,24 @@
         Finds live power cables through walls, floors and ceilings.
 
         HOW
-        Any wire with current running through it makes a magnetic field around it, and that field fades fast as you move away. Your phone can measure it. Walk along, watch the number climb, and you have found the cable.
+        Any wire with current running through it makes a magnetic field around it - the invisible push electricity makes, measured in microtesla. That field fades fast as you move away. Your phone can measure it. Walk along, watch the number climb, and you have found the cable.
 
         WHY YOU CARE
         Running network cable alongside power cable is a classic mistake. The power cable's field pushes noise into the data cable, and you get errors that look like a bad cable, a bad port or a bad switch. You will replace all three before anyone suspects the tray it is lying in.
 
-        It also finds live conductors where nothing is labelled, which happens more often than anyone admits.
+        It also finds live conductors - wires or bars carrying electricity - where nothing is labelled, which happens more often than anyone admits.
 
         HOW TO RUN IT
         1. Press play and hold the phone flat.
-        2. Walk SLOWLY along walls, trays, containment and floors. The field fades fast, so walking briskly past at arm's length will miss it.
+        2. Walk SLOWLY along walls, cable trays, containment (the barriers that box in a row of racks) and floors. The field fades fast, so walking briskly past at arm's length will miss it.
         3. Watch peak hold - it keeps the highest value seen so you do not have to stare at the screen while walking.
         4. Press Reset to start a fresh sweep.
 
         WHAT TO LOOK AT
-        Watch the AC activity number, not the total. Here is why: the Earth has its own magnetic field, and every piece of steel in the building bends it. So the total is large and lumpy everywhere and means nothing. But steel does not FLICKER. Alternating current does. So the flickering part is the part that says live cable.
+        Watch the AC activity number, not the total. AC means alternating current - electricity that flips back and forth many times a second. Here is why it matters: the Earth has its own magnetic field, and every piece of steel in the building bends it. So the total is large and lumpy everywhere and means nothing. But steel does not FLICKER. Alternating current does. So the flickering part is the part that says live cable.
 
         THE HONEST LIMIT
-        Your phone reads its magnetometer about 100 times a second. Mains power alternates 50 or 60 times a second. To measure something you must sample MORE THAN TWICE as fast as it changes, and 100 is not more than twice 60.
+        Your phone reads its magnetometer about 100 times a second. Mains power - the electricity in the wall sockets - flips 50 or 60 times a second. To measure how fast something repeats you must check MORE THAN TWICE as fast as it changes, and 100 is not more than twice 60.
 
         So this cannot prove a field is mains by its frequency, and it deliberately shows no frequency reading, because any number it gave you there would be false. It tells you this route is busier than that one. That is genuinely useful, and it is all it claims.
     </description>
@@ -71,7 +71,7 @@
       </value>
       <value label="Verdict">
         <input>bAc</input>
-        <map max="0.3">quiet - sensor noise floor</map>
+        <map max="0.3">quiet - just the sensor talking to itself</map>
         <map max="1">slight activity</map>
         <map max="5">notable - a live conductor is near</map>
         <map>strong - keep copper data cable away and cross at right angles</map>
@@ -112,7 +112,7 @@
     </view>
 
     <view label="Axes">
-      <info label="Individual axes, in the phone's own frame of reference. Useful for working out which direction a field is coming from: rotate the phone and watch which axis dominates."/>
+      <info label="These show the field split into three directions - Bx, By and Bz - measured from the phone's own point of view, not the room's. Useful for working out which way a field is coming from: rotate the phone and watch which direction gets biggest."/>
       <separator height="0.5"/>
       <value label="Bx" unit="uT" precision="2">
         <input>bxLast</input>
@@ -140,13 +140,27 @@
       <separator height="0.5"/>
       <info label="WHY THERE IS NO FREQUENCY DISPLAY"/>
       <info label="Because it would lie to you, and this is worth understanding once."/>
-      <info label="To measure how fast something repeats, you must sample MORE THAN TWICE as fast as it repeats. Your phone reads the magnetometer around 100 times a second. Mains alternates 50 or 60 times a second. That is not fast enough."/>
-      <info label="When you sample too slowly, you do not get a poor answer, you get a confident wrong one. A 60 Hz field sampled 100 times a second shows up as a 40 Hz wobble that does not exist anywhere in reality. Same reason wagon wheels appear to spin backwards on film."/>
+      <info label="To measure how fast something repeats, you must check MORE THAN TWICE as fast as it repeats. Your phone reads the magnetometer around 100 times a second. Mains - the electricity in the wall sockets - flips 50 or 60 times a second. That is not fast enough."/>
+      <info label="When you check too slowly, you do not get a poor answer, you get a confident wrong one. A field that flips 60 times a second, read only 100 times a second, shows up as a 40-times-a-second wobble that does not exist anywhere in reality. Same reason wagon wheels appear to spin backwards on film."/>
       <info label="So this reports HOW MUCH the field flickers, which is real, and refuses to report how fast, which would not be."/>
       <separator height="0.5"/>
       <info label="WHAT IT CANNOT TELL YOU"/>
-      <info label="It measures the field in the air. It does NOT measure the interference that actually ends up inside your data cable. Screening, the twist in a pair, and how the cable is routed all change that enormously and none of them are visible here."/>
-      <info label="So treat a strong reading as a reason to look at the cable route. It is not a measurement of crosstalk, and it is not evidence of bit errors. If you have a link problem, test the link."/>
+      <info label="It measures the field in the air. It does NOT measure the interference that actually ends up inside your data cable. Screening (a metal foil wrap around the cable), the twist in each pair of wires, and how the cable is routed all change that a lot, and none of them show up here."/>
+      <info label="So treat a strong reading as a reason to look at the cable route. It is not a measurement of crosstalk - noise leaking from a power cable into a data cable - and it is not proof of bit errors, the flipped 1s and 0s that corrupt data. If you have a link problem, test the link."/>
+      <separator height="0.5"/>
+      <info label="WORDS THIS USES"/>
+      <info label="EMI - electrical interference; unwanted electrical noise."/>
+      <info label="Magnetic field - the invisible push electricity and magnets make. Measured in microtesla (uT). The Earth makes about 25 to 65 uT."/>
+      <info label="Conductor - a wire or bar that carries electricity."/>
+      <info label="AC (alternating current) - electricity that flips back and forth many times a second."/>
+      <info label="Mains - the electricity in the wall sockets, which flips 50 or 60 times a second."/>
+      <info label="Peak hold - keeps the biggest value it has seen so you do not have to watch."/>
+      <info label="Noise floor - the tiny wobble a still sensor shows; readings smaller than this are not real."/>
+      <info label="Crosstalk - noise leaking from a power cable into a data cable."/>
+      <info label="Screening - a metal wrap around a cable that blocks outside noise."/>
+      <info label="Bit errors - flipped 1s and 0s that corrupt data."/>
+      <info label="Containment - the barriers that box in a row of racks."/>
+      <info label="Bx, By, Bz - the field split into three directions, seen from the phone's own point of view."/>
     </view>
   </views>
 

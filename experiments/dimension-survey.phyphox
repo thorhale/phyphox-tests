@@ -7,19 +7,19 @@
         Three things, and they are honestly not equally good. Read this before deciding which tab to use.
 
         1. LEVEL AND PLUMB - excellent, use this
-        Is this rack straight. Is this floor flat. Is this rail true. Accurate to about a hundredth of a degree, which makes it the most accurate measurement anywhere in this whole set of tests.
+        Is this rack straight. Is this floor flat. Is this rail true, meaning not leaning. Accurate to about a hundredth of a degree, which makes it the most accurate measurement anywhere in this whole set of tests.
 
-        It works because a phone at rest is measuring gravity, and gravity is extremely reliable. Lay the phone on a tile for floor level, or flat against a rack upright for plumb. It reports slope in millimetres per metre, which is how floor flatness is normally specified.
+        It works because a phone at rest is measuring gravity, and gravity is extremely reliable. Lay the phone on a tile for floor level, or flat against a rack upright for plumb - that is straight up-and-down. It reports slope in millimetres per metre: the drop in millimetres over each metre you go across. That is how floor flatness is normally described.
 
         The catch: it is only true when the phone is COMPLETELY STILL. Any movement looks exactly like tilt to an accelerometer and it cannot tell the difference.
 
         2. DISTANCE BY SONAR - decent but fiddly
-        The phone chirps through the speaker and listens for the echo, then times it. Works best on a big flat hard surface a few metres away. Aisle widths and ceiling heights are fine. The length of a hall is not - a phone speaker is not loud enough.
+        Sonar means the phone chirps through the speaker and listens for the echo, like a bat, then times it. Works best on a big flat hard surface a few metres away. Aisle widths and ceiling heights are fine. The length of a hall is not - a phone speaker is not loud enough.
 
         3. AIR TEMPERATURE FROM SOUND - a curiosity, not a tool
-        Sound travels faster in warm air, so timing it over a distance you already know gives you the temperature of air the phone is not touching. Genuinely clever, genuinely real physics.
+        Sound travels faster in warm air. So if you time it over a distance you already know, you can work out the temperature of air the phone is not even touching. Genuinely clever, genuinely real physics.
 
-        But you have to type in the distance, and getting it wrong by 1 percent throws the temperature out by about 6 degrees C. Over 10 metres, being 10 cm out ruins it. You would need a laser measure and real care to beat a cheap thermometer. Enjoy it, but do not plan around it.
+        But you have to type in the distance. Getting it wrong by 1 percent throws the temperature out by about 6 degrees C. Over 10 metres, being 10 cm out ruins it. You would need a laser measure and real care to beat a cheap thermometer. Enjoy it, but do not plan around it.
     </description>
 
   <data-containers>
@@ -214,7 +214,7 @@
       <separator height="0.5"/>
       <info label="THE ONE TRICK WORTH LEARNING HERE"/>
       <info label="Phones have a small built in error, so a phone can confidently report a slope on a perfectly flat floor."/>
-      <info label="To cancel it: take a reading, turn the phone 180 degrees on the spot without moving it sideways, and take another. The true slope is HALF THE DIFFERENCE between the two. The phone's own error cancels out because it flipped with the phone and the floor did not."/>
+      <info label="To cancel it, do this. 1. Take a reading. 2. Turn the phone 180 degrees on the spot, a half turn, without sliding it sideways. 3. Take another reading. The true slope is HALF THE DIFFERENCE between the two. The phone's own error cancels out, because it flipped with the phone and the floor did not."/>
       <info label="Do this once on any floor you care about. It takes ten seconds and it is the difference between a measurement and a guess."/>
       <separator height="0.5"/>
       <info label="SONAR IN A DATA HALL IS HARD"/>
@@ -226,6 +226,14 @@
       <info label="Concretely: 1 percent wrong on the distance is about 6 degrees C wrong on the temperature. Over a 10 metre span, 10 centimetres of error ruins it."/>
       <info label="If you do want to try it: use the longest span you can, measure it with a tape properly, take several readings and use the middle one. Longer is better because a fixed timing error matters proportionally less over a longer distance."/>
       <info label="Humidity also changes the answer slightly. It is ignored here, and it is much smaller than the error above."/>
+      <separator height="0.5"/>
+      <info label="WORDS THIS USES"/>
+      <info label="plumb - straight up-and-down."/>
+      <info label="level or true - flat and not leaning."/>
+      <info label="sonar - the phone chirps and listens for the echo, like a bat."/>
+      <info label="speed of sound - how fast sound travels through air, about 340 metres a second."/>
+      <info label="mm/m - millimetres of drop for every metre you go across; a way to say how far off flat a floor is."/>
+      <info label="a.u. - arbitrary units. The number only means something next to another number from the same test."/>
     </view>
   </views>
 

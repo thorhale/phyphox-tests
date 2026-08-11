@@ -4,15 +4,15 @@
   <icon>RPM</icon>
   <description>
         WHAT IT DOES
-        Two jobs at once: how fast a fan is spinning, and whether its bearing is starting to fail.
+        Two jobs at once. It tells you how fast a fan is spinning, and whether its bearing is starting to fail. A bearing is the ring of balls a shaft spins on.
 
         HOW THE SPEED WORKS
-        A fan with 7 blades turning 20 times a second pushes 140 puffs of air past any fixed point every second. That makes a tone at 140 Hz. Tell the app how many blades there are, it divides, and you get RPM. No strobe, no stopping the fan, nothing opened.
+        The spinning blade wheel of a fan is called the impeller. Each blade pushes a puff of air past any fixed point as it goes by. This is called blade passing. A fan with 7 blades turning 20 times a second pushes 140 puffs of air past that point every second. That makes a tone at 140 Hz, which means 140 times per second. Tell the app how many blades there are. It divides, and you get the RPM, the turns per minute. No strobe, no stopping the fan, nothing opened.
 
         HOW THE BEARING CHECK WORKS
-        A healthy bearing makes a smooth even buzz. A failing one makes sharp little cracks, one for every time a ball rolls over a damaged patch. The app measures how SPIKY the vibration is compared with its average. That is the crest factor. Smooth buzz gives a low number, cracking gives a high one.
+        A healthy bearing makes a smooth even buzz. A failing one makes sharp little cracks, one for every time a ball rolls over a damaged patch. The app measures how SPIKY the shaking is compared with its average size. That spikiness number is called the crest factor. A smooth buzz gives a low number. Cracking gives a high one.
 
-        The useful part is that the spikes appear long before the overall vibration rises. That is what makes it an early warning rather than a post mortem.
+        The useful part is that the spikes show up long before the overall shaking rises. That is what makes it an early warning, rather than a report after the machine has already died.
 
         HOW TO RUN IT
         1. Count the blades on the impeller and type the number in. Get this wrong and the RPM is wrong by exactly that ratio.
@@ -20,12 +20,12 @@
         3. Vibration tab: press the phone flat against the fan housing or frame and hold it firmly.
 
         WHAT GOOD LOOKS LIKE
-        Crest factor around 3 to 4 is a healthy bearing. Past about 6, keep an eye on it. Past 10, get someone to look at it.
+        A crest factor around 3 to 4 is a healthy bearing. Past about 6, keep an eye on it. Past 10, get someone to look at it.
 
         But the TREND beats the number every time. A fan that has read 3.5 all year and is suddenly 5 is far more interesting than one that has always read 6.
 
         WHEN
-        Commissioning, or as a routine round. Write the numbers down. They are worth little alone and a great deal in a series.
+        At start-up, or as a routine round. Write the numbers down. They are worth little alone and a great deal in a series.
     </description>
 
   <data-containers>
@@ -118,7 +118,7 @@
 
   <views>
     <view label="Fan speed (sound)">
-      <info label="Hold the phone in the airflow path, roughly a hand's width from the fan guard. Set the band to bracket the tone you can hear."/>
+      <info label="Hold the phone in the path of the airflow, about a hand's width from the fan guard. Set the search band so it surrounds the tone you can hear."/>
       <separator height="0.5"/>
       <value label="Strongest tone in band" unit="Hz" size="2" precision="1">
         <input>micPeak</input>
@@ -149,21 +149,21 @@
     <view label="Vibration">
       <info label="Rest the phone flat on the frame of the unit, not on the floor and not held in your hand. Stay still while it reads."/>
       <separator height="0.5"/>
-      <value label="Overall vibration (RMS)" unit="m/s^2" size="2" precision="3">
+      <value label="Overall vibration - RMS, a kind of average size of the shaking" unit="m/s^2" size="2" precision="3">
         <input>vibRms</input>
       </value>
-      <value label="Crest factor" unit="x" size="2" precision="2">
+      <value label="Crest factor - how spiky the shaking is compared to its average" unit="x" size="2" precision="2">
         <input>vibCrest</input>
       </value>
       <value label="Bearing verdict">
         <input>vibCrest</input>
-        <map max="3">smooth - no impulsive content</map>
-        <map max="4.5">some impulsiveness - note it and re-check later</map>
-        <map max="6">impulsive - compare against an identical healthy unit</map>
-        <map>strongly impulsive - inspect the bearing</map>
+        <map max="3">smooth - no sharp cracks</map>
+        <map max="4.5">a few sharp cracks - note it and check again later</map>
+        <map max="6">spiky - compare against a matching healthy fan</map>
+        <map>very spiky - inspect the bearing</map>
       </value>
       <separator height="0.5"/>
-      <value label="Imbalance peak (1x)" unit="Hz" precision="2">
+      <value label="Wobble peak (once per turn)" unit="Hz" precision="2">
         <input>vib1x</input>
       </value>
       <value label="Implied shaft speed" unit="RPM" precision="0">
@@ -185,20 +185,33 @@
     <view label="Notes">
       <info label="IF THE RPM LOOKS WRONG"/>
       <info label="The app takes the loudest tone in the range you set. Usually that is the blades. Sometimes it is not."/>
-      <info label="If the answer comes out at almost exactly double, half, or a third of what you expected, it locked onto a harmonic - a whole number multiple of the real tone, which is always present alongside it. Narrow the search range around the pitch you actually want and try again."/>
-      <info label="A speed controlled fan can also whine at its own switching rate. It is usually a clean high whistle with nothing to do with the shaft. If the number will not settle, look at the spectrum and choose the range by eye."/>
+      <info label="If the answer comes out at almost exactly double, half, or a third of what you expected, it locked onto a harmonic. A harmonic is a whole-number multiple of a tone (twice the pitch, three times, and so on). It is always present alongside the real tone. Narrow the search range around the pitch you actually want and try again."/>
+      <info label="A speed-controlled fan can also whine at its own switching rate. That is usually a clean high whistle with nothing to do with the shaft. If the number will not settle, look at the spectrum (the list of pitches the sound is made of) and choose the range by eye."/>
       <info label="And check your blade count. That is the most common cause of a confidently wrong answer, because nothing about the reading looks suspicious - it is just multiplied by the wrong number."/>
       <separator height="0.5"/>
       <info label="WHY THE BEARING CHECK USES SPIKINESS RATHER THAN PITCH"/>
-      <info label="Bearing damage rattles at thousands of times per second. Your phone reads its accelerometer a few hundred times a second at best, so it can never hear that pitch. Not a limitation of this app - a limitation of the hardware, and no software fixes it."/>
+      <info label="Bearing damage rattles at thousands of times per second. Your phone reads its accelerometer (its shake sensor) a few hundred times a second at best, so it can never hear that pitch. This is not a limit of this app. It is a limit of the hardware, and no software fixes it."/>
       <info label="But it can still feel that the shaking has become spiky rather than smooth, and that is enough. That is what crest factor measures, and it is why this works on a phone at all."/>
       <separator height="0.5"/>
       <info label="DO NOT COMPARE THE VIBRATION NUMBER TO PUBLISHED CHARTS"/>
-      <info label="The standard vibration severity charts are drawn in millimetres per second - a speed. This measures acceleration, which is a different quantity. The numbers are not interchangeable and putting one into the other's chart gives a confident, meaningless answer."/>
-      <info label="Compare unit against identical unit, and each unit against its own history. That is the honest use."/>
+      <info label="The standard vibration charts are drawn in millimetres per second, which is a speed. This app measures acceleration instead. Acceleration is how hard it shakes, not how fast it moves. Those are two different things. You cannot swap the numbers. Do not compare this to the published charts, they use a different measure."/>
+      <info label="Compare one fan against a matching fan, and each fan against its own past readings. That is the honest use."/>
       <separator height="0.5"/>
       <info label="THE FRAME CARRIES EVERYTHING"/>
-      <info label="A phone resting on a frame feels every machine bolted to that frame, plus the floor. If two neighbouring units read the same, do not conclude both are faulty. Suspect you are measuring the structure they share."/>
+      <info label="A phone resting on a frame feels every machine bolted to that frame, plus the floor. If two nearby units read the same, do not decide both are faulty. Suspect you are measuring the frame they share."/>
+      <separator height="0.5"/>
+      <info label="WORDS THIS USES"/>
+      <info label="Hz - times per second."/>
+      <info label="RPM - turns per minute. To convert, multiply Hz by 60."/>
+      <info label="Impeller - the fan's spinning blade wheel."/>
+      <info label="Blade passing - each blade pushes a puff of air past a fixed point as it goes by."/>
+      <info label="Bearing - the ring of balls a shaft spins on."/>
+      <info label="Harmonic - a whole-number multiple of a tone (twice the pitch, three times, and so on)."/>
+      <info label="Crest factor - how spiky the shaking is compared to its average."/>
+      <info label="RMS - a kind of average size of the shaking."/>
+      <info label="Acceleration - how hard it shakes, not how fast it moves. Two different things."/>
+      <info label="Spectrum - a list of which pitches a sound is made of."/>
+      <info label="a.u. - the number only means something next to another number from the same test."/>
     </view>
   </views>
 

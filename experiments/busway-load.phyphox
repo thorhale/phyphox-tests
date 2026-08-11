@@ -7,14 +7,14 @@
         Tells you which power feed is working harder, without touching anything or opening anything.
 
         HOW
-        The more current flows through a conductor, the stronger the magnetic field around it. Your phone can measure that field. So holding the phone against a busway gives you a rough sense of how loaded it is, through the housing, with nothing clamped on.
+        The more current flows through a conductor (a wire or metal bar that carries electricity), the stronger its magnetic field - the invisible push electricity and magnets make, measured in microtesla. Your phone can measure that field. A busway is the big metal bar that carries power along a data hall. So holding the phone against a busway gives you a rough sense of how loaded it is, right through the metal cover, with nothing clamped on.
 
         WHY YOU CARE
-        In an A and B power setup the two feeds should be roughly even. If one is clearly busier, someone has probably single-corded something that was supposed to be dual-fed - and you would rather find that now than during a failover.
+        In an A and B power setup there are two separate feeds, and they should carry roughly the same load. If one is clearly busier, someone has probably single-corded a machine - plugged it into one feed when it was meant to be dual-fed, plugged into two. You would rather find that now than during a failover, when the load switches from one feed to the other.
 
         HOW TO RUN IT
-        1. Stand somewhere away from the run and press Set baseline here. That records the background field of the room.
-        2. Hold the phone against a fixed reference point on the busway and press Log section.
+        1. Stand somewhere away from the run and press Set baseline here. A baseline is a first reading you compare everything else against. This one records the background field of the room.
+        2. Hold the phone against a fixed spot on the busway that you can find again every time, and press Log section.
         3. Work down the run, or use Capture as feed A and Capture as feed B to compare two feeds directly.
 
         THE ONE THING THAT WILL RUIN IT
@@ -23,7 +23,7 @@
         Rest it against something physical you can find again every time - the same edge, the same bolt, the same label. Holding it near the busway is not a measurement. Holding it against the same spot twice is.
 
         IT IS NOT AN AMMETER
-        It cannot tell you amps, and it never will. It tells you this is busier than that, and only when you held the phone identically both times. Use it to decide where to send someone with a proper clamp meter.
+        It cannot tell you amps, and it never will (that would need an ammeter, a tool that measures current). It tells you this is busier than that, and only when you held the phone the same way both times. Use it to decide where to send someone with a proper clamp meter - a tool that measures current by clamping round a wire.
     </description>
 
   <data-containers>
@@ -87,14 +87,14 @@
       <value label="Ambient baseline" unit="uT" precision="2">
         <input>baseline</input>
       </value>
-      <value label="AC activity" unit="uT" precision="3">
+      <value label="AC activity (electricity flipping back and forth)" unit="uT" precision="3">
         <input>bAc</input>
       </value>
       <value label="Energised?">
         <input>bAc</input>
-        <map max="0.3">no fluctuation - dead, DC, or too far away</map>
-        <map max="1">slight fluctuation</map>
-        <map>fluctuating - alternating current nearby</map>
+        <map max="0.3">no flicker - dead, steady DC, or too far away</map>
+        <map max="1">slight flicker</map>
+        <map>flickering - alternating current nearby, so live power</map>
       </value>
       <separator height="0.5"/>
       <info label="Stand clear of the run, let the reading settle, then press this."/>
@@ -124,7 +124,7 @@
     </view>
 
     <view label="A / B feeds">
-      <info label="Hold the phone at the SAME spot and standoff on each feed. Anything else and the comparison is meaningless."/>
+      <info label="Hold the phone at the SAME spot and the same standoff - the same distance from the bars - on each feed. Anything else and the comparison is meaningless."/>
       <separator height="0.5"/>
       <value label="Reading now" unit="uT" precision="2">
         <input>delta</input>
@@ -163,7 +163,7 @@
         <input axis="x">bt</input>
         <input axis="y">babs</input>
       </graph>
-      <info label="Walk the length of the run with the phone at a constant standoff. Steps in this trace are section joints, tap-off boxes and changes in load."/>
+      <info label="Walk the length of the run with the phone held at a constant distance from the bars. Steps in this trace are section joints, tap-off boxes (points where power branches off the busway) and changes in load."/>
     </view>
 
     <view label="Notes">
@@ -172,13 +172,30 @@
       <info label="The practical result: a centimetre of difference in how you hold the phone can outweigh a genuine difference in load. So rest the phone against a physical feature you can find again every time. Same edge, same bolt, same label."/>
       <separator height="0.5"/>
       <info label="A LOW READING DOES NOT MEAN A LIGHT LOAD"/>
-      <info label="This is the trap worth knowing. In a properly balanced three phase busway the phases cancel each other out, so it can read LOW while carrying a lot of current."/>
+      <info label="This is the trap worth knowing. A three phase busway carries power on three bars at once. When the load is balanced, the wires partly cancel each other out, so a busy busway can read LOW while carrying a lot of current."/>
       <info label="Which means a HIGH reading might be heavy load - or it might be imbalance, or an awkwardly arranged tap off. Both are worth knowing about, but they are not the same finding."/>
       <info label="Treat any surprise here as a reason to go and meter it properly, never as the measurement itself."/>
       <separator height="0.5"/>
       <info label="WHAT THE AC ACTIVITY NUMBER IS"/>
       <info label="It is how much the field FLICKERS. Steel bends the field but holds still. Alternating current makes it flicker. So flicker is what separates a live run from a lump of metal."/>
-      <info label="There is deliberately no frequency shown. The phone reads its magnetometer about 100 times a second and mains alternates 50 or 60 times a second, which is not fast enough to measure honestly - any frequency shown would be invented. The size of the flicker is real; the pitch of it is not available."/>
+      <info label="There is deliberately no frequency shown. The phone reads its magnetometer about 100 times a second. Mains - the electricity in the wall sockets - flips 50 or 60 times a second. To measure how fast something repeats, you must check more than twice as fast as it repeats, and 100 is not more than twice 60. So any frequency shown would be made up. It is the same trick that makes wagon wheels seem to spin slowly backwards on film. The size of the flicker is real; the pitch of it is not."/>
+      <separator height="0.5"/>
+      <info label="WORDS THIS USES"/>
+      <info label="Busway - a big metal bar or duct that carries power along a data hall."/>
+      <info label="Conductor - a wire or metal bar that carries electricity."/>
+      <info label="Magnetic field - the invisible push electricity and magnets make. Measured in microtesla (uT). The Earth makes about 25 to 65 uT."/>
+      <info label="Current - the flow of electricity, measured in amps."/>
+      <info label="AC (alternating current) - electricity that flips back and forth many times a second."/>
+      <info label="Mains - the electricity in the wall sockets, which flips 50 or 60 times a second."/>
+      <info label="Baseline - a first reading you compare everything else against."/>
+      <info label="Standoff - how far the phone sits from the bars."/>
+      <info label="Tap-off - a point where power branches off the busway to feed a rack."/>
+      <info label="Three phase - power carried on three bars at once; when the load is balanced their fields partly cancel out."/>
+      <info label="Imbalance - how far apart the two feeds are, given as a percentage."/>
+      <info label="Single-corded / dual-fed - plugged into one feed, or plugged into two."/>
+      <info label="Failover - the moment power switches from one feed to the other."/>
+      <info label="Ammeter - a tool that measures current in amps."/>
+      <info label="Clamp meter - a tool that measures current by clamping round a wire."/>
     </view>
   </views>
 

@@ -4,18 +4,18 @@
   <icon>TAP</icon>
   <description>
         WHAT IT DOES
-        Finds loose, cracked and unsupported raised floor tiles by the note they make when you tap them.
+        Finds loose, cracked and unsupported raised floor tiles by the note they make when you tap them. A raised floor is floor panels held up on short legs, with a gap underneath for cables and cool air.
 
         HOW
-        A tile sitting properly on four pedestals rings high and dies away quickly. Take a pedestal away, crack the tile, or leave a stringer loose, and it rings lower and rumbles on. It is exactly why a cracked mug sounds dull compared with a good one.
+        A tile sitting properly on four pedestals rings high and dies away quickly. Pedestals are the short legs a tile sits on. Take a pedestal away, crack the tile, or leave a stringer loose, and it rings lower and rumbles on. A stringer is one of the metal rails that link the legs. It is exactly why a cracked mug sounds dull compared with a good one.
 
-        Engineers have tapped things and listened for a hundred years. This just puts a number on what your ear already notices, so you can compare a hundred tiles without trusting your memory of the first one.
+        Engineers have tapped things and listened for a hundred years. This just puts a number on what your ear already notices. So you can compare a hundred tiles without trusting your memory of the first one.
 
         WHY YOU CARE
-        Loose tiles trip people, they leak air out of the underfloor plenum, and they are a sign the grid is going. The usual way to find them is to walk on every one and hope you notice.
+        Loose tiles trip people. They leak air out of the underfloor plenum, the open space beneath the tiles that carries cool air. They are also a sign the grid, the metal frame that holds the tiles, is going. The usual way to find them is to walk on every one and hope you notice.
 
         HOW TO RUN IT
-        1. Find a tile you KNOW is solid. Tap it, then press Set this tile as the reference.
+        1. Find a tile you KNOW is solid. Tap it, then press Set this tile as the reference. The reference is the known-good tile you score the rest against.
         2. Walk the room. Tap each tile, press Log this tile.
         3. Press Next tile to advance the number so your log matches the floor plan.
         4. Anything ringing well below the reference is worth lifting.
@@ -88,7 +88,7 @@
 
   <views>
     <view label="Tap a tile">
-      <value label="Ring frequency" unit="Hz" size="3" precision="0">
+      <value label="The note the tile rings at" unit="Hz" size="3" precision="0">
         <input>ringF</input>
       </value>
       <separator height="0.5"/>
@@ -160,7 +160,7 @@
         <input axis="y">peakHold</input>
       </graph>
       <separator height="0.5"/>
-      <info label="A healthy tile gives one clear peak. Several peaks close together, or a broad smear instead of a peak, usually means the tile is moving against its stringers rather than ringing - which is itself worth reporting."/>
+      <info label="A healthy tile gives one clear peak - a pitch louder than its neighbours. Several peaks close together, or a broad smear instead of a peak, usually means the tile is moving against its stringers, the rails under it, rather than ringing. That is itself worth reporting."/>
       <separator height="0.5"/>
       <edit label="Search from" unit="Hz" default="80" decimal="false">
         <output>fLow</output>
@@ -173,7 +173,7 @@
     <view label="Notes">
       <info label="HOW TO TAP"/>
       <info label="Middle of the tile. Same object every time - a knuckle, or the handle of a screwdriver. Same force."/>
-      <info label="Never over a pedestal. There the tile cannot move, so it thuds dully whether it is perfect or broken, and every tile scores the same."/>
+      <info label="Never over a pedestal - one of the short legs under the tile. There the tile cannot move, so it thuds dully whether it is perfect or broken, and every tile scores the same."/>
       <info label="Being consistent matters more than being skilful. A rough tap repeated identically a hundred times is far more useful than a perfect tap done slightly differently each time."/>
       <separator height="0.5"/>
       <info label="WHY IT COMPARES INSTEAD OF MEASURING"/>

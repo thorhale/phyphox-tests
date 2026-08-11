@@ -7,12 +7,12 @@
         Lets you find the exact same spot again, using the building's own steel as the map.
 
         HOW
-        Every piece of metal around you - racks, floor pedestals, beams, cable tray - bends the Earth's magnetic field slightly. The result is a pattern that is a little different at every single point in the room, and does not move, because the racks do not move.
+        A magnetic field is the invisible push that magnets and electricity make. We measure its strength in microtesla, written uT. The Earth makes a steady field of about 25 to 65 uT everywhere. Every piece of metal around you bends that field a little: racks, floor pedestals (the short legs a raised floor sits on), beams, and cable trays (the metal channels that carry cables). The result is a pattern that is slightly different at every single point in the room. It does not move, because the racks do not move.
 
-        That bending is exactly why a compass is useless indoors. Here it is the entire point. It is an accidental fingerprint for a location, already installed, free.
+        That bending is exactly why a compass is useless indoors. Here it is the whole point. It is an accidental fingerprint for a place, already installed, and free.
 
         WHY YOU CARE
-        Repeat readings only mean something if they are taken in the same place. Third tile from the end, roughly, is not the same place. This pins it down, needs nothing installed anywhere, and costs nothing.
+        Repeat readings only mean something if you take them in the same place. Third tile from the end, roughly, is not the same place. This pins it down. It needs nothing installed anywhere, and it costs nothing.
 
         HOW TO RUN IT
         1. Stand where you want to remember. Press Capture this spot.
@@ -20,10 +20,10 @@
         3. Record a route logs a series of numbered points along a path.
 
         THE CLEVER BIT
-        It does not care which way you hold the phone. It uses two things that do not change when you turn it: how strong the field is, and the angle between the field and straight down. Spin the phone in your hand and both numbers sit still. That is what makes it usable while walking rather than needing a tripod.
+        It does not care which way you hold the phone. It uses two things that do not change when you turn it. One is how strong the field is. The other is the angle between the field and straight down. Spin the phone in your hand and both numbers sit still. That is what makes it usable while walking, instead of needing a tripod.
 
         WHAT BREAKS IT
-        Anything magnetic that MOVES. A rack rolled in or out, a trolley parked nearby, a big change in current in a busbar. It is a landmark, not a survey monument.
+        Anything magnetic that MOVES. A rack rolled in or out, a trolley parked nearby, or a big change in the current in a busbar (a thick metal bar that carries power). It is a landmark, not a fixed survey marker.
     </description>
 
   <data-containers>
@@ -117,13 +117,13 @@
         <input axis="x">hT</input>
         <input axis="y">hMis</input>
       </graph>
-      <info label="Hold the phone away from your body and walk slowly. The number drops as you approach and rises again as you pass."/>
+      <info label="The mismatch number is how different this spot is from the one you saved. Zero means the same spot. Hold the phone away from your body and walk slowly. The number drops as you get close and rises again as you pass."/>
     </view>
 
     <view label="Signature">
       <info label="These two numbers are the fingerprint. Neither changes when you rotate the phone, which is what makes them usable while walking."/>
       <separator height="0.5"/>
-      <value label="Field strength" unit="uT" size="2" precision="2">
+      <value label="Field strength - how strong the magnetic field is" unit="uT" size="2" precision="2">
         <input>bMag</input>
       </value>
       <value label="Angle from straight down" unit="deg" size="2" precision="2">
@@ -182,7 +182,7 @@
       <info label="One person's noise is another person's signal. That is the whole idea here."/>
       <separator height="0.5"/>
       <info label="READING THE MISMATCH NUMBER"/>
-      <info label="Zero means the reading is identical to the one you saved. Under about 0.5 means you are closer than you could reliably stand twice anyway, so treat that as arrived."/>
+      <info label="Zero means this reading is the same as the one you saved, so you are back on the exact spot. Under about 0.5 means you are closer than you could stand twice on purpose anyway. Treat that as arrived."/>
       <info label="It combines the two measurements by treating 1 microtesla of field strength as roughly equal in importance to 2 degrees of angle."/>
       <separator height="0.5"/>
       <info label="WHAT FOOLS IT"/>
@@ -194,7 +194,7 @@
       <info label="Use it knowing roughly which aisle you are in already, and it is excellent. Use it as a positioning system on its own and it will eventually mislead you."/>
       <separator height="0.5"/>
       <info label="CHECK THIS FIRST"/>
-      <info label="Look at your magnetometer noise figure in Device Check. If it is above about 0.5 microtesla, the mismatch number can never settle below that, and this will be correspondingly blunter on your phone."/>
+      <info label="Look at your magnetometer (magnetic field sensor) noise figure in Device Check. If it is above about 0.5 microtesla, the mismatch number can never settle below that, so this will be blunter on your phone."/>
     </view>
   </views>
 

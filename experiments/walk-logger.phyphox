@@ -6,12 +6,12 @@
         WHAT IT IS
         The recorder. Not a test - the thing you run while you do everything else.
 
-        It records noise, magnetic field, light, air pressure, tilt and your walking pace all at once, against a single clock, with a button to mark any spot.
+        It records noise, magnetic field (the invisible push electricity and magnets make), light, air pressure, tilt and your walking pace all at once, against a single clock, with a button to mark any spot.
 
         WHY YOU CARE
         Walk the hall once and you get one file with everything lined up on the same timeline. Then you work out what you wanted to know afterwards - including things you did not think to look for at the time. That is the difference between a survey and a second trip.
 
-        Every row carries a real world timestamp, so anything else recorded on the same walk - a WiFi app's log, thermal camera shots, a note on your phone - can be matched up to it afterwards by time alone.
+        Every row carries a real world timestamp - the exact clock time on every row - so anything else recorded on the same walk, a WiFi app's log, thermal camera shots, a note on your phone, can be matched up to it afterwards by time alone.
 
         HOW TO RUN IT
         1. Start at a point whose location you actually know.
@@ -164,7 +164,7 @@
         <input>slopeY</input>
       </value>
       <separator height="0.5"/>
-      <value label="Cadence" unit="steps/s" precision="2">
+      <value label="Cadence (your steps per second)" unit="steps/s" precision="2">
         <input>cadence</input>
       </value>
       <value label="Steps (estimated)" precision="0">
@@ -198,7 +198,7 @@
     </view>
 
     <view label="Cadence detail">
-      <info label="Cadence is the strongest peak between 1.2 and 3.5 Hz in the spectrum of total acceleration - the rhythm of walking. Step count is that cadence integrated over time, and only accumulates while the phone judges you to be moving."/>
+      <info label="Cadence is your steps per second. The phone finds it as the strongest beat between about 1.2 and 3.5 steps a second in the rhythm of your walking. Step count is that cadence integrated over time - added up as you go - and it only climbs while the phone thinks you are moving."/>
       <separator height="0.5"/>
       <value label="Accelerometer sample rate" unit="Hz" precision="1">
         <input>aRate</input>
@@ -215,7 +215,7 @@
     <view label="Notes">
       <info label="WHY IT DOES NOT DRAW YOU A MAP"/>
       <info label="Because the map would be wrong, and worse, it would look right."/>
-      <info label="To track yourself by walking you need to know which way you are facing. Indoors that comes from the magnetometer, which in a hall full of steel is wrong by tens of degrees and changes as you move. The alternative, adding up turns from the gyroscope, drifts by degrees every minute."/>
+      <info label="This is called dead reckoning - guessing where you are by tracking each step. To do it you need to know which way you are facing. Indoors that comes from the magnetometer, which in a hall full of steel is wrong by tens of degrees and changes as you move. The other option, adding up turns from the gyroscope, drifts by a few degrees every minute."/>
       <info label="Either way the path curls up into a shape that looks like a plausible walk and is not one. A wrong map you trust is worse than no map."/>
       <separator height="0.5"/>
       <info label="SO PRESS THE WAYPOINT BUTTON INSTEAD"/>
@@ -225,18 +225,30 @@
       <info label="Yes, the FASTER phone is worse here, which looks backwards. The pace is worked out from a fixed length chunk of readings, so a faster phone covers less time in that chunk and sees the rhythm less finely. Faster is better for vibration and worse for this."/>
       <separator height="0.5"/>
       <info label="LINING UP WITH OTHER RECORDINGS"/>
-      <info label="Every row carries a real world timestamp, so a WiFi app's export, camera shots and this file can all be joined by time afterwards."/>
+      <info label="Every row carries a real world timestamp - the exact clock time, stored as Unix time, which counts the seconds from the start of 1970 - so a WiFi app's export, camera shots and this file can all be joined by time afterwards."/>
       <info label="Two things to do first. Check the phone's clock is right. And if a second device is involved, clap once in front of both at the start - that gives you a shared event so you can CHECK the alignment instead of assuming it. Assumed alignment fails silently, which is the worst way for anything to fail."/>
       <separator height="0.5"/>
       <info label="HOW MUCH TO TRUST EACH COLUMN"/>
-      <info label="Slope - the best thing here, but only while the phone is still."/>
-      <info label="Magnetic field - accurate."/>
-      <info label="Pressure - good for comparing, but the absolute value can be several units out."/>
-      <info label="Sound level - comparative only, and NOT dB(A). Use the Sound Level Meter if you need a proper noise figure."/>
-      <info label="Light - roughly right, and reads low whenever the sensor is shaded or tilted. Keep the phone flat and face up."/>
+      <info label="Slope, in mm/m (millimetres of drop per metre of length) - the best thing here, but only while the phone is still."/>
+      <info label="Magnetic field, in uT (microtesla, the invisible push electricity and magnets make) - accurate."/>
+      <info label="Pressure, in hPa (air pressure; 100 Pa = 1 hPa) - good for comparing, but the absolute value can be several units out."/>
+      <info label="Sound level, in dBFS (loudness compared to the loudest the phone can record, so always a minus number) - comparative only, and NOT dB(A). Use the Sound Level Meter if you need a proper noise figure."/>
+      <info label="Light, in lx (how bright the light is) - roughly right, and reads low whenever the sensor is shaded or tilted. Keep the phone flat and face up."/>
       <separator height="0.5"/>
       <info label="MISSING SENSORS DO NOT BREAK IT"/>
       <info label="Anything your phone does not have is skipped rather than stopping the recording. No barometer or no light sensor just leaves those columns empty."/>
+      <separator height="0.5"/>
+      <info label="WORDS THIS USES"/>
+      <info label="Dead reckoning - guessing where you are by tracking each step."/>
+      <info label="Cadence - your steps per second."/>
+      <info label="Integrated over time - added up as you go."/>
+      <info label="Timestamp - the exact clock time on every row."/>
+      <info label="Unix time - time stored as the number of seconds since the start of 1970."/>
+      <info label="dBFS - loudness compared to the loudest the phone can record, so always a minus number."/>
+      <info label="uT (microtesla) - the size of a magnetic field, the invisible push electricity and magnets make."/>
+      <info label="lx (lux) - how bright the light is."/>
+      <info label="hPa - a unit of air pressure (100 Pa = 1 hPa)."/>
+      <info label="mm/m - millimetres of drop per metre; how much the phone tilts."/>
     </view>
   </views>
 

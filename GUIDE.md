@@ -1,6 +1,9 @@
 # What these tests actually do — in plain English
 
-No jargon. If a word has to be technical, it gets explained the first time.
+No jargon. If a word has to be technical, it gets explained the first time — and
+every term that comes up more than once is defined in one place, in the
+**[Words this uses](#words-this-uses)** section further down. If any word here
+stops you, that's where to look.
 
 Every test below answers the same six questions: **what** it measures, **why**
 you'd care, **where** you stand, **when** you'd reach for it, **how** you run it,
@@ -32,6 +35,125 @@ merged or dropped. Read that before you install all sixteen.
 | **Room Echo Signature** | Recognise a room by its echoes | **Weak — see review** |
 | **Ultrasonic Leak** | Find hissing air leaks | **Weak — see review** |
 | **Strobe Tacho** | Fan speed by eye with the torch | Can't run yet — needs a phyphox beta |
+
+---
+
+# Words this uses
+
+Every test tries to explain its own words as it goes. But a handful come up again
+and again, so here they are in one place, in plain language. Nothing here needs
+maths.
+
+## The words
+
+**Hz** — "times per second." That's all it means. 50 Hz is fifty times a second.
+A sound at 50 Hz wobbles the air fifty times a second; a fan spinning at 50 Hz
+turns fifty times a second.
+
+**RPM** — turns per minute. To go from Hz to RPM, multiply by 60. So 50 Hz is
+3000 RPM.
+
+**decibel (dB)** — how loud a sound is. It's a stretchy scale, not a normal one:
+every 10 dB is **ten times** the sound energy, and sounds about **twice as loud**
+to your ears. One odd result of that: two machines at 70 dB each add up to about
+73 dB together, not 140.
+
+**spectrum** — a list of which pitches a sound or a shake is made of. Like
+splitting music into its low notes and high notes and seeing how much of each
+there is. A "peak" in a spectrum is a pitch that's louder than the ones around it.
+
+**magnetic field** — the invisible push a magnet or an electric wire makes in the
+space around it. Measured in **microtesla (µT)**. For a size guide: the Earth
+itself makes a steady field of about 25 to 65 µT everywhere, and that's the
+background everything else sits on top of.
+
+**mains** — the electricity in the wall sockets. It doesn't sit still — it flips
+back and forth 50 or 60 times a second (50 in most of the world, 60 in North
+America). That flipping is why a lot of things in a building hum.
+
+**baseline** — a first reading you take on purpose, to compare everything else
+against. "Set a baseline" means "record what normal looks like right here, right
+now."
+
+**reference** — the known-good thing you score everything else against. A healthy
+machine, a solid floor tile, a spot you want to find again.
+
+**calibrate / offset** — a phone sensor measures a raw signal, not a real-world
+unit. To turn one into the other you add a fixed number, called the offset.
+Finding that number is called calibrating. Most of these tests don't need it —
+see the big idea below about differences.
+
+**a.u.** — you'll see this on some graphs. It's short for "arbitrary units," which
+means: this number only means something **compared with another number from the
+same test**, on the same phone. Don't read it as a real measurement on its own.
+
+## The one rule about fast things (and why some tests won't show a pitch)
+
+A phone sensor doesn't watch all the time. It takes quick snapshots — a few times
+a second for some sensors, thousands of times a second for the microphone.
+
+There's a rule with no exceptions: **to catch something that repeats, you have to
+take snapshots more than twice as fast as it repeats.** If you don't, you don't
+just get a fuzzy answer — you get a confidently **wrong** one. The repeating thing
+shows up as a slower wobble that isn't really there.
+
+The everyday version: on film, a fast-spinning wagon wheel sometimes looks like
+it's turning slowly backwards. The camera isn't snapping fast enough to keep up,
+so it invents a slow motion that never happened. Phone sensors do exactly the same
+thing when something is too fast for them.
+
+That's why a few of these tests refuse to show you a pitch or a frequency for
+something — because at that speed, any number they gave you would be made up.
+
+## Two big ideas that run through everything
+
+**1. Differences are trustworthy. Single numbers are usually guesses.**
+Most phone sensors aren't calibrated, so a lone number with a unit after it is a
+rough guess. But comparing two places, or the same place last month against this
+month, cancels out whatever the guess got wrong — because the same error is in
+both readings. So "this aisle is 6 dB louder than that one" is reliable even when
+"it's 72 dB" is not.
+
+**2. A held phone is a moving phone. Put it down.**
+For anything that measures shaking, tilt, or a magnetic field, your hand wobbles
+far more than the thing you're trying to measure. Set the phone on the floor or
+against the surface and take your hand off it. This is the single most common way
+to get a meaningless reading.
+
+## Parts of a data hall (in case you're new to the room)
+
+- **CRAC** — the big air-conditioning unit that keeps the room cold. (Stands for
+  Computer Room Air Conditioner.)
+- **rack** — the tall metal cabinet the computers are bolted into.
+- **raised floor** — a second floor sitting on little legs above the real one, so
+  cold air and cables can run underneath. The removable squares are **tiles**, the
+  little legs are **pedestals**, and the rails they sit on are **stringers**.
+- **plenum** — the gap under the raised floor that the cold air flows through.
+- **cold aisle / hot aisle** — the lane in front of the racks where cold air comes
+  out, and the lane behind where hot air comes off.
+- **containment** — doors and panels that pen the cold air in so it doesn't mix
+  with the hot.
+- **busway / busbar** — a metal track running overhead that carries the power; the
+  copper bars inside it are the busbars. A **tap-off** is where a feed branches off
+  it to a rack.
+- **conductor** — any wire or bar carrying electricity.
+
+## Units you'll see on labels
+
+| Unit | Plain meaning |
+|---|---|
+| Hz, kHz | times per second; kHz is thousands of times per second |
+| dB, dB(A), dB(C) | loudness; the letter is just which "hearing filter" was used |
+| dBFS | loudness compared to the loudest the phone can record — always a minus number |
+| dBm | radio signal strength; less negative is stronger (−67 beats −85) |
+| µT (microtesla) | magnetic field strength (Earth ≈ 25–65 µT) |
+| RPM | turns per minute |
+| m/s² | how hard something is shaking (acceleration) |
+| mm/m | slope — millimetres of drop per metre across |
+| hPa, Pa | air pressure (100 Pa = 1 hPa) |
+| lx (lux) | how bright the light is |
+| °C | temperature in Celsius |
+| % | a share out of a hundred |
 
 ---
 
