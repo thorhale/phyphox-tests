@@ -423,6 +423,31 @@ def emi_depth_recovers_a_known_cable_distance():
     return "recovers 2-30 cm depths exactly; guarded when the field does not drop"
 
 
+@test
+def device_check_timing_jitter_is_a_true_percentage():
+    """Jitter = 100 * (spread of the gaps between samples) / (average gap). Even
+    spacing reads 0; bursty spacing reads high. Reads the shipped accJitter
+    formula and checks it on gap sets of known mean and spread."""
+    expr = formula_for(path("device-check"), "accJitter")
+
+    def jitter(gaps):
+        n = len(gaps)
+        mean = sum(gaps) / n
+        std = math.sqrt(sum((g - mean) ** 2 for g in gaps) / (n - 1))
+        return evaluate(expr, std, mean)
+
+    close(jitter([0.01] * 50), 0.0, 0.001, "perfectly even spacing -> 0%")
+    # a set with mean 0.01 and a known coefficient of variation
+    import statistics  # noqa: E402
+    gaps = [0.005, 0.015] * 25            # mean 0.01, sample std ~0.00505
+    got = jitter(gaps)
+    want = 100 * statistics.stdev(gaps) / statistics.mean(gaps)
+    close(got, want, 0.1, "bursty spacing coefficient of variation")
+    if not got > 40:
+        raise AssertionError("half-and-half gaps should read as very bursty")
+    return f"even 0%, half-and-half {got:.0f}%"
+
+
 # ==========================================================================
 # Dimension survey: speed of sound as a thermometer
 # ==========================================================================

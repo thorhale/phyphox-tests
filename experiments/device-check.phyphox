@@ -33,6 +33,16 @@
     <container>accRate</container>
     <container>accMean</container>
     <container>accNoise</container>
+
+    <!-- timing jitter: how uneven the gaps between samples are -->
+    <container>accNm1</container>
+    <container size="256">accThead</container>
+    <container size="256">accTtail</container>
+    <container size="256">accStep</container>
+    <container>accStepMean</container>
+    <container>accStepStd</container>
+    <container>accJitter</container>
+
     <container size="256">gyrV</container>
     <container size="256">gyrT</container>
     <container>gyrN</container>
@@ -146,6 +156,15 @@
       </value>
       <value label="   its real sample rate" unit="Hz" precision="1">
         <input>accRate</input>
+      </value>
+      <value label="   timing evenness (how bursty the samples are)" unit="%" precision="1">
+        <input>accJitter</input>
+      </value>
+      <value label="   what that means">
+        <input>accJitter</input>
+        <map max="5">even - vibration readings are clean</map>
+        <map max="15">a little bursty - vibration readings slightly blurred</map>
+        <map>very bursty - vibration pitches will be smeared, read them loosely</map>
       </value>
       <value label="Gyroscope">
         <input>gyrN</input>
@@ -334,6 +353,41 @@
       <input clear="false">accN</input>
       <input>accSpan</input>
       <output clear="false">accRate</output>
+    </formula>
+
+    <!-- Timing jitter. Android often hands over accelerometer samples in
+         bursts rather than evenly, and uneven spacing smears every vibration
+         spectrum. Measure it: the gaps between successive timestamps, and how
+         much they vary. jitter = 100 * (spread of the gaps) / (average gap). -->
+    <formula formula="max([1]-1,1)">
+      <input clear="false">accN</input>
+      <output>accNm1</output>
+    </formula>
+    <subrange>
+      <input as="from" type="value">0</input>
+      <input as="length" clear="false">accNm1</input>
+      <input as="in" clear="false">accT</input>
+      <output>accThead</output>
+    </subrange>
+    <subrange>
+      <input as="from" type="value">1</input>
+      <input as="in" clear="false">accT</input>
+      <output>accTtail</output>
+    </subrange>
+    <subtract>
+      <input>accTtail</input>
+      <input>accThead</input>
+      <output>accStep</output>
+    </subtract>
+    <average>
+      <input as="buffer" clear="false">accStep</input>
+      <output as="average">accStepMean</output>
+      <output as="stddev">accStepStd</output>
+    </average>
+    <formula formula="100*[1]/max([2],0.000001)">
+      <input>accStepStd</input>
+      <input>accStepMean</input>
+      <output>accJitter</output>
     </formula>
     <average>
       <input as="buffer" clear="false">accV</input>
